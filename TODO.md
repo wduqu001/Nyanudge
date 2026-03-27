@@ -7,21 +7,22 @@ This document contains all the tasks and issues required to implement the NyaNud
 ## 1. Project Setup & Infrastructure
 
 ### [INFRA] Initialize React + TypeScript + Capacitor Project
-- [ ] Initialize a new Vite project using React and TypeScript.
-- [ ] Configure `capacitor.config.ts` with package name `com.nyanudge.app`.
-- [ ] Set up the directory structure as specified in Section 4 and 17 of the PRD.
-- [ ] Install base dependencies: `zustand`, `lucide-react`, `i18next`, `react-i18next`, `lottie-web`.
-- [ ] Set up `vitest` and `react-testing-library`.
+- [x] Initialize a new Vite project using React and TypeScript.
+- [x] Configure `capacitor.config.ts` with package name `com.nyanudge.app`.
+- [x] Set up the directory structure as specified in Section 4 and 17 of the PRD.
+- [x] Install base dependencies: `zustand`, `lucide-react`, `i18next`, `react-i18next`, `lottie-web`.
+- [x] Set up `vitest` and `react-testing-library`.
+- [x] Review and update project `.gitignore`.
 
 ---
 
 ## 2. Core Systems
 
 ### [CORE] Database: SQLite & Drizzle ORM Setup
-- [ ] Install `@capacitor-community/sqlite` and `drizzle-orm`.
-- [ ] Create `src/core/db/schema.ts` with tables: `preferences`, `reminders`, `schedules`, `completion_log`, `streaks` (Section 11.2).
-- [ ] Implement `MigrationRunner.ts` to handle versioning (Section 11.3).
-- [ ] Implement `seed.ts` to populate default reminders on first launch (Section 11.4).
+- [x] Install `@capacitor-community/sqlite` and `drizzle-orm`.
+- [x] Create `src/core/db/schema.ts` with tables: `preferences`, `reminders`, `schedules`, `completion_log`, `streaks` (Section 11.2).
+- [x] Implement `MigrationRunner.ts` to handle versioning (Section 11.3).
+- [x] Implement `seed.ts` to populate default reminders on first launch (Section 11.4).
 
 ### [CORE] State Management: Zustand Stores
 - [ ] Create `remindersStore.ts` to manage reminder states and CRUD operations.
@@ -35,10 +36,10 @@ This document contains all the tasks and issues required to implement the NyaNud
 - [ ] Implement Sound/Vibration handlers and integrate `.mp3` assets (Section 10.2).
 
 ### [CORE] Internationalization: i18next Setup
-- [ ] Configure `i18next` in `src/core/i18n/index.ts`.
-- [ ] Create initial locale JSON files for `en`, `pt-BR`, and `ja`.
-- [ ] Include all reminder phrases from Section 8.
-- [ ] Implement `pickMessage` utility for category-specific random messages.
+- [x] Configure `i18next` in `src/core/i18n/index.ts`.
+- [/] Create initial locale JSON files for `en`, `pt-BR`, and `ja`. (Pending: pt-BR and ja content)
+- [x] Include all reminder phrases from Section 8 (English).
+- [x] Implement `pickMessage` utility for category-specific random messages.
 
 ---
 
