@@ -3,6 +3,10 @@
     "name": "NyaNudge",
     "tagline": "Your cat-powered wellness companion."
   },
+  "formats": {
+    "time": "12h",
+    "date": "MM/DD/YYYY"
+  },
   "categories": {
     "water":    { "name": "Drink Water",    "icon": "water" },
     "meal":     { "name": "Eat Something",  "icon": "meal" },

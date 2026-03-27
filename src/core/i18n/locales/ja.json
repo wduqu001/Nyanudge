@@ -1,1 +1,6 @@
-{}
+{
+  "formats": {
+    "time": "24h",
+    "date": "YYYY/MM/DD"
+  }
+}

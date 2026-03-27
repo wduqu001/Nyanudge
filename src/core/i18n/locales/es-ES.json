@@ -1,0 +1,91 @@
+{
+  "app": {
+    "name": "NyaNudge",
+    "tagline": "Tu compañero de bienestar gatuno."
+  },
+  "formats": {
+    "time": "24h",
+    "date": "DD/MM/YYYY"
+  },
+  "categories": {
+    "water":    { "name": "Beber Agua",        "icon": "water" },
+    "meal":     { "name": "Comer Algo",        "icon": "meal" },
+    "exercise": { "name": "Mueve tu Cuerpo",   "icon": "exercise" },
+    "bathroom": { "name": "Pausa para Baño",   "icon": "bathroom" },
+    "medicine": { "name": "Tomar Medicación",  "icon": "medicine" }
+  },
+  "messages": {
+    "water": [
+      "¡Pspspsps... tu cuenco de agua está vacío de nuevo. 🐱",
+      "¡Miau! Los gatos también necesitan hidratarse, pero hoy te toca a TI.",
+      "Es hora de beber agua. No, el café no cuenta.",
+      "Un gato muy serio ha determinado que necesitas agua. Ahora mismo.",
+      "Nya~ Tu cuerpo te llama. Tiene sed. Hidrátate, por favor.",
+      "Cero agua desde la última vez. El gato te está juzgando. 🐾",
+      "¡Hora del agua! Tus riñones te lo agradecerán. El gato ya lo hace.",
+      "Hasta los peces nadan en agua. Deberías beber un poco."
+    ],
+    "meal": [
+      "¡Miau! El desayuno es el purrr-mer momento más importante del día.",
+      "El gato ha inspeccionado tu nevera. Exige que comas.",
+      "El hambre pone gruñona a la gente. Los gatos lo saben. Te estamos vigilando.",
+      "Tu estómago acaba de enviar una nota muy seria. Firmado: El Almuerzo.",
+      "¡Nya~ Hora de comer! Hasta el pienso suena bien ahora mismo, ¿verdad?",
+      "Baja energía detectada. El gato recomienda despliegue inmediato de snacks.",
+      "Este mensaje fue escrito por un gato bien alimentado que espera que tú también lo estés.",
+      "Oye. OYE. Come. El gato insiste."
+    ],
+    "exercise": [
+      "¡Estírate como un gato! Tu espalda te amará por ello.",
+      "Hasta los gatos tienen zoomies. Es tu turno. 🏃",
+      "El récord mundial de estar quieto es para... tú no. ¡Muévete!",
+      "Tu meta diaria de estiramientos te espera. El gato ya calentó.",
+      "¡Nya! 10 minutos de movimiento = 10 ronroneos felices de tu equipo.",
+      "Un gato se ha caído del sofá para motivarte. No dejes que sea en vano.",
+      "Cuerpos en movimiento permanecen en movimiento. Cuerpos en el sofá son empujados por gatos.",
+      "Cinco minutos de movimiento ahora > una hora de arrepentimiento después. ¡Vamos!"
+    ],
+    "bathroom": [
+      "El gato ha reclamado el trono del baño. Pero puedes ir después.",
+      "Recordatorio suave: tu vejiga también tiene derechos.",
+      "Una pausa rápida es autocuidado. El gato lo aprueba. 🚽🐾",
+      "Aléjate de la pantalla. Sí, ahora. El gato te está sujetando la puerta.",
+      "Tu cuerpo envió un memorándum. Dice: baño, por favor.",
+      "Nya~ Un gatito acaba de tirar algo de tu escritorio para llamar tu atención. ¡Al baño!",
+      "Hidratación comprobada ✓  |  Pausa para el baño vencida ✗  |  Ya sabes qué hacer.",
+      "El gato te ha guiñado un ojo. Eso significa pausa para el baño. Confía en el gato."
+    ],
+    "medicine": [
+      "Hora de tu medicina. El gato ya te espera con el agua. 💊",
+      "¡Miau! Hora de la medicación. No hagas que el gato vaya a buscarte.",
+      "Tu dosis diaria. El gato miró el reloj dos veces para estar seguro.",
+      "Recordatorio de medicina — porque tu 'yo' del futuro nos pidió que te lo recordáramos.",
+      "Nya~ Pastilla pequeña, gran diferencia. Tú puedes. 🐾",
+      "El gato está sentado sobre tu medicina. Ese es el recordatorio.",
+      "Este mensaje fue aprobado por un gato muy responsable. Toma tus medicinas.",
+      "Logro de salud de hoy desbloqueado: recordar tu medicación. 💊✓"
+    ]
+  },
+  "snooze": {
+    "5":  "Vale. 5 minutos. El gato vigila el reloj.",
+    "10": "10 minutos. El gato está poniendo un temporizador. 👀",
+    "15": "15 minutos. El gato toma nota de esto. Serás juzgado.",
+    "30": "¡¿30 minutos?! El gato está decepcionado. Nos vemos pronto."
+  },
+  "streaks": {
+    "1": "¡Día 1! El viaje comienza. 🐾",
+    "3": "3 días seguidos. El gato está impresionado.",
+    "7": "¡Una semana completa! Has desbloqueado el emoji de Gato Orgulloso. 🐱✨",
+    "14": "Dos semanas de constancia. El gato se inclina con respeto.",
+    "30": "¡Racha de 30 días! Eres el humano en el que el gato siempre creyó."
+  },
+  "actions": {
+    "done": "Hecho",
+    "snooze": "Posponer",
+    "skip": "Saltar por hoy",
+    "enable": "Activar",
+    "disable": "Desactivar",
+    "save": "Guardar",
+    "cancel": "Cancelar"
+  }
+}
