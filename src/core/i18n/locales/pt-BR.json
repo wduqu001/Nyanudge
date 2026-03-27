@@ -1,6 +1,91 @@
 {
+  "app": {
+    "name": "NyaNudge",
+    "tagline": "Seu companheiro felino de bem-estar."
+  },
   "formats": {
     "time": "24h",
     "date": "DD/MM/YYYY"
+  },
+  "categories": {
+    "water":    { "name": "Beber Água",        "icon": "water" },
+    "meal":     { "name": "Comer Algo",        "icon": "meal" },
+    "exercise": { "name": "Mova-se",           "icon": "exercise" },
+    "bathroom": { "name": "Pausa pro Banheiro","icon": "bathroom" },
+    "medicine": { "name": "Tomar Remédio",     "icon": "medicine" }
+  },
+  "messages": {
+    "water": [
+      "Pspspsps... sua tigela de água tá vazia de novo. 🐱",
+      "Miau! Gatos precisam de hidratação, mas hoje é SUA vez.",
+      "É hora de beber água. Não, o café não conta.",
+      "Um gatinho muito sério decidiu que você precisa de água. Agora.",
+      "Nya~ Seu corpo ligou. Tá com sede. Hidrata-se, por favor.",
+      "Sem água desde a última vez. O gato tá te julgando. 🐾",
+      "Hora da água! Seus rins vão agradecer. O gato já agradeceu.",
+      "Até peixe nada na água. Você devia beber um pouco."
+    ],
+    "meal": [
+      "Miau! O café da manhã é a parte mais importante do purrr-dia.",
+      "O gato inspecionou sua geladeira. Ele exige que você coma.",
+      "Fome deixa humano mal-humorado. Gatos sabem. Tô de olho.",
+      "Seu estômago acabou de mandar um bilhete sério. Assinado, o Almoço.",
+      "Nya~ Hora de comer! Até ração parece boa agora, né?",
+      "Baixa energia detectada. O gato recomenda snack imediato.",
+      "Esta mensagem foi escrita por um gato bem alimentado que espera o mesmo por você.",
+      "Ei. EI. Come. O gato insiste."
+    ],
+    "exercise": [
+      "Espreguice-se como um gato! Sua coluna vai amar.",
+      "Até gato tem zoomies. É sua vez. 🏃",
+      "O recorde mundial de ficar parado é de... não você. Mexe-se!",
+      "Sua meta de alongamento de hoje está esperando. O gato já aqueceu.",
+      "Nya! 10 minutos de movimento = 10 ronronados felizes da equipe.",
+      "Um gato rolou do sofá pra te motivar. Não deixa ser em vão.",
+      "Corpo em movimento permanece em movimento. Em repouso, os gatos empurram.",
+      "Cinco minutos de movimento agora > uma hora de arrependimento depois. Vai!"
+    ],
+    "bathroom": [
+      "O gato já reivindicou o trono do banheiro. Mas vai depois dele.",
+      "Lembrete gentil: sua bexiga também tem direitos.",
+      "Uma pausa rápida é autocuidado. O gato aprova. 🚽🐾",
+      "Sai da tela. Sim, agora. O gato tá segurando a porta.",
+      "Seu corpo mandou recado: banheiro, pfv.",
+      "Nya~ Um gatinho derrubou algo da sua mesa pra chamar sua atenção. Hora do banheiro!",
+      "Hidratação ok ✓  |  Pausa pro banheiro atrasada ✗  |  Você sabe o que fazer.",
+      "O gato te deu o piscadão lento. Isso significa banheiro. Confia no gato."
+    ],
+    "medicine": [
+      "Hora do remédio. O gato já tá te esperando com água. 💊",
+      "Miau! Hora do remédio. Não me faça ir aí te buscar.",
+      "Sua dose diária. O gato conferiu o relógio duas vezes.",
+      "Lembrete de remédio — porque seu eu do futuro pediu pra lembrar.",
+      "Nya~ Comprimidinho pequeno, diferença grande. Você consegue. 🐾",
+      "O gato tá sentado em cima do seu remédio. Esse é o lembrete.",
+      "Esta mensagem foi aprovada por um gato muito responsável. Toma o remédio.",
+      "Conquista de saúde de hoje desbloqueada: lembrar do remédio. 💊✓"
+    ]
+  },
+  "snooze": {
+    "5":  "Tudo bem. 5 minutos. O gato tá vigiando o relógio.",
+    "10": "10 minutos. O gato tá colocando um timer. 👀",
+    "15": "15 minutos. O gato anotou. Será julgado.",
+    "30": "30 minutos?! O gato tá decepcionado. Até já."
+  },
+  "streaks": {
+    "1": "Dia 1! A jornada começa. 🐾",
+    "3": "3 dias seguidos. O gato tá impressionado.",
+    "7": "Uma semana inteira! Você desbloqueou o emoji de gato orgulhoso. 🐱✨",
+    "14": "Duas semanas de consistência. O gato se inclina com respeito.",
+    "30": "Sequência de 30 dias! Você é o humano em que o gato sempre acreditou."
+  },
+  "actions": {
+    "done": "Feito",
+    "snooze": "Adiar",
+    "skip": "Pular por hoje",
+    "enable": "Ativar",
+    "disable": "Desativar",
+    "save": "Salvar",
+    "cancel": "Cancelar"
   }
 }
