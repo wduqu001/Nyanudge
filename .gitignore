@@ -16,11 +16,14 @@ node_modules
 # Environment Variables
 .env
 .env.local
+.env.development
+.env.test
 .env.*.local
 *.env
 
 # Tooling/Vite Caches
 .vite
+*.timestamp-*
 .eslintcache
 .stylelintcache
 .prettiercache
@@ -28,6 +31,7 @@ node_modules
 .cache
 .npm
 .yarn-integrity
+storybook-static/
 
 # IDEs and Editors
 .vscode/*
