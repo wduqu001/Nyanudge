@@ -25,20 +25,20 @@ This document contains all the tasks and issues required to implement the NyaNud
 - [x] Implement `seed.ts` to populate default reminders on first launch (Section 11.4).
 
 ### [CORE] State Management: Zustand Stores
-- [ ] Create `remindersStore.ts` to manage reminder states and CRUD operations.
-- [ ] Create `preferencesStore.ts` for app settings (Section 9).
-- [ ] Create `statsStore.ts` for tracking streaks and history.
+- [x] Create `remindersStore.ts` to manage reminder states and CRUD operations.
+- [x] Create `preferencesStore.ts` for app settings (Section 9).
+- [x] Create `statsStore.ts` for tracking streaks and history.
 
 ### [CORE] Notifications: Scheduling & Handlers
-- [ ] Implement `scheduler.ts` logic using `@capacitor/local-notifications` (Section 10.1).
-- [ ] Implement logic to calculate `nextFireTime` for interval and fixed schedules.
-- [ ] Configure Android Notification Channels in `capacitor.config.ts` (Section 10.3).
+- [x] Implement `scheduler.ts` logic using `@capacitor/local-notifications` (Section 10.1).
+- [x] Implement logic to calculate `nextFireTime` for interval and fixed schedules.
+- [x] Configure Android Notification Channels in `capacitor.config.ts` (Section 10.3).
 - [ ] Implement Sound/Vibration handlers and integrate `.mp3` assets (Section 10.2).
 
 ### [CORE] Internationalization: i18next Setup
 - [x] Configure `i18next` in `src/core/i18n/index.ts`.
-- [/] Create initial locale JSON files for `en`, `pt-BR`, and `ja`. (Pending: pt-BR and ja content)
-- [x] Include all reminder phrases from Section 8 (English).
+- [x] Create initial locale JSON files for `en`, `pt-BR`, `ja`, and `es-ES`.
+- [x] Include all reminder phrases from Section 8 (English, pt-BR, ja, es-ES).
 - [x] Implement `pickMessage` utility for category-specific random messages.
 
 ---
