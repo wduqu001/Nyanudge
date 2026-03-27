@@ -1,0 +1,87 @@
+{
+  "app": {
+    "name": "NyaNudge",
+    "tagline": "Your cat-powered wellness companion."
+  },
+  "categories": {
+    "water":    { "name": "Drink Water",    "icon": "water" },
+    "meal":     { "name": "Eat Something",  "icon": "meal" },
+    "exercise": { "name": "Move Your Body", "icon": "exercise" },
+    "bathroom": { "name": "Bathroom Break", "icon": "bathroom" },
+    "medicine": { "name": "Medication",     "icon": "medicine" }
+  },
+  "messages": {
+    "water": [
+      "Pspspsps... your water bowl is empty again. 🐱",
+      "Mrow! Cats need hydration too, but today it's YOUR turn.",
+      "This is your water check-in. No, your tea doesn't count.",
+      "A very serious cat has determined you need water. Right now.",
+      "Nya~ Your body called. It's thirsty. Please hydrate.",
+      "Zero water since last check. The cat is judging you. 🐾",
+      "Water o'clock! Your kidneys will thank you. The cat already does.",
+      "Even fish swim in water. You should drink some."
+    ],
+    "meal": [
+      "Meow! Breakfast is the most important purr of the day.",
+      "The cat has inspected your fridge. It demands you eat.",
+      "Hunger makes humans grumpy. Cats know. The cat is watching.",
+      "Your stomach just sent a strongly worded note. Signed, Lunch.",
+      "Nya~ Food time! Even kibble sounds good right now, doesn't it?",
+      "Low energy detected. Cat recommends immediate snack deployment.",
+      "This message was written by a well-fed cat who hopes you are too.",
+      "Hey. HEY. Eat. The cat insists."
+    ],
+    "exercise": [
+      "Stretch like a cat! Your spine will love you for it.",
+      "Even cats do zoomies. It's your turn. 🏃",
+      "The world record for sitting still goes to... not you. Move!",
+      "Your daily stretch goal is waiting. The cat already warmed up.",
+      "Nya! 10 minutes of movement = 10 happy purrs from your crew.",
+      "A cat has rolled off the couch to motivate you. Don't let it be for nothing.",
+      "Bodies in motion stay in motion. Bodies on the couch get nudged by cats.",
+      "Five minutes of movement now > an hour of regret later. Go!"
+    ],
+    "bathroom": [
+      "The cat has claimed the bathroom throne. But do go after.",
+      "Gentle reminder: your bladder has rights too.",
+      "A quick break is self-care. The cat approves. 🚽🐾",
+      "Step away from the screen. Yes, now. The cat is holding the door open.",
+      "Your body sent a memo. It says: bathroom, please.",
+      "Nya~ A tiny cat just knocked something off your desk to get your attention. Bathroom time!",
+      "Hydration check passed ✓  |  Bathroom break overdue ✗  |  You know what to do.",
+      "The cat has given you the slow blink. That means bathroom break. Trust the cat."
+    ],
+    "medicine": [
+      "Time for your medicine. The cat is already waiting with water. 💊",
+      "Mrow! Medication o'clock. Don't make the cat come find you.",
+      "Your daily dose. The cat checked the clock twice to be sure.",
+      "Medicine reminder — because your future self asked us to remind you.",
+      "Nya~ Small pill, big difference. You've got this. 🐾",
+      "The cat is sitting on your medication. That's the reminder.",
+      "This message was approved by a very responsible cat. Take your meds.",
+      "Today's health achievement unlocked: remembering your medication. 💊✓"
+    ]
+  },
+  "snooze": {
+    "5":  "Fine. 5 minutes. The cat is watching the clock.",
+    "10": "10 minutes. The cat is setting a timer. 👀",
+    "15": "15 minutes. The cat notes this. It will be judged.",
+    "30": "30 minutes?! The cat is disappointed. See you soon."
+  },
+  "streaks": {
+    "1": "Day 1! The journey begins. 🐾",
+    "3": "3 days in a row. The cat is impressed.",
+    "7": "One full week! You've unlocked the Proud Cat emoji. 🐱✨",
+    "14": "Two weeks of consistency. The cat bows respectfully.",
+    "30": "30-day streak! You are the human the cat always believed in."
+  },
+  "actions": {
+    "done": "Done",
+    "snooze": "Snooze",
+    "skip": "Skip for today",
+    "enable": "Enable",
+    "disable": "Disable",
+    "save": "Save",
+    "cancel": "Cancel"
+  }
+}
