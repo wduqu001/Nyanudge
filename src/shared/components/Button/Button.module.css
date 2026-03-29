@@ -1,0 +1,50 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  border-radius: 9999px; /* Pill shape */
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+  gap: 8px;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.primary {
+  background-color: var(--accent);
+  color: #FFFFFF; /* High contrast on accent */
+}
+
+.primary:hover:not(:disabled) {
+  background-color: var(--color-accent-500);
+}
+
+.secondary {
+  background-color: var(--surface-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+}
+
+.secondary:hover:not(:disabled) {
+  background-color: var(--surface-overlay);
+}
+
+.ghost {
+  background-color: transparent;
+  color: var(--accent);
+}
+
+.ghost:hover:not(:disabled) {
+  background-color: var(--surface-overlay);
+}
+
+.fullWidth {
+  width: 100%;
+}

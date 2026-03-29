@@ -1,0 +1,45 @@
+.card {
+  background-color: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 6px -1px var(--surface-overlay), 0 2px 4px -1px var(--surface-overlay);
+  transition: all 0.2s ease;
+  overflow: hidden;
+  position: relative; /* For the left border pseudo-element */
+  text-align: left;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover {
+  box-shadow: 0 10px 15px -3px var(--surface-overlay), 0 4px 6px -2px var(--surface-overlay);
+  transform: translateY(-2px);
+}
+
+.clickable:active {
+  transform: translateY(0);
+}
+
+.border-water::before,
+.border-food::before,
+.border-exercise::before,
+.border-bathroom::before,
+.border-medicine::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 4px;
+}
+
+.border-water::before { background-color: var(--color-water); }
+.border-food::before { background-color: var(--color-food); }
+.border-exercise::before { background-color: var(--color-exercise); }
+.border-bathroom::before { background-color: var(--color-bathroom); }
+.border-medicine::before { background-color: var(--color-medicine); }

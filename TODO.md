@@ -46,21 +46,21 @@ This document contains all the tasks and issues required to implement the NyaNud
 ## 3. UI/UX Design Tokens & Shared Components
 
 ### [UI] Design Tokens: CSS Variables
-- [ ] Create `src/shared/styles/tokens.css` with the color system and neutral ramp (Section 5).
-- [ ] Implement Light/Dark mode variants using `prefers-color-scheme`.
-- [ ] Configure Nunito font and global typography styles (Section 6).
+- [x] Create `src/shared/styles/tokens.css` with the color system and neutral ramp (Section 5).
+- [x] Implement Light/Dark mode variants using `prefers-color-scheme`.
+- [x] Configure Nunito font and global typography styles (Section 6).
 
 ### [UI] Shared Components Library
-- [ ] **Button**: Primary, secondary, and ghost variants.
-- [ ] **Card**: Surface for reminder cards and history items.
-- [ ] **Toggle/Switch**: Custom styled switch for reminder enabling.
-- [ ] **Modal**: Base modal for reminder editing and onboarding steps.
-- [ ] **Iconography**: Integrate `lucide-react` icons (Section 12.3).
+- [x] **Button**: Primary, secondary, and ghost variants.
+- [x] **Card**: Surface for reminder cards and history items.
+- [x] **Toggle/Switch**: Custom styled switch for reminder enabling.
+- [x] **Modal**: Base modal for reminder editing and onboarding steps.
+- [x] **Iconography**: Integrate `lucide-react` icons (Section 12.3).
 
 ### [UI] Storybook Integration
-- [ ] Initialize and configure Storybook for shared component development.
-- [ ] Create stories for shared components (Button, Card, Toggle, Modal).
-- [ ] Configure Storybook to use Design Tokens (CSS variables).
+- [x] Initialize and configure Storybook for shared component development.
+- [x] Create stories for shared components (Button, Card, Toggle, Modal).
+- [x] Configure Storybook to use Design Tokens (CSS variables).
 
 ---
 

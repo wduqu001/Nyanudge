@@ -71,3 +71,5 @@ Thumbs.db
 *.tsbuildinfo
 *.js.map
 *.css.map
+
+*storybook.log

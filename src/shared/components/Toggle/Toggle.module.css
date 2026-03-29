@@ -1,0 +1,57 @@
+.wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.label {
+  font-size: 16px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.toggle {
+  appearance: none;
+  background-color: var(--color-neutral-300);
+  margin: 0;
+  padding: 0;
+  width: 52px;
+  height: 32px;
+  border-radius: 9999px;
+  position: relative;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s ease;
+}
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 28px;
+  height: 28px;
+  background-color: #FFFFFF;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: transform 0.2s ease;
+}
+
+.checked {
+  background-color: var(--accent);
+}
+
+.checked .thumb {
+  transform: translateX(20px);
+}
+
+.color-water { background-color: var(--color-water); }
+.color-food { background-color: var(--color-food); }
+.color-exercise { background-color: var(--color-exercise); }
+.color-bathroom { background-color: var(--color-bathroom); }
+.color-medicine { background-color: var(--color-medicine); }
