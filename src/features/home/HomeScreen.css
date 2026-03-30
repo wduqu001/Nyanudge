@@ -17,10 +17,9 @@
 }
 
 .home-title {
-  font-size: 17px;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 600;
   margin: 0;
-  letter-spacing: -0.02em;
 }
 
 .icon-button {
@@ -92,8 +91,8 @@
 .next-up-pill {
   background-color: var(--accent);
   color: #fff;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 500;
   padding: 5px 12px;
   border-radius: 20px;
   display: inline-block;
@@ -101,14 +100,15 @@
 }
 
 .hero-copy {
-  font-size: 14px;
+  font-size: 22px;
   font-weight: 600;
   color: var(--text-primary);
   text-align: center;
 }
 
 .hero-sub {
-  font-size: 12px;
+  font-size: 16px;
+  font-weight: 400;
   color: var(--text-secondary);
   text-align: center;
 }
@@ -124,8 +124,8 @@
 }
 
 .streak-banner span {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 500;
   color: var(--color-accent-500);
 }
 
@@ -140,12 +140,12 @@
 }
 
 .section-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  padding: 10px 16px 4px;
+  letter-spacing: 0.05em;
+  padding: 10px 16px 8px;
 }
 
 .reminders-list {
@@ -190,15 +190,16 @@
 
 .reminder-card-text h3 {
   margin: 0;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 400;
   line-height: 1.2;
   color: var(--text-primary);
 }
 
 .reminder-card-text p {
   margin: 0;
-  font-size: 11px;
+  font-size: 13px;
+  font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.3;
 }
@@ -223,7 +224,7 @@
   gap: 3px;
   background: none;
   border: none;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   color: var(--text-secondary);

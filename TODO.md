@@ -87,10 +87,10 @@ This document contains all the tasks and issues required to implement the NyaNud
 - [ ] Implement Sound/Snooze/Character overrides.
 
 ### [FEATURE] Settings Screen
-- [ ] Implement `SettingsScreen.tsx` with all sections from Section 9.
-- [ ] Notification style & DND window.
-- [ ] Appearance (Theme, Character, Language).
-- [ ] Data Management (Export CSV, Clear History).
+- [x] Implement `SettingsScreen.tsx` with all sections from Section 9.
+- [x] Notification style & DND window.
+- [x] Appearance (Theme, Character, Language).
+- [x] Data Management (Export CSV, Clear History).
 
 ### [FEATURE] History & Stats
 - [ ] Implement `HistoryScreen.tsx` (Section 7.4).
