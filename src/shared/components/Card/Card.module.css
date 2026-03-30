@@ -1,41 +1,35 @@
 .card {
   background-color: var(--surface-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: 16px;
-  padding: 16px;
+  border: 0.5px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 10px 12px;
   display: flex;
-  flex-direction: column;
-  box-shadow: 0 4px 6px -1px var(--surface-overlay), 0 2px 4px -1px var(--surface-overlay);
-  transition: all 0.2s ease;
+  align-items: center;
+  gap: 10px;
+  position: relative;
   overflow: hidden;
-  position: relative; /* For the left border pseudo-element */
   text-align: left;
+  transition: opacity 0.15s;
 }
 
 .clickable {
   cursor: pointer;
 }
 
-.clickable:hover {
-  box-shadow: 0 10px 15px -3px var(--surface-overlay), 0 4px 6px -2px var(--surface-overlay);
-  transform: translateY(-2px);
-}
-
 .clickable:active {
-  transform: translateY(0);
+  opacity: 0.8;
 }
 
-.border-water::before,
-.border-food::before,
-.border-exercise::before,
-.border-bathroom::before,
-.border-medicine::before {
+.card::before {
   content: "";
   position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
   width: 4px;
+  border-radius: 12px 0 0 12px;
+  background-color: var(--color-neutral-300); /* default disabled color */
+  transition: background-color 0.2s ease;
 }
 
 .border-water::before { background-color: var(--color-water); }
