@@ -1,4 +1,4 @@
-import { CapacitorSQLite, SQLiteConnection, SQLiteDBConnection } from '@capacitor-community/sqlite';
+import type { SQLiteDBConnection } from '@capacitor-community/sqlite';
 import { migrations } from './migrations';
 
 export class MigrationRunner {
