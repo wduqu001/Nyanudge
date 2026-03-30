@@ -87,5 +87,50 @@
     "disable": "Disable",
     "save": "Save",
     "cancel": "Cancel"
+  },
+  "settings": {
+    "title": "Settings",
+    "notifications": {
+      "title": "NOTIFICATIONS",
+      "default_sound_mode": "Default sound mode",
+      "sound_vibration": "Sound + Vibration",
+      "vibration_only": "Vibration only",
+      "silent": "Silent",
+      "notification_style": "Notification style",
+      "style_standard": "Standard",
+      "style_compact": "Compact",
+      "dnd": "Do Not Disturb",
+      "start_time": "Start time",
+      "end_time": "End time"
+    },
+    "appearance": {
+      "title": "APPEARANCE",
+      "theme": "Theme",
+      "theme_system": "Follow system",
+      "theme_light": "Light",
+      "theme_dark": "Dark",
+      "cat_character": "Cat character",
+      "char_mochi": "Mochi",
+      "char_sora": "Sora",
+      "char_kuro": "Kuro",
+      "language": "Language",
+      "lang_en": "English",
+      "lang_ptBR": "Português (BR)",
+      "lang_ja": "日本語",
+      "lang_esES": "Español"
+    },
+    "reminders": {
+      "title": "REMINDERS",
+      "default_snooze": "Default snooze duration",
+      "mark_done_on_open": "Mark as done on open",
+      "mark_done_desc": "When on, opening a notification marks the reminder as complete automatically.",
+      "reset_defaults": "Reset all to defaults"
+    },
+    "data": {
+      "title": "DATA",
+      "export_csv": "Export history as CSV",
+      "clear_history": "Clear all history",
+      "app_version": "App version"
+    }
   }
 }
