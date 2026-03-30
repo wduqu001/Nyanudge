@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Toggle } from './Toggle';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const meta: Meta<typeof Toggle> = {
   title: 'Shared/Toggle',
@@ -9,22 +9,55 @@ const meta: Meta<typeof Toggle> = {
     layout: 'centered',
   },
   tags: ['autodocs'],
+  argTypes: {
+    checked: {
+      control: 'boolean',
+      description: 'Current toggle state',
+    },
+    disabled: {
+      control: 'boolean',
+      description: 'Whether the toggle is interactable',
+    },
+    label: {
+      control: 'text',
+      description: 'Optional label displayed beside the toggle',
+    },
+    categoryColor: {
+      control: 'select',
+      options: ['water', 'food', 'exercise', 'bathroom', 'medicine'],
+      description: 'Color theme applied when the toggle is active',
+    },
+  },
 };
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+// A wrapper to handle the state interactively in storybook if users don't directly manipulate 'checked' arg
+const ToggleWithState = (args: any) => {
+  const [checked, setChecked] = useState(args.checked || false);
+  useEffect(() => {
+    setChecked(args.checked || false);
+  }, [args.checked]);
+  
+  return <Toggle {...args} checked={checked} onChange={(val) => {
+    setChecked(val);
+    args.onChange?.(val);
+  }} />;
+};
+
 export const Default: Story = {
-  render: (args) => {
-    const [checked, setChecked] = useState(false);
-    return <Toggle {...args} checked={checked} onChange={setChecked} />;
+  render: (args) => <ToggleWithState {...args} />,
+  args: {
+    checked: false,
   },
 };
 
 export const WithLabel: Story = {
-  render: (args) => {
-    const [checked, setChecked] = useState(false);
-    return <Toggle {...args} label="Enable Notification" checked={checked} onChange={setChecked} />;
+  render: (args) => <ToggleWithState {...args} />,
+  args: {
+    checked: false,
+    label: 'Enable Notifications',
   },
 };
 
@@ -37,8 +70,19 @@ export const Disabled: Story = {
 };
 
 export const WithCategoryColor: Story = {
-  render: (args) => {
-    const [checked, setChecked] = useState(true);
-    return <Toggle {...args} categoryColor="food" checked={checked} onChange={setChecked} />;
+  render: (args) => <ToggleWithState {...args} />,
+  args: {
+    checked: true,
+    categoryColor: 'food',
   },
+};
+
+export const AllCategories: Story = {
+  render: (args) => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      {['water', 'food', 'exercise', 'bathroom', 'medicine'].map((color) => (
+        <ToggleWithState key={color} {...args} checked={true} categoryColor={color} label={`${color} category`} />
+      ))}
+    </div>
+  ),
 };

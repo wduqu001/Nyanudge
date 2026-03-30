@@ -8,6 +8,31 @@ const meta: Meta<typeof Button> = {
     layout: 'centered',
   },
   tags: ['autodocs'],
+  argTypes: {
+    variant: {
+      control: 'radio',
+      options: ['primary', 'secondary', 'ghost'],
+      description: 'The visual style of the button',
+    },
+    fullWidth: {
+      control: 'boolean',
+      description: 'Whether the button extends to the full width of its container',
+    },
+    disabled: {
+      control: 'boolean',
+      description: 'Whether the button is disabled and non-interactive',
+    },
+    children: {
+      control: 'text',
+      description: 'Content to be rendered inside the button',
+    },
+  },
+  args: {
+    variant: 'primary',
+    fullWidth: false,
+    disabled: false,
+    children: 'Button',
+  },
 };
 
 export default meta;
@@ -35,17 +60,18 @@ export const Ghost: Story = {
 };
 
 export const FullWidth: Story = {
+  parameters: {
+    layout: 'padded',
+  },
   args: {
-    variant: 'primary',
-    children: 'Full Width Button',
     fullWidth: true,
+    children: 'Full Width Button',
   },
 };
 
 export const Disabled: Story = {
   args: {
-    variant: 'primary',
-    children: 'Disabled Button',
     disabled: true,
+    children: 'Disabled Button',
   },
 };
