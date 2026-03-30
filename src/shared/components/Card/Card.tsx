@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { type ReactNode } from 'react';
 import styles from './Card.module.css';
 
 export interface CardProps {
