@@ -34,6 +34,12 @@
   --text-muted:        var(--color-neutral-300);
   --border-subtle:     var(--color-neutral-200);
   --accent:            var(--color-accent-400);
+
+  /* --- Icon Backgrounds --- */
+  --color-icon-bg-water:    #EBF3FC;
+  --color-icon-bg-food:     #EBF5EC;
+  --color-icon-bg-exercise: #FEF3E7;
+  --color-icon-bg-disabled: #F4F3F1;
   
   /* --- Typography --- */
   --font-family-base: 'Nunito Variable', sans-serif;
@@ -49,5 +55,11 @@
     --text-muted:      var(--color-neutral-600);
     --border-subtle:   var(--color-neutral-700);
     --accent:          var(--color-accent-300);
+
+    /* --- Icon Backgrounds Dark --- */
+    --color-icon-bg-water:    #FFFFFF;
+    --color-icon-bg-food:     #FFFFFF;
+    --color-icon-bg-exercise: #FFFFFF;
+    --color-icon-bg-disabled: #E8E6E1;
   }
 }
