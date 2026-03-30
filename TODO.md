@@ -107,7 +107,7 @@ This document contains all the tasks and issues required to implement the NyaNud
 - [ ] Integrate Mochi character Lottie JSON files (Phase 1).
 
 ### [ASSETS] Audio Integration
-- [ ] Add `chime_soft.mp3`, `bell_gentle.mp3`, and `chime_persistent.mp3` to `src/assets/sounds/`.
+- [x] Add `chime_soft.mp3`, `bell_gentle.mp3`, and `chime_persistent.mp3` to `src/assets/sounds/`.
 
 ---
 
