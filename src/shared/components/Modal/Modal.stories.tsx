@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Modal } from './Modal';
 import { Button } from '../Button/Button';
 import { useState, useEffect } from 'react';
+import { LottiePlayer } from '../../animations/LottiePlayer';
 
 const meta: Meta<typeof Modal> = {
   title: 'Shared/Modal',

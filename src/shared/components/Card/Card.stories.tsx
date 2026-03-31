@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Card } from './Card';
 import { Toggle } from '../Toggle/Toggle';
+import { LottiePlayer } from '../../animations/LottiePlayer';
 
 const meta: Meta<typeof Card> = {
   title: 'Shared/Card',
@@ -62,6 +63,22 @@ export const Clickable: Story = {
       <div style={{ width: '300px' }}>
         <h3 style={{ margin: 0 }}>Move Your Body</h3>
         <p style={{ margin: 0, color: 'var(--text-secondary)' }}>Next: 6:30 PM</p>
+      </div>
+    ),
+  },
+};
+
+export const AnimationHero: Story = {
+  args: {
+    children: (
+      <div style={{ width: '320px', padding: '16px', textAlign: 'center' }}>
+        <div style={{ width: '120px', height: '120px', margin: '0 auto 16px' }}>
+          <LottiePlayer animationKey="cat_idle" />
+        </div>
+        <div style={{ backgroundColor: 'var(--color-accent-100)', color: 'var(--color-accent-400)', borderRadius: '20px', padding: '4px 12px', display: 'inline-block', fontSize: '13px', marginBottom: '8px' }}>
+          Next up: Drink Water
+        </div>
+        <h3 style={{ margin: 0, fontSize: '24px' }}>In 14 min</h3>
       </div>
     ),
   },
