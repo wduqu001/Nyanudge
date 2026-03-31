@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NyaNudge — Lottie Preview</title>
+<style>
+  body { font-family: system-ui; background: #1a1918; color: #f0eee8; margin: 0; padding: 24px; }
+  h1   { font-size: 18px; margin: 0 0 24px; color: #f5a155; letter-spacing: .04em; }
+  .grid { display: grid; grid-template-columns: repeat(4, 200px); gap: 20px; }
+  .card { background: #242320; border-radius: 12px; padding: 12px; text-align: center; }
+  .card span { font-size: 11px; color: #74726c; display: block; margin-top: 4px; }
+  lottie-player { display: block; }
+</style>
+</head>
+<body>
+<h1>NyaNudge — Lottie Animation Preview</h1>
+<div class="grid" id="grid"></div>
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script>
+const anims = [
+  ['cat_idle',      'Idle (loop)'],
+  ['cat_water',     'Drink water'],
+  ['cat_meal',      'Eat something'],
+  ['cat_exercise',  'Move your body'],
+  ['cat_bathroom',  'Bathroom break'],
+  ['cat_medicine',  'Medication'],
+  ['cat_celebrate', 'Celebrate!'],
+  ['cat_sleep',     'Sleep (loop)'],
+];
+const grid = document.getElementById('grid');
+anims.forEach(([nm, label]) => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  const loop = nm.includes('idle') || nm.includes('sleep');
+  card.innerHTML = `
+    <lottie-player src="${nm}.json" background="transparent"
+      speed="1" style="width:200px;height:200px" ${loop ? 'loop' : ''} autoplay>
+    </lottie-player>
+    <span>${label}</span>`;
+  grid.appendChild(card);
+});
+</script>
+</body>
+</html>
