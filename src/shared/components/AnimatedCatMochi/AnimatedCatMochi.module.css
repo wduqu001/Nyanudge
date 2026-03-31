@@ -1,0 +1,65 @@
+.catWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  cursor: crosshair;
+}
+
+.catSvg {
+  width: 220px;
+  height: 220px;
+}
+
+/* Tail animation */
+.catTail {
+  transform-origin: 52px 52px;
+  animation: tailMove 2.8s ease-in-out infinite;
+}
+
+@keyframes tailMove {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(8deg); }
+}
+
+/* Breathing animation */
+.catBody {
+  transform-origin: center;
+  animation: breathe 3.5s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+/* Head tilt */
+.catHead {
+  transform-origin: center;
+  animation: headMove 6s ease-in-out infinite;
+}
+
+@keyframes headMove {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(1.8deg); }
+}
+
+/* Blink */
+.blink ellipse {
+  transform: scaleY(0.1);
+}
+
+.catEyes ellipse {
+  transition: transform 0.08s ease;
+}
+
+/* Ear twitch */
+.twitch {
+  animation: earTwitchMov 0.2s ease;
+}
+
+@keyframes earTwitchMov {
+  0% { transform: rotate(0deg); }
+  50% { transform: rotate(-6deg); }
+  100% { transform: rotate(0deg); }
+}
