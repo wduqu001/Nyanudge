@@ -102,9 +102,9 @@ This document contains all the tasks and issues required to implement the NyaNud
 ## 5. Assets & Animations
 
 ### [ASSETS] Lottie Animation Integration
-- [ ] Implement `LottiePlayer.tsx` wrapper for `lottie-web`.
-- [ ] Set up `registry.ts` for all 8 core animation keys (Section 13.2).
-- [ ] Integrate Mochi character Lottie JSON files (Phase 1).
+- [x] Implement `LottiePlayer.tsx` wrapper for `lottie-web`.
+- [x] Set up `registry.ts` for all 8 core animation keys (Section 13.2).
+- [x] Integrate Mochi character Lottie JSON files (Phase 1).
 
 ### [ASSETS] Audio Integration
 - [x] Add `chime_soft.mp3`, `bell_gentle.mp3`, and `chime_persistent.mp3` to `src/assets/sounds/`.
