@@ -69,10 +69,10 @@ This document contains all the tasks and issues required to implement the NyaNud
 - [x] Integrate React Router and scaffold basic placeholders for all feature screens.
 
 ### [FEATURE] Onboarding Flow
-- [ ] Implement `OnboardingFlow.tsx` with 3 swipeable screens (Section 7.5).
-- [ ] Screen 1: "Meet your crew" (Character intro).
-- [ ] Screen 2: "Your reminders" (Quick setup).
-- [ ] Screen 3: "How you like it" (Sound/vibration prefs).
+- [x] Implement `OnboardingFlow.tsx` with 3 swipeable screens (Section 7.5).
+- [x] Screen 1: "Meet your crew" (Character intro).
+- [x] Screen 2: "Your reminders" (Quick setup).
+- [x] Screen 3: "How you like it" (Sound/vibration prefs).
 
 ### [FEATURE] Home Screen (Base Layout & Styling Completed)
 - [x] **Hero Section**: Display active cat idle animation and "Next Up" countdown (Section 14.1). (Styled with precision SVGs matching UI spec)

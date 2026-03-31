@@ -18,6 +18,7 @@ export interface Preferences {
   // Reminders
   defaultSnoozeMins: number;
   markAsDoneOnOpen: boolean;
+  isOnboardingComplete: boolean;
 }
 
 const defaultPreferences: Preferences = {
@@ -30,6 +31,7 @@ const defaultPreferences: Preferences = {
   language: 'en',
   defaultSnoozeMins: 10,
   markAsDoneOnOpen: false,
+  isOnboardingComplete: false,
 };
 
 interface PreferencesState {

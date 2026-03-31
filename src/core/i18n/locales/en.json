@@ -132,5 +132,43 @@
       "clear_history": "Clear all history",
       "app_version": "App version"
     }
+  },
+  "onboarding": {
+    "step1": {
+      "title": "Meet your crew",
+      "description": "Choose your cat companion to help you stay healthy.",
+      "mochi": {
+        "name": "Mochi",
+        "description": "Round, white, perpetually surprised. Clueless but charming."
+      },
+      "sora": {
+        "name": "Sora",
+        "description": "Sleek grey tabby. Calm, reassuring, and always steady."
+      },
+      "kuro": {
+        "name": "Kuro",
+        "description": "Black cat with yellow eyes. Full of mischief and sass."
+      }
+    },
+    "step2": {
+      "title": "Your reminders",
+      "description": "Select the health habits you want to focus on.",
+      "water": "Keep your water bowl (and yourself) hydrated.",
+      "meal": "Your body needs fuel to purr perfectly.",
+      "exercise": "Time for some zoomies and stretches.",
+      "bathroom": "Don't ignore your bladder's rights.",
+      "medicine": "A daily dose for your future self."
+    },
+    "step3": {
+      "title": "How you like it",
+      "description": "Choose how you'd like to be nudged.",
+      "sound_mode": "Notification sound & vibration"
+    },
+    "actions": {
+      "next": "Next",
+      "back": "Back",
+      "finish": "Let's go!",
+      "select": "Choose"
+    }
   }
 }
