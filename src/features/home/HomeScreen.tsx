@@ -5,34 +5,10 @@ import { useRemindersStore } from '../../core/store/remindersStore';
 import type { Category, Reminder } from '../../core/store/remindersStore';
 import { Card } from '../../shared/components/Card/Card';
 import { Toggle } from '../../shared/components/Toggle/Toggle';
+import { LottiePlayer } from '../../shared/animations';
 import './HomeScreen.css';
 
-// SVG components from the design spec
-const CatMochiSVG = () => (
-  <svg className="cat-body" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path className="cat-tail" d="M52 52 Q64 46 60 38" stroke="#D4D2CC" strokeWidth="5" strokeLinecap="round" fill="none" />
-    <ellipse cx="36" cy="48" rx="20" ry="16" fill="#F0EEE8" />
-    <circle cx="36" cy="28" r="18" fill="#F0EEE8" />
-    <polygon points="18,14 12,4 24,10" fill="#F0EEE8" />
-    <polygon points="54,14 60,4 48,10" fill="#F0EEE8" />
-    <polygon points="19,13 14,6 23,10" fill="#FFD4D4" />
-    <polygon points="53,13 58,6 49,10" fill="#FFD4D4" />
-    <ellipse className="cat-eye" cx="28" cy="27" rx="4" ry="4.5" fill="#333" />
-    <ellipse className="cat-eye" cx="44" cy="27" rx="4" ry="4.5" fill="#333" />
-    <circle cx="29.5" cy="25.5" r="1.5" fill="white" />
-    <circle cx="45.5" cy="25.5" r="1.5" fill="white" />
-    <ellipse cx="36" cy="33" rx="2" ry="1.5" fill="#FFB3B3" />
-    <path d="M33 35 Q36 38 39 35" stroke="#CCC" strokeWidth="1.2" fill="none" strokeLinecap="round" />
-    <line x1="38" y1="33" x2="50" y2="31" stroke="#CCC" strokeWidth="0.8" />
-    <line x1="38" y1="34" x2="50" y2="35" stroke="#CCC" strokeWidth="0.8" />
-    <line x1="34" y1="33" x2="22" y2="31" stroke="#CCC" strokeWidth="0.8" />
-    <line x1="34" y1="34" x2="22" y2="35" stroke="#CCC" strokeWidth="0.8" />
-    <circle cx="36" cy="50" r="8" fill="white" stroke="#E97B22" strokeWidth="1.5" />
-    <circle cx="36" cy="50" r="1" fill="#E97B22" />
-    <line x1="36" y1="50" x2="36" y2="44.5" stroke="#E97B22" strokeWidth="1.2" strokeLinecap="round" />
-    <line x1="36" y1="50" x2="39.5" y2="51.5" stroke="#74726C" strokeWidth="1" strokeLinecap="round" />
-  </svg>
-);
+import CatMochi from '../../assets/cat_mochi.svg';
 
 const CategoryIcon = ({ category, enabled }: { category: Category, enabled: boolean }) => {
   const color = enabled ? CATEGORY_COLORS[category] : '#A09E98';
@@ -130,7 +106,7 @@ export const HomeScreen: React.FC = () => {
 
       <section className="hero-section">
         <div className="hero-cat-container">
-          <CatMochiSVG />
+          <LottiePlayer animationKey="cat_idle" />
         </div>
         <div className="next-up-pill">Next up in 14 min</div>
         <div className="hero-copy">Drink Water</div>
