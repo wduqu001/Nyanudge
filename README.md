@@ -1,9 +1,9 @@
+![NyaNudge Hero Banner - Calm, playful, and minimal. A soft UI experience inspired by Mochi aesthetics.](./src/assets/hero.png)
+
 # NyaNudge 🐾
 > **Your cat-powered wellness companion.**
 
 NyaNudge is a delightful mobile health companion that transforms daily habits into moments of joy. Using a crew of animated cat characters, NyaNudge sends gentle, witty reminders for hydration, meals, exercise, and more.
-
-![NyaNudge Banner](./src/assets/hero.png)
 
 ## ✨ Features
 
