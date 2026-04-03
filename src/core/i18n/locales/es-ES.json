@@ -86,6 +86,107 @@
     "enable": "Activar",
     "disable": "Desactivar",
     "save": "Guardar",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "next": "Siguiente",
+    "back": "Atrás",
+    "finish": "¡Vamos!",
+    "select": "Elegir"
+  },
+  "settings": {
+    "title": "Ajustes",
+    "notifications": {
+      "title": "NOTIFICACIONES",
+      "default_sound_mode": "Modo de sonido por defecto",
+      "sound_vibration": "Sonido + Vibración",
+      "vibration_only": "Solo vibración",
+      "silent": "Silencio",
+      "notification_style": "Estilo de notificación",
+      "style_standard": "Estándar",
+      "style_compact": "Compacto",
+      "dnd": "No molestar",
+      "start_time": "Hora de inicio",
+      "end_time": "Hora de fin"
+    },
+    "appearance": {
+      "title": "APARIENCIA",
+      "theme": "Tema",
+      "theme_system": "Seguir sistema",
+      "theme_light": "Claro",
+      "theme_dark": "Oscuro",
+      "cat_character": "Personaje gatuno",
+      "char_mochi": "Mochi",
+      "char_sora": "Sora",
+      "char_kuro": "Kuro",
+      "language": "Idioma",
+      "lang_en": "English",
+      "lang_ptBR": "Português (BR)",
+      "lang_ja": "日本語",
+      "lang_esES": "Español"
+    },
+    "reminders": {
+      "title": "RECORDATORIOS",
+      "default_snooze": "Duración de posponer por defecto",
+      "mark_done_on_open": "Marcar como hecho al abrir",
+      "mark_done_desc": "Cuando está activado, abrir una notificación marca el recordatorio como completo automáticamente.",
+      "reset_defaults": "Restablecer todos los valores predeterminados"
+    },
+    "data": {
+      "title": "DATOS",
+      "export_csv": "Exportar historial como CSV",
+      "clear_history": "Borrar todo el historial",
+      "app_version": "Versión de la aplicación"
+    }
+  },
+  "onboarding": {
+    "step1": {
+      "title": "Conoce a tu equipo",
+      "description": "Elige a tu compañero gatuno para ayudarte a mantenerte saludable.",
+      "mochi": {
+        "name": "Mochi",
+        "description": "Redondo, blanco, perpetuamente sorprendido. Despistado pero encantador."
+      },
+      "sora": {
+        "name": "Sora",
+        "description": "Elegante atigrado gris. Tranquilo, tranquilizador y siempre estable."
+      },
+      "kuro": {
+        "name": "Kuro",
+        "description": "Gato negro con ojos amarillos. Lleno de travesuras y desparpajo."
+      }
+    },
+    "step2": {
+      "title": "Tus recordatorios",
+      "description": "Selecciona los hábitos de salud en los que quieres centrarte.",
+      "water": "Mantén tu cuenco de agua (y a ti mismo) hidratado.",
+      "meal": "Tu cuerpo necesita combustible para ronronear perfectamente.",
+      "exercise": "Hora de unos zoomies y estiramientos.",
+      "bathroom": "No ignores los derechos de tu vejiga.",
+      "medicine": "Una dosis diaria para tu 'yo' del futuro."
+    },
+    "step3": {
+      "title": "Cómo te gusta",
+      "description": "Elige cómo te gustaría recibir los avisos.",
+      "sound_mode": "Sonido y vibración de notificación"
+    }
+  },
+  "edit_reminder": {
+    "title": "Editar {{label}}",
+    "schedule_section": "HORARIO",
+    "repeat_section": "REPETIR",
+    "appearance_section": "APARIENCIA",
+    "custom_message_label": "Mensaje personalizado",
+    "custom_message_placeholder": "Dejar en blanco para usar el predeterminado",
+    "type_fixed": "Horas fijas",
+    "type_interval": "Intervalo",
+    "interval_label": "Cada",
+    "minutes": "minutos",
+    "from": "desde",
+    "to": "hasta",
+    "days": {
+      "daily": "Diario",
+      "weekdays": "Entre semana",
+      "weekends": "Fines de semana",
+      "custom": "Personalizado"
+    }
   }
 }

@@ -86,6 +86,107 @@
     "enable": "オンにする",
     "disable": "オフにする",
     "save": "保存",
-    "cancel": "キャンセル"
+    "cancel": "キャンセル",
+    "next": "次へ",
+    "back": "戻る",
+    "finish": "始めよう！",
+    "select": "選ぶ"
+  },
+  "settings": {
+    "title": "設定",
+    "notifications": {
+      "title": "通知",
+      "default_sound_mode": "デフォルトのサウンドモード",
+      "sound_vibration": "サウンド + バイブレーション",
+      "vibration_only": "バイブレーションのみ",
+      "silent": "サイレント",
+      "notification_style": "通知スタイル",
+      "style_standard": "標準",
+      "style_compact": "コンパクト",
+      "dnd": "おやすみモード",
+      "start_time": "開始時間",
+      "end_time": "終了時間"
+    },
+    "appearance": {
+      "title": "外見",
+      "theme": "テーマ",
+      "theme_system": "システム設定に従う",
+      "theme_light": "ライト",
+      "theme_dark": "ダーク",
+      "cat_character": "猫のキャラクター",
+      "char_mochi": "モチ",
+      "char_sora": "ソラ",
+      "char_kuro": "クロ",
+      "language": "言語",
+      "lang_en": "English",
+      "lang_ptBR": "Português (BR)",
+      "lang_ja": "日本語",
+      "lang_esES": "Español"
+    },
+    "reminders": {
+      "title": "リマインダー",
+      "default_snooze": "デフォルトのスヌーズ時間",
+      "mark_done_on_open": "開いたときに完了とする",
+      "mark_done_desc": "オンにすると、通知を開いたときにリマインダーが自動的に完了になります。",
+      "reset_defaults": "すべてデフォルトに戻す"
+    },
+    "data": {
+      "title": "データ",
+      "export_csv": "履歴をCSVで書き出す",
+      "clear_history": "すべての履歴を消去",
+      "app_version": "アプリのバージョン"
+    }
+  },
+  "onboarding": {
+    "step1": {
+      "title": "仲間に出会う",
+      "description": "健康をサポートしてくれる猫の仲間を選んでください。",
+      "mochi": {
+        "name": "モチ",
+        "description": "まんまる、白、いつも驚いたような顔。「抜けてるけど愛嬌たっぷり」な性格。"
+      },
+      "sora": {
+        "name": "ソラ",
+        "description": "シュッとしたグレーのトラ猫。穏やかで安心感があり、いつも落ち着いています。"
+      },
+      "kuro": {
+        "name": "クロ",
+        "description": "黄色い目の黒猫。いたずら好きで、ちょっと生意気。"
+      }
+    },
+    "step2": {
+      "title": "あなたのリマインダー",
+      "description": "重点的に取り組みたい健康習慣を選んでください。",
+      "water": "自分（と、あなたの水飲みボウル）の水分を補給しましょう。",
+      "meal": "体を完璧に鳴らすには燃料が必要です。",
+      "exercise": "ズーミーズとストレッチの時間です。",
+      "bathroom": "膀胱の権利を無視しないで。",
+      "medicine": "未来の自分のための毎日の服用。"
+    },
+    "step3": {
+      "title": "好みの設定",
+      "description": "どのように励ましてほしいか選んでください。",
+      "sound_mode": "通知音とバイブレーション"
+    }
+  },
+  "edit_reminder": {
+    "title": "{{label}} の編集",
+    "schedule_section": "スケジュール",
+    "repeat_section": "繰り返し",
+    "appearance_section": "外見",
+    "custom_message_label": "カスタムメッセージ",
+    "custom_message_placeholder": "空白にするとデフォルトを使用します",
+    "type_fixed": "固定時間",
+    "type_interval": "間隔",
+    "interval_label": "毎",
+    "minutes": "分",
+    "from": "から",
+    "to": "まで",
+    "days": {
+      "daily": "毎日",
+      "weekdays": "平日",
+      "weekends": "週末",
+      "custom": "カスタム"
+    }
   }
 }

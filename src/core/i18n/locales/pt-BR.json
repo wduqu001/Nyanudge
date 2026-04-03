@@ -86,6 +86,107 @@
     "enable": "Ativar",
     "disable": "Desativar",
     "save": "Salvar",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "next": "Próximo",
+    "back": "Voltar",
+    "finish": "Vamos nessa!",
+    "select": "Escolher"
+  },
+  "edit_reminder": {
+    "title": "Editar {{label}}",
+    "schedule_section": "AGENDA",
+    "repeat_section": "REPETIR",
+    "appearance_section": "APARÊNCIA",
+    "custom_message_label": "Mensagem personalizada",
+    "custom_message_placeholder": "Em branco para mensagem padrão",
+    "type_fixed": "Horários fixos",
+    "type_interval": "Intervalo",
+    "interval_label": "A cada",
+    "minutes": "minutos",
+    "from": "das",
+    "to": "até",
+    "days": {
+      "daily": "Diário",
+      "weekdays": "Semana",
+      "weekends": "Fim de semana",
+      "custom": "Personalizado"
+    }
+  },
+  "settings": {
+    "title": "Configurações",
+    "notifications": {
+      "title": "NOTIFICAÇÕES",
+      "default_sound_mode": "Modo de som padrão",
+      "sound_vibration": "Som + Vibração",
+      "vibration_only": "Somente vibração",
+      "silent": "Silencioso",
+      "notification_style": "Estilo da notificação",
+      "style_standard": "Padrão",
+      "style_compact": "Compacto",
+      "dnd": "Não perturbe",
+      "start_time": "Hora de início",
+      "end_time": "Hora de término"
+    },
+    "appearance": {
+      "title": "APARÊNCIA",
+      "theme": "Tema",
+      "theme_system": "Seguir sistema",
+      "theme_light": "Claro",
+      "theme_dark": "Escuro",
+      "cat_character": "Personagem felino",
+      "char_mochi": "Mochi",
+      "char_sora": "Sora",
+      "char_kuro": "Kuro",
+      "language": "Idioma",
+      "lang_en": "Inglês",
+      "lang_ptBR": "Português (BR)",
+      "lang_ja": "Japonês",
+      "lang_esES": "Espanhol"
+    },
+    "reminders": {
+      "title": "LEMBRETES",
+      "default_snooze": "Duração padrão de adiamento",
+      "mark_done_on_open": "Marcar como concluído ao abrir",
+      "mark_done_desc": "Quando ativado, abrir uma notificação marca o lembrete como concluído automaticamente.",
+      "reset_defaults": "Redefinir tudo para o padrão"
+    },
+    "data": {
+      "title": "DADOS",
+      "export_csv": "Exportar histórico como CSV",
+      "clear_history": "Limpar todo o histórico",
+      "app_version": "Versão do app"
+    }
+  },
+  "onboarding": {
+    "step1": {
+      "title": "Conheça sua equipe",
+      "description": "Escolha seu companheiro felino para ajudar você a se manter saudável.",
+      "mochi": {
+        "name": "Mochi",
+        "description": "Redondo, branco, perpetuamente surpreso. Meio lerdinho, mas um charme."
+      },
+      "sora": {
+        "name": "Sora",
+        "description": "Gato cinza elegante. Calmo, tranquilizador e sempre constante."
+      },
+      "kuro": {
+        "name": "Kuro",
+        "description": "Gato preto com olhos amarelados. Cheio de travessuras e atitude."
+      }
+    },
+    "step2": {
+      "title": "Seus lembretes",
+      "description": "Selecione os hábitos de saúde que você deseja focar.",
+      "water": "Mantenha sua tigela de água (e você mesmo) hidratada.",
+      "meal": "Seu corpo precisa de combustível para ronronar perfeitamente.",
+      "exercise": "Hora de alguns zoomies e alongamentos.",
+      "bathroom": "Não ignore os direitos da sua bexiga.",
+      "medicine": "Uma dose diária para o seu eu do futuro."
+    },
+    "step3": {
+      "title": "Do seu jeito",
+      "description": "Escolha como você gostaria de ser cutucado.",
+      "sound_mode": "Som e vibração da notificação"
+    }
   }
 }

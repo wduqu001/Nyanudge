@@ -81,10 +81,10 @@ This document contains all the tasks and issues required to implement the NyaNud
 - [ ] Implement card expansion for quick-edit options.
 
 ### [FEATURE] Reminder Edit Screen
-- [ ] Create `ReminderEdit.tsx` for deep configuration of a reminder (Section 7.2).
-- [ ] Implement Time/Interval selection.
-- [ ] Implement Repeat Pattern selection (Daily, Weekdays, Custom).
-- [ ] Implement Sound/Snooze/Character overrides.
+- [x] Create `ReminderEdit.tsx` for deep configuration of a reminder (Section 7.2).
+- [x] Implement Time/Interval selection.
+- [x] Implement Repeat Pattern selection (Daily, Weekdays, Custom).
+- [x] Implement Sound/Snooze/Character overrides.
 
 ### [FEATURE] Settings Screen
 - [x] Implement `SettingsScreen.tsx` with all sections from Section 9.

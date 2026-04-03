@@ -170,5 +170,25 @@
       "finish": "Let's go!",
       "select": "Choose"
     }
+  },
+  "edit_reminder": {
+    "title": "Edit {{label}}",
+    "schedule_section": "SCHEDULE",
+    "repeat_section": "REPEAT",
+    "appearance_section": "APPEARANCE",
+    "custom_message_label": "Custom message",
+    "custom_message_placeholder": "Leave blank to use default",
+    "type_fixed": "Fixed times",
+    "type_interval": "Interval",
+    "interval_label": "Every",
+    "minutes": "minutes",
+    "from": "from",
+    "to": "to",
+    "days": {
+      "daily": "Daily",
+      "weekdays": "Weekdays",
+      "weekends": "Weekends",
+      "custom": "Custom"
+    }
   }
 }
