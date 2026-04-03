@@ -56,13 +56,13 @@
     --text-muted:      var(--color-neutral-600);
     --border-subtle:   var(--color-neutral-700);
     --accent:          var(--color-accent-300);
-    --surface-selected: rgba(233, 123, 34, 0.15);
+    --surface-selected: rgba(245, 161, 85, 0.2); /* Slightly higher alpha for visibility, using accent-300 */
 
     /* --- Icon Backgrounds Dark --- */
-    --color-icon-bg-water:    #FFFFFF;
-    --color-icon-bg-food:     #FFFFFF;
-    --color-icon-bg-exercise: #FFFFFF;
-    --color-icon-bg-disabled: #E8E6E1;
+    --color-icon-bg-water:    var(--color-neutral-700);
+    --color-icon-bg-food:     var(--color-neutral-700);
+    --color-icon-bg-exercise: var(--color-neutral-700);
+    --color-icon-bg-disabled: var(--color-neutral-800);
   }
 }
 
@@ -75,13 +75,13 @@
   --text-muted:      var(--color-neutral-600);
   --border-subtle:   var(--color-neutral-700);
   --accent:          var(--color-accent-300);
-  --surface-selected: rgba(233, 123, 34, 0.15);
+  --surface-selected: rgba(245, 161, 85, 0.2);
 
   /* --- Icon Backgrounds Dark --- */
-  --color-icon-bg-water:    #FFFFFF;
-  --color-icon-bg-food:     #FFFFFF;
-  --color-icon-bg-exercise: #FFFFFF;
-  --color-icon-bg-disabled: #E8E6E1;
+  --color-icon-bg-water:    var(--color-neutral-700);
+  --color-icon-bg-food:     var(--color-neutral-700);
+  --color-icon-bg-exercise: var(--color-neutral-700);
+  --color-icon-bg-disabled: var(--color-neutral-800);
 }
 
 [data-theme='light'] {

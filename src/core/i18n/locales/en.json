@@ -1,7 +1,8 @@
 {
   "app": {
     "name": "NyaNudge",
-    "tagline": "Your cat-powered wellness companion."
+    "tagline": "Your cat-powered wellness companion.",
+    "loading": "Loading..."
   },
   "formats": {
     "time": "12h",
@@ -87,7 +88,30 @@
     "disable": "Disable",
     "save": "Save",
     "cancel": "Cancel",
-    "edit_full": "Edit Settings"
+    "edit_full": "Edit Settings",
+    "disabled": "Disabled",
+    "at": "At",
+    "every": "Every",
+    "today": "today",
+    "minutes_count": "{{count}} minutes"
+  },
+  "home": {
+    "next_up": "Next up in {{time}}",
+    "hero_sub": "{{name}} is keeping an eye on things 👀",
+    "streak_message": "{{count}}-day streak — keep going!",
+    "reminders_title": "Your reminders",
+    "quick_edit": {
+      "next_fire": "Next fire time"
+    },
+    "nav": {
+      "home": "Home",
+      "history": "History",
+      "settings": "Settings"
+    }
+  },
+  "history": {
+    "title": "History & Stats",
+    "subtitle": "View completion history and habits."
   },
   "settings": {
     "title": "Settings",
@@ -131,7 +155,11 @@
       "title": "DATA",
       "export_csv": "Export history as CSV",
       "clear_history": "Clear all history",
-      "app_version": "App version"
+      "app_version": "App version",
+      "exporting": "Exporting CSV...",
+      "clear_confirm": "Are you sure you want to clear all history? This action cannot be undone.",
+      "history_cleared": "History cleared.",
+      "version_format": "v{{version}} (build {{build}})"
     }
   },
   "onboarding": {
@@ -174,6 +202,10 @@
   },
   "edit_reminder": {
     "title": "Edit {{label}}",
+    "loading": "Loading reminder...",
+    "enable_desc": "Receive notifications for this reminder",
+    "notification_title": "NOTIFICATION",
+    "off": "Off",
     "schedule_section": "SCHEDULE",
     "repeat_section": "REPEAT",
     "appearance_section": "APPEARANCE",
@@ -191,5 +223,13 @@
       "weekends": "Weekends",
       "custom": "Custom"
     }
+  },
+  "error": {
+    "title": "Something went wrong",
+    "hero": "Mochi couldn't find that.",
+    "subtitle": "This page doesn't exist — or maybe it wandered off like a cat at 3 AM. Either way, let's get you back.",
+    "go_back": "Go back",
+    "take_home": "Take me home",
+    "footer": "error page"
   }
 }

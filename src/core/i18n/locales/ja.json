@@ -1,7 +1,8 @@
 {
   "app": {
     "name": "NyaNudge",
-    "tagline": "ネコに背中を押してもらう健康コンパニオン。"
+    "tagline": "あなたのための、ねこ健康習慣アプリ。",
+    "loading": "ロード中..."
   },
   "formats": {
     "time": "24h",
@@ -91,7 +92,30 @@
     "back": "戻る",
     "finish": "始めよう！",
     "select": "選ぶ",
-    "edit_full": "詳細設定"
+    "edit_full": "設定を編集",
+    "disabled": "無効",
+    "at": "開始:",
+    "every": "毎",
+    "today": "本日",
+    "minutes_count": "{{count}} 分"
+  },
+  "home": {
+    "next_up": "次の予定まで {{time}}",
+    "hero_sub": "{{name}} が見守っています 👀",
+    "streak_message": "{{count}} 日連続！その調子です。",
+    "reminders_title": "リマインダー",
+    "quick_edit": {
+      "next_fire": "次の通知"
+    },
+    "nav": {
+      "home": "ホーム",
+      "history": "履歴",
+      "settings": "設定"
+    }
+  },
+  "history": {
+    "title": "履歴と統計",
+    "subtitle": "完了履歴と習慣を確認しましょう。"
   },
   "settings": {
     "title": "設定",
@@ -133,9 +157,13 @@
     },
     "data": {
       "title": "データ",
-      "export_csv": "履歴をCSVで書き出す",
-      "clear_history": "すべての履歴を消去",
-      "app_version": "アプリのバージョン"
+      "export_csv": "履歴をCSVで書き出し",
+      "clear_history": "全履歴を消去",
+      "app_version": "アプリバージョン",
+      "exporting": "CSVを書き出し中...",
+      "clear_confirm": "本当に全ての履歴を消去しますか？この操作は取り消せません。",
+      "history_cleared": "履歴を消去しました。",
+      "version_format": "v{{version}} (build {{build}})"
     }
   },
   "onboarding": {
@@ -171,7 +199,11 @@
     }
   },
   "edit_reminder": {
-    "title": "{{label}} の編集",
+    "title": "{{label}} を編集",
+    "loading": "読み込み中...",
+    "enable_desc": "通知を受け取る",
+    "notification_title": "通知設定",
+    "off": "オフ",
     "schedule_section": "スケジュール",
     "repeat_section": "繰り返し",
     "appearance_section": "外見",

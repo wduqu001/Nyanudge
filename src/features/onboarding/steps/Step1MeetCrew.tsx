@@ -26,7 +26,7 @@ export const Step1MeetCrew: React.FC = () => {
               width: '48px',
               height: '48px',
               borderRadius: '24px',
-              backgroundColor: 'var(--color-neutral-100)',
+              backgroundColor: 'var(--color-neutral-200)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',

@@ -2,7 +2,7 @@ import {
   LocalNotifications,
   type ScheduleOptions,
 } from '@capacitor/local-notifications';
-import type { Schedule, Reminder, Category } from '../store/remindersStore';
+import type { Schedule, Reminder, Category } from '../../types/nyanudge';
 import { pickMessage } from '../i18n';
 import i18n from '../i18n';
 
@@ -39,7 +39,12 @@ export function calculateNextFireTime(schedule: Schedule): Date | undefined {
   const now = new Date();
 
   if (schedule.type === 'fixed' && schedule.timeValue) {
-    const [hours, minutes] = schedule.timeValue.split(':').map(Number);
+    const parts = schedule.timeValue.split(':');
+    const hours = Number(parts[0]);
+    const minutes = Number(parts[1]);
+
+    if (isNaN(hours) || isNaN(minutes)) return undefined;
+
     const candidate = new Date();
     candidate.setHours(hours, minutes, 0, 0);
 
@@ -63,14 +68,21 @@ export function calculateNextFireTime(schedule: Schedule): Date | undefined {
 
   if (schedule.type === 'interval' && schedule.timeValue) {
     const intervalMins = parseInt(schedule.timeValue, 10);
-    const startParts = (schedule.startTime ?? '07:00').split(':').map(Number);
-    const endParts   = (schedule.endTime   ?? '21:00').split(':').map(Number);
+    const startParts = (schedule.startTime ?? '07:00').split(':');
+    const endParts   = (schedule.endTime   ?? '21:00').split(':');
+
+    const startH = Number(startParts[0]);
+    const startM = Number(startParts[1]);
+    const endH   = Number(endParts[0]);
+    const endM   = Number(endParts[1]);
+
+    if (isNaN(startH) || isNaN(startM) || isNaN(endH) || isNaN(endM)) return undefined;
 
     const windowStart = new Date();
-    windowStart.setHours(startParts[0], startParts[1], 0, 0);
+    windowStart.setHours(startH, startM, 0, 0);
 
     const windowEnd = new Date();
-    windowEnd.setHours(endParts[0], endParts[1], 0, 0);
+    windowEnd.setHours(endH, endM, 0, 0);
 
     // Step through slots from windowStart until we find one in the future
     let candidate = new Date(windowStart);

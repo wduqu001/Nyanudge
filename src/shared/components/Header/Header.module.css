@@ -1,0 +1,42 @@
+.header {
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--surface-bg);
+  top: 0;
+  z-index: 100;
+  border-bottom: 0px solid var(--border-subtle);
+  min-height: 72px;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 12px;
+  margin-left: -12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.backButton:hover {
+  background-color: var(--surface-overlay);
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  flex: 1;
+  text-align: center;
+}
+
+.spacer {
+  width: 24px;
+}

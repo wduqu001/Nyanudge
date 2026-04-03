@@ -6,51 +6,25 @@ import type { Category, Reminder } from '../../types/nyanudge';
 import { Card } from '../../shared/components/Card/Card';
 import { Toggle } from '../../shared/components/Toggle/Toggle';
 import { LottiePlayer } from '../../shared/animations';
+import { 
+  WaterIcon, 
+  MealIcon, 
+  ExerciseIcon, 
+  BathroomIcon, 
+  MedicineIcon 
+} from '../../shared/components/Icons';
 import './HomeScreen.css';
-
-import CatMochi from '../../assets/cat_mochi.svg';
 
 const CategoryIcon = ({ category, enabled }: { category: Category, enabled: boolean }) => {
   const color = enabled ? CATEGORY_COLORS[category] : '#A09E98';
 
   switch (category) {
-    case 'water':
-      return (
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-          <path d="M9 2L13 8C14.1 9.6 14.5 11 13.8 12.8 13.1 14.5 11.2 16 9 16 6.8 16 4.9 14.5 4.2 12.8 3.5 11 3.9 9.6 5 8Z" fill={color} />
-        </svg>
-      );
-    case 'meal':
-      return (
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-          <path d="M4 3v4c0 2.2 1.8 4 4 4v4h2v-4c2.2 0 4-1.8 4-4V3h-2v3H6V3H4z" fill={color} />
-        </svg>
-      );
-    case 'exercise':
-      return (
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-          <circle cx="9" cy="4" r="2" fill={color} />
-          <path d="M6 7h6l1 4H5l1-4z" fill={color} />
-          <path d="M7 11l-1 5M11 11l1 5M6 13h6" stroke={color} strokeWidth="1.2" strokeLinecap="round" />
-        </svg>
-      );
-    case 'bathroom':
-      return (
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-          <rect x="4" y="8" width="10" height="8" rx="2" fill={color} />
-          <path d="M6 8V5a3 3 0 016 0v3" stroke={color} strokeWidth="1.3" fill="none" />
-        </svg>
-      );
-    case 'medicine':
-      return (
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-          <rect x="4" y="7" width="10" height="7" rx="2" fill={color} />
-          <rect x="7" y="4" width="4" height="3" rx="1" fill={color} />
-          <rect x="6.5" y="10" width="5" height="1.2" rx="0.6" fill="white" />
-        </svg>
-      );
-    default:
-      return null;
+    case 'water':    return <WaterIcon size={18} color={color} />;
+    case 'meal':     return <MealIcon size={18} color={color} />;
+    case 'exercise': return <ExerciseIcon size={18} color={color} />;
+    case 'bathroom': return <BathroomIcon size={18} color={color} />;
+    case 'medicine': return <MedicineIcon size={18} color={color} />;
+    default:         return null;
   }
 };
 
@@ -76,8 +50,8 @@ export const HomeScreen: React.FC = () => {
   const { reminders, toggleReminder } = useRemindersStore();
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  const handleToggle = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleToggle = (id: string, e?: React.MouseEvent) => {
+    e?.stopPropagation();
     toggleReminder(id);
   };
 
@@ -86,14 +60,14 @@ export const HomeScreen: React.FC = () => {
   };
 
   const formatSchedule = (reminder: Reminder) => {
-    if (!reminder.enabled) return t('actions.disabled', 'Disabled');
-    const schedule = reminder.schedules[0];
+    if (!reminder.enabled) return t('actions.disabled');
+    const schedule = reminder.schedules && reminder.schedules[0];
     if (!schedule) return 'No schedule';
     
     if (schedule.type === 'interval') {
-      return `Every ${schedule.timeValue} mins · ${schedule.startTime}-${schedule.endTime}`;
+      return `${t('actions.every')} ${schedule.timeValue} ${t('edit_reminder.minutes')} · ${schedule.startTime}-${schedule.endTime}`;
     } else {
-      return `At ${schedule.timeValue}`;
+      return `${t('actions.at')} ${schedule.timeValue}`;
     }
   };
 
@@ -120,16 +94,16 @@ export const HomeScreen: React.FC = () => {
         <div className="hero-cat-container">
           <LottiePlayer animationKey="cat_idle" />
         </div>
-        <div className="next-up-pill">Next up in 14 min</div>
-        <div className="hero-copy">Drink Water</div>
-        <div className="hero-sub">Mochi is keeping an eye on things 👀</div>
+        <div className="next-up-pill">{t('home.next_up', { time: '14 min' })}</div>
+        <div className="hero-copy">{t('categories.water.name')}</div>
+        <div className="hero-sub">{t('home.hero_sub', { name: 'Mochi' })}</div>
       </section>
 
       <section className="streak-banner">
-        🔥 <span>3-day streak — keep going!</span>
+        🔥 <span>{t('home.streak_message', { count: 3 })}</span>
       </section>
 
-      <div className="section-label">Your reminders</div>
+      <div className="section-label">{t('home.reminders_title')}</div>
 
       <section className="reminders-list">
         {reminders.map((reminder: Reminder) => {
@@ -168,7 +142,8 @@ export const HomeScreen: React.FC = () => {
                   <div className="reminder-card-toggle">
                     <Toggle
                       checked={reminder.enabled}
-                      onChange={(e: any) => handleToggle(reminder.id, e as any)}
+                      onChange={(_, e) => handleToggle(reminder.id, e)}
+                      categoryColor={categoryColorMapping[reminder.category]}
                     />
                   </div>
                 </div>
@@ -179,8 +154,8 @@ export const HomeScreen: React.FC = () => {
                   <div className="expanded-divider" />
                   <div className="quick-actions">
                     <div className="quick-info">
-                      <span className="quick-label">Next fire time</span>
-                      <span className="quick-value">3:30 PM today</span>
+                      <span className="quick-label">{t('home.quick_edit.next_fire')}</span>
+                      <span className="quick-value">3:30 PM {t('actions.today')}</span>
                     </div>
                     <button 
                       className="edit-full-button"
@@ -205,7 +180,7 @@ export const HomeScreen: React.FC = () => {
             <path d="M3 9.5L10 3l7 6.5V17a1 1 0 01-1 1H5a1 1 0 01-1-1V9.5z" stroke="currentColor" strokeWidth="1.4" fill="none" />
             <rect x="7" y="12" width="6" height="6" rx="1" fill="currentColor" opacity="0.4" />
           </svg>
-          Home
+          {t('home.nav.home')}
         </button>
         <button className="nav-item" onClick={() => navigate('/history')}>
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -214,7 +189,7 @@ export const HomeScreen: React.FC = () => {
             <line x1="13" y1="2" x2="13" y2="6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
             <line x1="3" y1="9" x2="17" y2="9" stroke="currentColor" strokeWidth="1" />
           </svg>
-          History
+          {t('home.nav.history')}
         </button>
         <button className="nav-item" onClick={() => navigate('/settings')}>
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -225,7 +200,7 @@ export const HomeScreen: React.FC = () => {
             <line x1="3" y1="10" x2="6" y2="10" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
             <line x1="14" y1="10" x2="17" y2="10" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
           </svg>
-          Settings
+          {t('home.nav.settings')}
         </button>
       </nav>
     </div>

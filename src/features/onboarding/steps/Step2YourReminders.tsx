@@ -10,6 +10,13 @@ export const Step2YourReminders: React.FC = () => {
   const { reminders, toggleReminder } = useRemindersStore();
 
   const categories: Category[] = ['water', 'meal', 'exercise', 'bathroom', 'medicine'];
+  const categoryColorMapping: Record<string, 'water' | 'food' | 'exercise' | 'bathroom' | 'medicine'> = {
+    water: 'water',
+    meal: 'food',
+    exercise: 'exercise',
+    bathroom: 'bathroom',
+    medicine: 'medicine',
+  };
 
   return (
     <div className={styles.stepContent} style={{ justifyContent: 'start' }}>
@@ -45,7 +52,11 @@ export const Step2YourReminders: React.FC = () => {
               </div>
               <Toggle
                 checked={reminder.enabled}
-                onChange={() => toggleReminder(reminder.id)}
+                onChange={(_, e) => {
+                  e?.stopPropagation();
+                  toggleReminder(reminder.id);
+                }}
+                categoryColor={categoryColorMapping[cat]}
               />
             </div>
           );

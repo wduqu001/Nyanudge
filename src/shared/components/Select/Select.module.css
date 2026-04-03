@@ -1,0 +1,120 @@
+.container {
+  position: relative;
+  width: 100%;
+  font-family: var(--font-family-base);
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px 14px;
+  background-color: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 16px;
+  text-align: left;
+}
+
+.trigger:hover {
+  border-color: var(--accent);
+  background-color: var(--surface-overlay);
+}
+
+.activeTrigger {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(233, 123, 34, 0.1);
+}
+
+.label {
+  flex: 1;
+  font-weight: 500;
+}
+
+.chevron {
+  color: var(--text-muted);
+  transition: transform 0.2s ease;
+  margin-left: 8px;
+}
+
+.chevronRotated {
+  transform: rotate(180deg);
+  color: var(--accent);
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 998;
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  background-color: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  padding: 6px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: slideIn 0.2s ease-out;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 15px;
+  color: var(--text-primary);
+  width: 100%;
+  transition: background 0.1s;
+}
+
+.item:hover {
+  background-color: var(--surface-overlay);
+}
+
+.itemSelected {
+  background-color: var(--surface-selected) !important;
+  font-weight: 700;
+}
+
+.check {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+/* Scrollbar styling for commonality */
+.menu::-webkit-scrollbar {
+  width: 4px;
+}
+.menu::-webkit-scrollbar-thumb {
+  background-color: var(--border-subtle);
+  border-radius: 4px;
+}

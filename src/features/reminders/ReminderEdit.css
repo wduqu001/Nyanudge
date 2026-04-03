@@ -120,6 +120,19 @@
   border: 1px solid var(--border-subtle);
   background-color: var(--surface-card);
   color: var(--text-primary);
+  font-family: inherit;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.time-input:focus {
+  border-color: var(--accent);
+}
+
+.time-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(53%) sepia(76%) saturate(2335%) hue-rotate(345deg) brightness(101%) contrast(88%);
 }
 
 .days-selector {
@@ -169,7 +182,7 @@
 
 .character-option.active {
   border-color: var(--accent);
-  background-color: var(--color-accent-100);
+  background-color: var(--surface-selected);
 }
 
 .character-icon {

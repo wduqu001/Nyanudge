@@ -27,7 +27,7 @@ export function pickMessage(category: string): string {
   if (!messages || typeof messages === 'string' || messages.length === 0) return 'Meow! Time for your reminder.';
   
   const randomIndex = Math.floor(Math.random() * messages.length);
-  return messages[randomIndex];
+  return messages[randomIndex] ?? 'Meow! Time for your reminder.';
 }
 
 /**

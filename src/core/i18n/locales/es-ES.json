@@ -1,7 +1,8 @@
 {
   "app": {
     "name": "NyaNudge",
-    "tagline": "Tu compañero de bienestar gatuno."
+    "tagline": "Tu compañero de bienestar gatuno.",
+    "loading": "Cargando..."
   },
   "formats": {
     "time": "24h",
@@ -91,7 +92,30 @@
     "back": "Atrás",
     "finish": "¡Vamos!",
     "select": "Elegir",
-    "edit_full": "Ajustes Detallados"
+    "edit_full": "Editar configuración",
+    "disabled": "Desactivado",
+    "at": "A las",
+    "every": "Cada",
+    "today": "hoy",
+    "minutes_count": "{{count}} minutos"
+  },
+  "home": {
+    "next_up": "Siguiente en {{time}}",
+    "hero_sub": "{{name}} te está vigilando 👀",
+    "streak_message": "Racha de {{count}} días — ¡sigue así!",
+    "reminders_title": "Tus recordatorios",
+    "quick_edit": {
+      "next_fire": "Próximo aviso"
+    },
+    "nav": {
+      "home": "Inicio",
+      "history": "Historial",
+      "settings": "Ajustes"
+    }
+  },
+  "history": {
+    "title": "Historial y estadísticas",
+    "subtitle": "Información sobre tus hábitos."
   },
   "settings": {
     "title": "Ajustes",
@@ -133,9 +157,13 @@
     },
     "data": {
       "title": "DATOS",
-      "export_csv": "Exportar historial como CSV",
-      "clear_history": "Borrar todo el historial",
-      "app_version": "Versión de la aplicación"
+      "export_csv": "Exportar historial a CSV",
+      "clear_history": "Borrar historial",
+      "app_version": "Versión de la aplicación",
+      "exporting": "Exportando CSV...",
+      "clear_confirm": "¿Estás seguro de que quieres borrar el historial? Esta acción no se puede deshacer.",
+      "history_cleared": "Historial borrado.",
+      "version_format": "v{{version}} (build {{build}})"
     }
   },
   "onboarding": {
@@ -172,6 +200,10 @@
   },
   "edit_reminder": {
     "title": "Editar {{label}}",
+    "loading": "Cargando...",
+    "enable_desc": "Recibir avisos para este recordatorio",
+    "notification_title": "NOTIFICACIÓN",
+    "off": "Apagado",
     "schedule_section": "HORARIO",
     "repeat_section": "REPETIR",
     "appearance_section": "APARIENCIA",

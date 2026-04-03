@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { useRemindersStore } from './core/store/remindersStore';
 import { defaultReminders } from './core/db/seed';
 import { HomeScreen } from './features/home/HomeScreen';
@@ -8,9 +8,11 @@ import { ReminderEdit } from './features/reminders/ReminderEdit';
 import { SettingsScreen } from './features/settings/SettingsScreen';
 import { HistoryScreen } from './features/history/HistoryScreen';
 import { usePreferencesStore } from './core/store/preferencesStore';
+import { useTranslation } from 'react-i18next';
 import './App.css';
 
 function App() {
+  const { t } = useTranslation();
   const { preferences, isLoaded, setLoaded } = usePreferencesStore();
   const isOnboardingComplete = preferences.isOnboardingComplete;
   const { setReminders, setLoaded: setRemindersLoaded } = useRemindersStore();
@@ -37,21 +39,19 @@ function App() {
   if (!isLoaded) {
     return (
       <div style={{ display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center' }}>
-        Loading...
+        {t('app.loading')}
       </div>
     );
   }
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={!isOnboardingComplete ? <Navigate to="/onboarding" replace /> : <HomeScreen />} />
-        <Route path="/onboarding" element={<OnboardingFlow />} />
-        <Route path="/reminder/:id" element={<ReminderEdit />} />
-        <Route path="/settings" element={<SettingsScreen />} />
-        <Route path="/history" element={<HistoryScreen />} />
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      <Route path="/" element={!isOnboardingComplete ? <Navigate to="/onboarding" replace /> : <HomeScreen />} />
+      <Route path="/onboarding" element={<OnboardingFlow />} />
+      <Route path="/reminder/:id" element={<ReminderEdit />} />
+      <Route path="/settings" element={<SettingsScreen />} />
+      <Route path="/history" element={<HistoryScreen />} />
+    </Routes>
   );
 }
 

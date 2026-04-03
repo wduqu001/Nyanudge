@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { Theme, NotificationStyle, Preferences, SoundMode, Character } from '../../types/nyanudge';
+import type { Preferences } from '../../types/nyanudge';
 
 const defaultPreferences: Preferences = {
   defaultSoundMode: 'sound_vibration',

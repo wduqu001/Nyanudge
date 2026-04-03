@@ -1,44 +1,35 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { usePreferencesStore } from '../../core/store/preferencesStore';
-import { Button } from '../../shared/components/Button/Button';
+import { NyaButton } from '../../shared/components/Button/NyaButton';
 import { Toggle } from '../../shared/components/Toggle/Toggle';
-import { ArrowLeft } from 'lucide-react';
+import { NyaHeader } from '../../shared/components/Header/NyaHeader';
+import { CharacterSelect } from '../../shared/components/CharacterSelect/CharacterSelect';
+import { NyaSelect } from '../../shared/components/Select/NyaSelect';
 import styles from './SettingsScreen.module.css';
 
 export const SettingsScreen: React.FC = () => {
-  const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   const { preferences, updatePreference, resetPreferences } = usePreferencesStore();
 
-  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newLang = e.target.value;
+  const handleLanguageChange = (newLang: string) => {
     updatePreference('language', newLang);
     i18n.changeLanguage(newLang);
   };
 
   const handleExportCSV = () => {
-    // Placeholder for export functionality
-    alert('Exporting CSV...');
+    alert(t('settings.data.exporting'));
   };
 
   const handleClearHistory = () => {
-    if (window.confirm('Are you sure you want to clear all history? This action cannot be undone.')) {
-      // Placeholder for clear history functionality
-      alert('History cleared.');
+    if (window.confirm(t('settings.data.clear_confirm'))) {
+      alert(t('settings.data.history_cleared'));
     }
   };
 
   return (
     <div className={styles.container}>
-      <header className={styles.header}>
-        <button className={styles.backButton} onClick={() => navigate(-1)} aria-label="Go back">
-          <ArrowLeft size={24} />
-        </button>
-        <h1 className={styles.title}>{t('settings.title')}</h1>
-        <div style={{ width: 24 }} /> {/* Spacer to center title */}
-      </header>
+      <NyaHeader title={t('settings.title')} />
 
       <div className={styles.content}>
         {/* NOTIFICATIONS */}
@@ -47,27 +38,27 @@ export const SettingsScreen: React.FC = () => {
           
           <div className={styles.settingGroup}>
             <label className={styles.label}>{t('settings.notifications.default_sound_mode')}</label>
-            <select 
-              className={styles.select}
+            <NyaSelect 
               value={preferences.defaultSoundMode}
-              onChange={(e) => updatePreference('defaultSoundMode', e.target.value as any)}
-            >
-              <option value="sound_vibration">{t('settings.notifications.sound_vibration')}</option>
-              <option value="vibration_only">{t('settings.notifications.vibration_only')}</option>
-              <option value="silent">{t('settings.notifications.silent')}</option>
-            </select>
+              onChange={(val) => updatePreference('defaultSoundMode', val)}
+              options={[
+                { value: 'sound_vibration', label: t('settings.notifications.sound_vibration') },
+                { value: 'vibration_only', label: t('settings.notifications.vibration_only') },
+                { value: 'silent', label: t('settings.notifications.silent') },
+              ]}
+            />
           </div>
 
           <div className={styles.settingGroup}>
             <label className={styles.label}>{t('settings.notifications.notification_style')}</label>
-            <select 
-              className={styles.select}
+            <NyaSelect 
               value={preferences.notificationStyle}
-              onChange={(e) => updatePreference('notificationStyle', e.target.value as any)}
-            >
-              <option value="standard">{t('settings.notifications.style_standard')}</option>
-              <option value="compact">{t('settings.notifications.style_compact')}</option>
-            </select>
+              onChange={(val) => updatePreference('notificationStyle', val)}
+              options={[
+                { value: 'standard', label: t('settings.notifications.style_standard') },
+                { value: 'compact', label: t('settings.notifications.style_compact') },
+              ]}
+            />
           </div>
 
           <div className={styles.settingGroup}>
@@ -101,42 +92,37 @@ export const SettingsScreen: React.FC = () => {
           
           <div className={styles.settingGroup}>
             <label className={styles.label}>{t('settings.appearance.theme')}</label>
-            <select 
-              className={styles.select}
+            <NyaSelect 
               value={preferences.theme}
-              onChange={(e) => updatePreference('theme', e.target.value as any)}
-            >
-              <option value="system">{t('settings.appearance.theme_system')}</option>
-              <option value="light">{t('settings.appearance.theme_light')}</option>
-              <option value="dark">{t('settings.appearance.theme_dark')}</option>
-            </select>
+              onChange={(val) => updatePreference('theme', val)}
+              options={[
+                { value: 'system', label: t('settings.appearance.theme_system') },
+                { value: 'light', label: t('settings.appearance.theme_light') },
+                { value: 'dark', label: t('settings.appearance.theme_dark') },
+              ]}
+            />
           </div>
 
           <div className={styles.settingGroup}>
             <label className={styles.label}>{t('settings.appearance.cat_character')}</label>
-            <select 
-              className={styles.select}
+            <CharacterSelect 
               value={preferences.character}
-              onChange={(e) => updatePreference('character', e.target.value as any)}
-            >
-              <option value="mochi">{t('settings.appearance.char_mochi')}</option>
-              <option value="sora">{t('settings.appearance.char_sora')}</option>
-              <option value="kuro">{t('settings.appearance.char_kuro')}</option>
-            </select>
+              onChange={(val) => updatePreference('character', val)}
+            />
           </div>
 
           <div className={styles.settingGroup}>
             <label className={styles.label}>{t('settings.appearance.language')}</label>
-            <select 
-              className={styles.select}
+            <NyaSelect 
               value={preferences.language}
               onChange={handleLanguageChange}
-            >
-              <option value="en">{t('settings.appearance.lang_en')}</option>
-              <option value="pt-BR">{t('settings.appearance.lang_ptBR')}</option>
-              <option value="ja">{t('settings.appearance.lang_ja')}</option>
-              <option value="es-ES">{t('settings.appearance.lang_esES')}</option>
-            </select>
+              options={[
+                { value: 'en', label: t('settings.appearance.lang_en') },
+                { value: 'pt-BR', label: t('settings.appearance.lang_ptBR') },
+                { value: 'ja', label: t('settings.appearance.lang_ja') },
+                { value: 'es-ES', label: t('settings.appearance.lang_esES') },
+              ]}
+            />
           </div>
         </section>
 
@@ -146,16 +132,16 @@ export const SettingsScreen: React.FC = () => {
           
           <div className={styles.settingGroup}>
             <label className={styles.label}>{t('settings.reminders.default_snooze')}</label>
-            <select 
-              className={styles.select}
+            <NyaSelect 
               value={preferences.defaultSnoozeMins.toString()}
-              onChange={(e) => updatePreference('defaultSnoozeMins', parseInt(e.target.value))}
-            >
-              <option value="5">5 minutes</option>
-              <option value="10">10 minutes</option>
-              <option value="15">15 minutes</option>
-              <option value="30">30 minutes</option>
-            </select>
+              onChange={(val) => updatePreference('defaultSnoozeMins', parseInt(val))}
+              options={[
+                { value: '5', label: t('actions.minutes_count', { count: 5 }) },
+                { value: '10', label: t('actions.minutes_count', { count: 10 }) },
+                { value: '15', label: t('actions.minutes_count', { count: 15 }) },
+                { value: '30', label: t('actions.minutes_count', { count: 30 }) },
+              ]}
+            />
           </div>
 
           <div className={styles.settingGroupRow}>
@@ -170,9 +156,9 @@ export const SettingsScreen: React.FC = () => {
           </div>
 
           <div className={styles.settingGroup}>
-            <Button variant="secondary" fullWidth onClick={resetPreferences}>
+            <NyaButton variant="secondary" fullWidth onClick={resetPreferences}>
               {t('settings.reminders.reset_defaults')}
-            </Button>
+            </NyaButton>
           </div>
         </section>
 
@@ -181,19 +167,19 @@ export const SettingsScreen: React.FC = () => {
           <h2 className={styles.sectionTitle}>{t('settings.data.title')}</h2>
           
           <div className={styles.settingGroup}>
-            <Button variant="secondary" fullWidth onClick={handleExportCSV}>
+            <NyaButton variant="secondary" fullWidth onClick={handleExportCSV}>
               {t('settings.data.export_csv')}
-            </Button>
+            </NyaButton>
           </div>
 
           <div className={styles.settingGroup}>
-            <Button variant="ghost" className={styles.destructiveButton} fullWidth onClick={handleClearHistory}>
+            <NyaButton variant="ghost" className={styles.destructiveButton} fullWidth onClick={handleClearHistory}>
               {t('settings.data.clear_history')}
-            </Button>
+            </NyaButton>
           </div>
 
           <div className={styles.versionInfo}>
-            {t('settings.data.app_version')} 1.0.0 (build 1)
+            {t('settings.data.app_version')} {t('settings.data.version_format', { version: '1.0.0', build: '1' })}
           </div>
         </section>
       </div>

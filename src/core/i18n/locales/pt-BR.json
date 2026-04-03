@@ -1,7 +1,8 @@
 {
   "app": {
     "name": "NyaNudge",
-    "tagline": "Seu companheiro felino de bem-estar."
+    "tagline": "Seu companheiro felino de bem-estar.",
+    "loading": "Carregando..."
   },
   "formats": {
     "time": "24h",
@@ -91,11 +92,38 @@
     "back": "Voltar",
     "finish": "Vamos nessa!",
     "select": "Escolher",
-    "edit_full": "Configurações Completas"
+    "edit_full": "Editar Configurações",
+    "disabled": "Desativado",
+    "at": "Às",
+    "every": "A cada",
+    "today": "hoje",
+    "minutes_count": "{{count}} minutos"
+  },
+  "home": {
+    "next_up": "Próximo em {{time}}",
+    "hero_sub": "{{name}} está de olho em tudo 👀",
+    "streak_message": "Sequência de {{count}} dias — continue assim!",
+    "reminders_title": "Seus lembretes",
+    "quick_edit": {
+      "next_fire": "Próximo disparo"
+    },
+    "nav": {
+      "home": "Início",
+      "history": "Histórico",
+      "settings": "Ajustes"
+    }
+  },
+  "history": {
+    "title": "Histórico e Stats",
+    "subtitle": "Veja seu histórico de conclusão e hábitos."
   },
   "edit_reminder": {
     "title": "Editar {{label}}",
-    "schedule_section": "AGENDA",
+    "loading": "Carregando lembrete...",
+    "enable_desc": "Receba notificações para este lembrete",
+    "notification_title": "NOTIFICAÇÃO",
+    "off": "Desligado",
+    "schedule_section": "AGENDAMENTO",
     "repeat_section": "REPETIR",
     "appearance_section": "APARÊNCIA",
     "custom_message_label": "Mensagem personalizada",
@@ -155,7 +183,11 @@
       "title": "DADOS",
       "export_csv": "Exportar histórico como CSV",
       "clear_history": "Limpar todo o histórico",
-      "app_version": "Versão do app"
+      "app_version": "Versão do app",
+      "exporting": "Exportando CSV...",
+      "clear_confirm": "Tem certeza que deseja limpar todo o histórico? Esta ação não pode ser desfeita.",
+      "history_cleared": "Histórico limpo.",
+      "version_format": "v{{version}} (build {{build}})"
     }
   },
   "onboarding": {

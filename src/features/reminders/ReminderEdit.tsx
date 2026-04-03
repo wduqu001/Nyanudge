@@ -2,11 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useRemindersStore } from '../../core/store/remindersStore';
-import type { Reminder, Category, Schedule, SoundMode, Character } from '../../types/nyanudge';
-import { Button } from '../../shared/components/Button/Button';
+import type { Reminder, Schedule, SoundMode, Character } from '../../types/nyanudge';
+import { NyaButton } from '../../shared/components/Button/NyaButton';
 import { Toggle } from '../../shared/components/Toggle/Toggle';
-import { ChevronLeft } from 'lucide-react';
+import { NyaSelect } from '../../shared/components/Select/NyaSelect';
+import { NyaHeader } from '../../shared/components/Header/NyaHeader';
+import { CharacterSelect } from '../../shared/components/CharacterSelect/CharacterSelect';
 import './ReminderEdit.css';
+
+const categoryColorMapping: Record<string, 'water' | 'food' | 'exercise' | 'bathroom' | 'medicine'> = {
+  water: 'water',
+  meal: 'food',
+  exercise: 'exercise',
+  bathroom: 'bathroom',
+  medicine: 'medicine',
+};
 
 export const ReminderEdit: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -42,7 +52,7 @@ export const ReminderEdit: React.FC = () => {
   if (!reminder) {
     return (
       <div className="reminder-edit-container">
-        <p>Loading reminder...</p>
+        <p>{t('edit_reminder.loading')}</p>
       </div>
     );
   }
@@ -70,7 +80,10 @@ export const ReminderEdit: React.FC = () => {
         ...changes
       });
     } else {
-      newSchedules[0] = { ...newSchedules[0], ...changes };
+      const first = newSchedules[0];
+      if (first) {
+        newSchedules[0] = { ...first, ...changes };
+      }
     }
     setSchedules(newSchedules);
   };
@@ -98,20 +111,19 @@ export const ReminderEdit: React.FC = () => {
 
   return (
     <div className="reminder-edit-container">
-      <header className="edit-header">
-        <button className="back-button" onClick={() => navigate(-1)} aria-label="Back">
-          <ChevronLeft size={24} />
-        </button>
-        <h1 className="edit-title">{t('edit_reminder.title', { label: reminder.label })}</h1>
-      </header>
+      <NyaHeader title={t('edit_reminder.title', { label: reminder.label })} />
 
       <section className="edit-section">
         <div className="setting-row">
           <div>
             <div className="setting-label">{t('actions.enable')}</div>
-            <div className="setting-desc">Receive notifications for this reminder</div>
+            <div className="setting-desc">{t('edit_reminder.enable_desc')}</div>
           </div>
-          <Toggle checked={enabled} onChange={setEnabled} categoryColor={reminder.category} />
+          <Toggle 
+            checked={enabled} 
+            onChange={setEnabled} 
+            categoryColor={categoryColorMapping[reminder.category]} 
+          />
         </div>
       </section>
 
@@ -197,50 +209,39 @@ export const ReminderEdit: React.FC = () => {
       </section>
 
       <section className="edit-section">
-        <div className="section-label">NOTIFICATION</div>
-        <div className="select-wrapper">
-          <select value={soundMode} onChange={(e) => setSoundMode(e.target.value as SoundMode)}>
-            <option value="sound_vibration">{t('settings.notifications.sound_vibration')}</option>
-            <option value="vibration_only">{t('settings.notifications.vibration_only')}</option>
-            <option value="silent">{t('settings.notifications.silent')}</option>
-          </select>
-        </div>
+        <div className="section-label">{t('edit_reminder.notification_title')}</div>
+        <NyaSelect 
+          value={soundMode}
+          onChange={(val) => setSoundMode(val as SoundMode)}
+          options={[
+            { value: 'sound_vibration', label: t('settings.notifications.sound_vibration') },
+            { value: 'vibration_only', label: t('settings.notifications.vibration_only') },
+            { value: 'silent', label: t('settings.notifications.silent') },
+          ]}
+        />
         
         <div style={{ marginTop: '16px' }}>
           <div className="section-label">{t('settings.reminders.default_snooze')}</div>
-          <div className="select-wrapper">
-            <select value={snoozeMins} onChange={(e) => setSnoozeMins(Number(e.target.value))}>
-              <option value={5}>5 {t('edit_reminder.minutes')}</option>
-              <option value={10}>10 {t('edit_reminder.minutes')}</option>
-              <option value={15}>15 {t('edit_reminder.minutes')}</option>
-              <option value={30}>30 {t('edit_reminder.minutes')}</option>
-              <option value={0}>Off</option>
-            </select>
-          </div>
+          <NyaSelect 
+            value={snoozeMins.toString()}
+            onChange={(val) => setSnoozeMins(Number(val))}
+            options={[
+              { value: '5', label: `5 ${t('edit_reminder.minutes')}` },
+              { value: '10', label: `10 ${t('edit_reminder.minutes')}` },
+              { value: '15', label: `15 ${t('edit_reminder.minutes')}` },
+              { value: '30', label: `30 ${t('edit_reminder.minutes')}` },
+              { value: '0', label: t('edit_reminder.off') },
+            ]}
+          />
         </div>
       </section>
 
       <section className="edit-section">
         <div className="section-label">{t('edit_reminder.appearance_section')}</div>
-        <div className="character-grid">
-          {(['mochi', 'sora', 'kuro'] as Character[]).map((char) => (
-            <div 
-              key={char} 
-              className={`character-option ${character === char ? 'active' : ''}`}
-              onClick={() => setCharacter(char)}
-            >
-              <div className="character-icon">
-                {/* SVG placeholders for characters could go here or actual SVGs */}
-                <svg viewBox="0 0 24 24" fill={character === char ? 'var(--accent)' : 'var(--text-muted)'}>
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
-                  <circle cx="9" cy="10" r="1.5"/><circle cx="15" cy="10" r="1.5"/>
-                  <path d="M12 16c-1.33 0-2.61-.38-3.69-1.03-.31-.19-.4-.59-.21-.9.18-.31.58-.41.89-.22.84.5 1.83.78 2.87.82.35 0 .64.29.64.64 0 .38-.3.7-.66.69z"/>
-                </svg>
-              </div>
-              <span className="character-name">{t(`settings.appearance.char_${char}`)}</span>
-            </div>
-          ))}
-        </div>
+        <CharacterSelect 
+          value={character}
+          onChange={setCharacter}
+        />
       </section>
 
       <section className="edit-section">
@@ -255,12 +256,12 @@ export const ReminderEdit: React.FC = () => {
       </section>
 
       <div className="action-buttons">
-        <Button variant="secondary" fullWidth onClick={() => navigate(-1)}>
+        <NyaButton variant="secondary" fullWidth onClick={() => navigate(-1)}>
           {t('actions.cancel')}
-        </Button>
-        <Button variant="primary" fullWidth onClick={handleSave}>
+        </NyaButton>
+        <NyaButton variant="primary" fullWidth onClick={handleSave}>
           {t('actions.save')}
-        </Button>
+        </NyaButton>
       </div>
     </div>
   );

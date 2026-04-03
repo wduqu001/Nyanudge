@@ -1,5 +1,7 @@
 import { create } from 'zustand';
-import type { Category, SoundMode, Character, Schedule, Reminder } from '../../types/nyanudge';
+import { Category, SoundMode, Character, Schedule, Reminder } from '../../types/nyanudge';
+
+export type { Category, SoundMode, Character, Schedule, Reminder };
 
 interface RemindersState {
   reminders: Reminder[];

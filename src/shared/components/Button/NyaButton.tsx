@@ -1,12 +1,12 @@
 import React, { type ButtonHTMLAttributes } from 'react';
 import styles from './Button.module.css';
 
-export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface NyaButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'ghost';
   fullWidth?: boolean;
 }
 
-export const Button: React.FC<ButtonProps> = ({
+export const NyaButton: React.FC<NyaButtonProps> = ({
   children,
   variant = 'primary',
   fullWidth = false,

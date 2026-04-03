@@ -3,7 +3,7 @@ import styles from './Toggle.module.css';
 
 export interface ToggleProps {
   checked: boolean;
-  onChange: (checked: boolean) => void;
+  onChange: (checked: boolean, e?: React.MouseEvent) => void;
   disabled?: boolean;
   label?: string;
   categoryColor?: 'water' | 'food' | 'exercise' | 'bathroom' | 'medicine';
@@ -23,7 +23,7 @@ export const Toggle: React.FC<ToggleProps> = ({ checked, onChange, disabled, lab
       <button
         type="button"
         className={cn}
-        onClick={() => !disabled && onChange(!checked)}
+        onClick={(e) => !disabled && onChange(!checked, e)}
         aria-pressed={checked}
         disabled={disabled}
       >
