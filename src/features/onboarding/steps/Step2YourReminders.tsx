@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRemindersStore, Category } from '../../../core/store/remindersStore';
+import { useRemindersStore } from '../../../core/store/remindersStore';
+import type { Category } from '../../../types/nyanudge';
 import { Toggle } from '../../../shared/components/Toggle/Toggle';
 import styles from '../OnboardingFlow.module.css';
 

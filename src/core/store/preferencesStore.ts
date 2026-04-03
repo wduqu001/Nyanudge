@@ -1,25 +1,5 @@
 import { create } from 'zustand';
-
-export type Theme = 'system' | 'light' | 'dark';
-export type NotificationStyle = 'standard' | 'compact';
-
-export interface Preferences {
-  // Notifications
-  defaultSoundMode: 'sound_vibration' | 'vibration_only' | 'silent';
-  notificationStyle: NotificationStyle;
-  dndStart: string;   // "22:00"
-  dndEnd: string;     // "07:00"
-
-  // Appearance
-  theme: Theme;
-  character: 'mochi' | 'sora' | 'kuro';
-  language: string;   // BCP-47 code: 'en' | 'pt-BR' | 'ja' | 'es-ES'
-
-  // Reminders
-  defaultSnoozeMins: number;
-  markAsDoneOnOpen: boolean;
-  isOnboardingComplete: boolean;
-}
+import type { Theme, NotificationStyle, Preferences, SoundMode, Character } from '../../types/nyanudge';
 
 const defaultPreferences: Preferences = {
   defaultSoundMode: 'sound_vibration',

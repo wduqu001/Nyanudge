@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useRemindersStore } from '../../core/store/remindersStore';
-import type { Category, Reminder } from '../../core/store/remindersStore';
+import type { Category, Reminder } from '../../types/nyanudge';
 import { Card } from '../../shared/components/Card/Card';
 import { Toggle } from '../../shared/components/Toggle/Toggle';
 import { LottiePlayer } from '../../shared/animations';

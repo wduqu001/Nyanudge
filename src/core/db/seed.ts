@@ -1,15 +1,4 @@
-
-export interface DefaultReminder {
-  id: string;
-  category: string;
-  label: string;
-  enabled: boolean;
-  soundMode: string;
-  snoozeMins: number;
-  character: string;
-  createdAt: number;
-  updatedAt: number;
-}
+import type { DefaultReminder } from '../../types/nyanudge';
 
 export const defaultReminders: DefaultReminder[] = [
   {

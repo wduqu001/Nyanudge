@@ -16,6 +16,16 @@ function App() {
   const { setReminders, setLoaded: setRemindersLoaded } = useRemindersStore();
 
   useEffect(() => {
+    // Sync theme
+    const root = document.documentElement;
+    if (preferences.theme === 'system') {
+      root.removeAttribute('data-theme');
+    } else {
+      root.setAttribute('data-theme', preferences.theme);
+    }
+  }, [preferences.theme]);
+
+  useEffect(() => {
     // Simulate DB load
     setTimeout(() => {
       setLoaded(true);

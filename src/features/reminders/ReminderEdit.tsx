@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useRemindersStore, type Reminder, type Category, type Schedule, type SoundMode, type Character } from '../../core/store/remindersStore';
+import { useRemindersStore } from '../../core/store/remindersStore';
+import type { Reminder, Category, Schedule, SoundMode, Character } from '../../types/nyanudge';
 import { Button } from '../../shared/components/Button/Button';
 import { Toggle } from '../../shared/components/Toggle/Toggle';
 import { ChevronLeft } from 'lucide-react';

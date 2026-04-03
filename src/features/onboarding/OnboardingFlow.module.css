@@ -7,6 +7,154 @@
   color: var(--text-primary);
   max-width: 500px;
   margin: 0 auto;
+  position: relative;
+}
+
+.onboardingHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  padding-bottom: 24px;
+}
+
+.progressBar {
+  flex: 1;
+  height: 4px;
+  background-color: var(--color-neutral-200);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background-color: var(--accent);
+  transition: width 0.3s ease;
+}
+
+.languageDropdownContainer {
+  position: relative;
+  z-index: 100;
+}
+
+.languageSelectWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: var(--surface-card);
+  border: 2px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 0 12px;
+  height: 44px;
+  min-width: 130px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--text-primary);
+  font-family: inherit;
+}
+
+.languageSelectWrapper:hover {
+  border-color: var(--accent);
+  background-color: var(--surface-overlay);
+}
+
+.dropdownActive {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(233, 123, 34, 0.1);
+}
+
+.globeIcon {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.currentLangLabel {
+  font-size: 14px;
+  font-weight: 700;
+  flex: 1;
+  text-align: left;
+}
+
+.chevronIcon {
+  color: var(--text-muted);
+  transition: transform 0.2s ease;
+}
+
+.chevronRotated {
+  transform: rotate(180deg);
+  color: var(--accent);
+}
+
+.dropdownOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 90;
+  background-color: transparent;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 160px;
+  background-color: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  padding: 8px;
+  z-index: 101;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  animation: dropdownFadeIn 0.2s cubic-bezier(0, 0, 0.2, 1);
+  transform-origin: top right;
+}
+
+@keyframes dropdownFadeIn {
+  from { opacity: 0; transform: scale(0.95) translateY(-10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  color: var(--text-primary);
+  width: 100%;
+}
+
+.dropdownItem:hover {
+  background-color: var(--surface-overlay);
+}
+
+.dropdownItemSelected {
+  background-color: var(--surface-selected) !important;
+}
+
+.dropdownItemName {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.dropdownItemSelected .dropdownItemName {
+  font-weight: 700;
+}
+
+.checkIcon {
+  color: var(--accent);
+  flex-shrink: 0;
 }
 
 .stepContent {
@@ -64,11 +212,7 @@
 
 .cardSelected {
   border-color: var(--accent);
-  background-color: var(--color-accent-100);
-}
-
-[data-theme='dark'] .cardSelected {
-  background-color: rgba(233, 123, 34, 0.1);
+  background-color: var(--surface-selected);
 }
 
 .cardContent {
