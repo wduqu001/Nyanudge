@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useRemindersStore } from '../../core/store/remindersStore';
@@ -74,7 +74,7 @@ export const HomeScreen: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { reminders, toggleReminder } = useRemindersStore();
-  // Removed unused preference
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const handleToggle = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -82,7 +82,19 @@ export const HomeScreen: React.FC = () => {
   };
 
   const handleCardClick = (id: string) => {
-    navigate(`/reminder/${id}`);
+    setExpandedId(expandedId === id ? null : id);
+  };
+
+  const formatSchedule = (reminder: Reminder) => {
+    if (!reminder.enabled) return t('actions.disabled', 'Disabled');
+    const schedule = reminder.schedules[0];
+    if (!schedule) return 'No schedule';
+    
+    if (schedule.type === 'interval') {
+      return `Every ${schedule.timeValue} mins · ${schedule.startTime}-${schedule.endTime}`;
+    } else {
+      return `At ${schedule.timeValue}`;
+    }
   };
 
   return (
@@ -138,27 +150,50 @@ export const HomeScreen: React.FC = () => {
           return (
             <Card
               key={reminder.id}
-              className="reminder-card"
+              className={`reminder-card ${expandedId === reminder.id ? 'expanded' : ''}`}
               onClick={() => handleCardClick(reminder.id)}
               categoryColor={enabled ? categoryColorMapping[reminder.category] : undefined}
             >
-              <div className="reminder-card-content">
-                <div className="reminder-card-icon" style={{ background: bgConfig }}>
-                  <CategoryIcon category={reminder.category} enabled={enabled} />
-                </div>
-                <div className="reminder-card-text">
-                  <h3 style={{ color: textColor }}>{reminder.label}</h3>
-                  <p style={{ color: subtextColor }}>
-                    {enabled ? 'Next: 3:30 PM · Every 2 hours' : 'Disabled'}
-                  </p>
-                </div>
-                <div className="reminder-card-toggle">
-                  <Toggle
-                    checked={reminder.enabled}
-                    onChange={(e: any) => handleToggle(reminder.id, e as any)}
-                  />
+              <div className="reminder-card-main">
+                <div className="reminder-card-content">
+                  <div className="reminder-card-icon" style={{ background: bgConfig }}>
+                    <CategoryIcon category={reminder.category} enabled={enabled} />
+                  </div>
+                  <div className="reminder-card-text">
+                    <h3 style={{ color: textColor }}>{reminder.label}</h3>
+                    <p style={{ color: subtextColor }}>
+                      {formatSchedule(reminder)}
+                    </p>
+                  </div>
+                  <div className="reminder-card-toggle">
+                    <Toggle
+                      checked={reminder.enabled}
+                      onChange={(e: any) => handleToggle(reminder.id, e as any)}
+                    />
+                  </div>
                 </div>
               </div>
+              
+              {expandedId === reminder.id && (
+                <div className="reminder-card-expanded">
+                  <div className="expanded-divider" />
+                  <div className="quick-actions">
+                    <div className="quick-info">
+                      <span className="quick-label">Next fire time</span>
+                      <span className="quick-value">3:30 PM today</span>
+                    </div>
+                    <button 
+                      className="edit-full-button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/reminder/${reminder.id}`);
+                      }}
+                    >
+                      {t('actions.edit_full', 'Edit Settings')}
+                    </button>
+                  </div>
+                </div>
+              )}
             </Card>
           );
         })}

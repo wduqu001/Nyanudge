@@ -86,7 +86,8 @@
     "enable": "Enable",
     "disable": "Disable",
     "save": "Save",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "edit_full": "Edit Settings"
   },
   "settings": {
     "title": "Settings",

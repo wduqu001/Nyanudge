@@ -90,7 +90,8 @@
     "next": "Siguiente",
     "back": "Atrás",
     "finish": "¡Vamos!",
-    "select": "Elegir"
+    "select": "Elegir",
+    "edit_full": "Ajustes Detallados"
   },
   "settings": {
     "title": "Ajustes",

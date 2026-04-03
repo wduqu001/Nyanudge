@@ -78,7 +78,7 @@ This document contains all the tasks and issues required to implement the NyaNud
 - [x] **Hero Section**: Display active cat idle animation and "Next Up" countdown (Section 14.1). (Styled with precision SVGs matching UI spec)
 - [x] **Streak Banner**: Show consecutive days counter. (Dark/Light mode tailored)
 - [x] **Reminder Card List**: Render list of 5 categories with quick-toggles (Section 14.2). (Full styling and semantic colors mapped from mockups)
-- [ ] Implement card expansion for quick-edit options.
+- [x] Implement card expansion for quick-edit options.
 
 ### [FEATURE] Reminder Edit Screen
 - [x] Create `ReminderEdit.tsx` for deep configuration of a reminder (Section 7.2).

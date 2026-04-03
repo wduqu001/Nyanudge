@@ -90,7 +90,8 @@
     "next": "Próximo",
     "back": "Voltar",
     "finish": "Vamos nessa!",
-    "select": "Escolher"
+    "select": "Escolher",
+    "edit_full": "Configurações Completas"
   },
   "edit_reminder": {
     "title": "Editar {{label}}",

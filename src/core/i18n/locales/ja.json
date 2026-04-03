@@ -90,7 +90,8 @@
     "next": "次へ",
     "back": "戻る",
     "finish": "始めよう！",
-    "select": "選ぶ"
+    "select": "選ぶ",
+    "edit_full": "詳細設定"
   },
   "settings": {
     "title": "設定",
