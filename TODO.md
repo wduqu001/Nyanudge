@@ -13,6 +13,7 @@ This document contains all the tasks and issues required to implement the NyaNud
 - [x] Install base dependencies: `zustand`, `lucide-react`, `i18next`, `react-i18next`, `lottie-web`.
 - [x] Set up `vitest` and `react-testing-library`.
 - [x] Review and update project `.gitignore`.
+- [x] Harden TypeScript configuration (Strict mode, `noUncheckedIndexedAccess`, etc.).
 
 ---
 
@@ -29,7 +30,7 @@ This document contains all the tasks and issues required to implement the NyaNud
 - [x] Create `preferencesStore.ts` for app settings (Section 9).
 - [x] Create `statsStore.ts` for tracking streaks and history.
 
-### [CORE] Notifications: Scheduling & Handlers
+### [CORE] Notifications: Scheduling & Handlers (#4)
 - [x] Implement `scheduler.ts` logic using `@capacitor/local-notifications` (Section 10.1).
 - [x] Implement logic to calculate `nextFireTime` for interval and fixed schedules.
 - [x] Configure Android Notification Channels in `capacitor.config.ts` (Section 10.3).
@@ -56,6 +57,8 @@ This document contains all the tasks and issues required to implement the NyaNud
 - [x] **Toggle/Switch**: Custom styled switch for reminder enabling.
 - [x] **Modal**: Base modal for reminder editing and onboarding steps.
 - [x] **Iconography**: Integrate `lucide-react` icons (Section 12.3).
+- [x] **Nya Standard**: Renamed core components (`NyaButton`, `NyaHeader`, `NyaSelect`) to avoid native tag conflicts.
+- [x] **Error System**: Implemented global `ErrorBoundary` and branded `ErrorPage`.
 
 ### [UI] Storybook Integration
 - [x] Initialize and configure Storybook for shared component development.
@@ -74,13 +77,13 @@ This document contains all the tasks and issues required to implement the NyaNud
 - [x] Screen 2: "Your reminders" (Quick setup).
 - [x] Screen 3: "How you like it" (Sound/vibration prefs).
 
-### [FEATURE] Home Screen (Base Layout & Styling Completed)
-- [x] **Hero Section**: Display active cat idle animation and "Next Up" countdown (Section 14.1). (Styled with precision SVGs matching UI spec)
-- [x] **Streak Banner**: Show consecutive days counter. (Dark/Light mode tailored)
-- [x] **Reminder Card List**: Render list of 5 categories with quick-toggles (Section 14.2). (Full styling and semantic colors mapped from mockups)
+### [FEATURE] Home Screen (#9) [DONE]
+- [x] **Hero Section**: Display active cat idle animation and "Next Up" countdown (Section 14.1).
+- [x] **Streak Banner**: Show consecutive days counter.
+- [x] **Reminder Card List**: Render list of 5 categories with quick-toggles (Section 14.2).
 - [x] Implement card expansion for quick-edit options.
 
-### [FEATURE] Reminder Edit Screen
+### [FEATURE] Reminder Edit Screen (#10) [DONE]
 - [x] Create `ReminderEdit.tsx` for deep configuration of a reminder (Section 7.2).
 - [x] Implement Time/Interval selection.
 - [x] Implement Repeat Pattern selection (Daily, Weekdays, Custom).
@@ -92,7 +95,7 @@ This document contains all the tasks and issues required to implement the NyaNud
 - [x] Appearance (Theme, Character, Language).
 - [x] Data Management (Export CSV, Clear History).
 
-### [FEATURE] History & Stats
+### [FEATURE] History & Stats (#12)
 - [ ] Implement `HistoryScreen.tsx` (Section 7.4).
 - [ ] **HeatmapCalendar**: Visual log of daily completions.
 - [ ] **Stats View**: Per-category completion rate and streak records.
@@ -111,18 +114,18 @@ This document contains all the tasks and issues required to implement the NyaNud
 
 ---
 
-## 6. Testing & QA
+## 6. Testing & QA (#15, #16, #17)
 
-### [TEST] Core System Unit Tests
+### [TEST] Core System Unit Tests (#15)
 - [ ] Implement `scheduler.test.ts` for fire time calculations (Section 15.2).
 - [ ] Implement `migrations.test.ts` for DB versioning logic.
 - [ ] Implement `messages.test.ts` for i18n message picking.
 
-### [TEST] Component & Feature Tests
+### [TEST] Component & Feature Tests (#16)
 - [ ] Implement `ReminderCard.test.tsx` (Section 15.2).
 - [ ] Implement `StreakCalculator.test.ts` for streak logic accuracy.
 
-### [QA] Accessibility & Polish
+### [QA] Accessibility & Polish (#17)
 - [ ] Verify `aria-label` on all interactive elements (Section 16).
 - [ ] Ensure touch targets meet 44x44 dp minimum.
 - [ ] Verify `prefers-reduced-motion` support.
