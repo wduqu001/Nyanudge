@@ -100,6 +100,11 @@ This document contains all the tasks and issues required to implement the NyaNud
 - [ ] **HeatmapCalendar**: Visual log of daily completions.
 - [ ] **Stats View**: Per-category completion rate and streak records.
 
+### [FEATURE] Export / Import Reminders 
+- [ ] Implement `ExportImportScreen.tsx`.
+- [ ] **Export**: Export reminders to JSON format.
+- [ ] **Import**: Import reminders from JSON format.
+
 ---
 
 ## 5. Assets & Animations
@@ -129,3 +134,20 @@ This document contains all the tasks and issues required to implement the NyaNud
 - [ ] Verify `aria-label` on all interactive elements (Section 16).
 - [ ] Ensure touch targets meet 44x44 dp minimum.
 - [ ] Verify `prefers-reduced-motion` support.
+
+## 7. Monetization (#18, #19)
+
+### [ADS] AdMob Integration (#18)
+- [x] Set up `@capacitor-community/admob` for cross-platform ad support. (User just updated package.json)
+- [ ] Implement **Consent Flow** using the User Messaging Platform (UMP) for GDPR/IDFA compliance.
+- [ ] Create `AdService.ts` for managed frequency capping (e.g., 1 cold-start interstitial max / 24h).
+- [ ] Integrate **Banner Ads** at the base of the Home Screen (non-intrusive).
+- [ ] Implement **Cold-Start Interstitial** (Max 1x per 24h, skippable after 3s).
+
+### [PREMIUM] In-App Purchases (IAP) (#19)
+- [ ] Configure `package:google_play_billing` or equivalent for direct store integration.
+- [ ] Create a "Go Premium" landing modal highlighting value props.
+- [ ] **"Support NyaNudge" One-Time Purchase**: Implement a simple $1.99 or similar (One-Time) option to remove ads forever.
+- [ ] **Ad-Free Experience**: Persist state to globally disable AdMob components for supporters.
+- [ ] **Exclusive Content**: Unlock rare cat characters (e.g., Galaxy Mochi) as a bonus for supporters.
+- [ ] **Custom Themes**: Bundle exclusive "Designer Palettes" with the one-time purchase.
