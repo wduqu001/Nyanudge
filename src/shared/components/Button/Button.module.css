@@ -19,7 +19,18 @@
 
 .primary {
   background-color: var(--accent);
-  color: #FFFFFF; /* High contrast on accent */
+  color: #FFFFFF;
+  font-weight: 700;
+}
+
+@media (prefers-color-scheme: dark) {
+  .primary {
+    color: var(--color-neutral-900);
+  }
+}
+
+[data-theme='dark'] .primary {
+  color: var(--color-neutral-900);
 }
 
 .primary:hover:not(:disabled) {

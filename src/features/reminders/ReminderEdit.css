@@ -36,11 +36,11 @@
 
 .section-label {
   font-size: 13px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  letter-spacing: 0.05em;
-  margin-bottom: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
   text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 10px 16px 8px;
 }
 
 .setting-row {
@@ -102,8 +102,9 @@
 
 .type-button.active {
   background-color: var(--accent);
-  color: white;
+  color: var(--color-neutral-900);
   border-color: var(--accent);
+  font-weight: 700;
 }
 
 .time-row {
@@ -149,17 +150,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
   color: var(--text-secondary);
 }
 
 .day-circle.active {
-  background-color: var(--accent);
-  color: white;
-  border-color: var(--accent);
+  background-color: rgba(233, 123, 34, 0.05);
+  color: var(--accent);
+  border: 2px solid var(--accent);
 }
 
 .character-grid {
