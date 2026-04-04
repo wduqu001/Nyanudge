@@ -1,0 +1,103 @@
+/* AnimatedCatKuro.module.css
+   Kuro — black cat, mischievous energy.
+   Animations: idle breath, slow tail sway, fast tail flick, ear twitch (per-ear).
+*/
+
+.catWrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  cursor: none; /* cat doesn't acknowledge your cursor */
+  user-select: none;
+}
+
+.catSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* ── Idle breath — subtle scale on the body group ──────────────── */
+.catBody {
+  transform-origin: 36px 48px;
+  animation: kuroBreath 3.4s ease-in-out infinite;
+}
+
+@keyframes kuroBreath {
+  0%, 100% { transform: scaleY(1)    scaleX(1); }
+  45%       { transform: scaleY(1.03) scaleX(0.98); }
+  70%       { transform: scaleY(1.01) scaleX(0.99); }
+}
+
+/* ── Tail — slow ambient sway ───────────────────────────────────── */
+.catTail {
+  transform-origin: 52px 52px;
+  animation: kuroTailSway 3.8s ease-in-out infinite;
+}
+
+@keyframes kuroTailSway {
+  0%, 100% { transform: rotate(0deg);   }
+  30%       { transform: rotate(-18deg); }
+  65%       { transform: rotate(12deg);  }
+}
+
+/* ── Tail flick — sudden fast aggressive swipe ──────────────────── */
+.tailFlick {
+  animation: kuroTailFlick 0.38s ease-in-out forwards !important;
+}
+
+@keyframes kuroTailFlick {
+  0%   { transform: rotate(0deg);   }
+  25%  { transform: rotate(-30deg); }
+  60%  { transform: rotate(28deg);  }
+  85%  { transform: rotate(-10deg); }
+  100% { transform: rotate(0deg);   }
+}
+
+/* ── Left ear twitch ────────────────────────────────────────────── */
+.catEarLeft {
+  transform-origin: 18px 14px;
+  /* no ambient animation — ears only move on event */
+}
+
+.catEarLeft.twitch {
+  animation: kuroEarL 0.24s ease-in-out forwards;
+}
+
+@keyframes kuroEarL {
+  0%   { transform: rotate(0deg);  }
+  35%  { transform: rotate(-12deg);}
+  70%  { transform: rotate(6deg);  }
+  100% { transform: rotate(0deg);  }
+}
+
+/* ── Right ear twitch ───────────────────────────────────────────── */
+.catEarRight {
+  transform-origin: 54px 14px;
+}
+
+.catEarRight.twitch {
+  animation: kuroEarR 0.24s ease-in-out forwards;
+}
+
+@keyframes kuroEarR {
+  0%   { transform: rotate(0deg);  }
+  35%  { transform: rotate(12deg); }
+  70%  { transform: rotate(-6deg); }
+  100% { transform: rotate(0deg);  }
+}
+
+/* ── Reduced motion ─────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .catBody,
+  .catTail,
+  .tailFlick,
+  .catEarLeft,
+  .catEarLeft.twitch,
+  .catEarRight,
+  .catEarRight.twitch {
+    animation: none !important;
+  }
+}

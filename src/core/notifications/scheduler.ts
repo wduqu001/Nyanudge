@@ -2,7 +2,7 @@ import {
   LocalNotifications,
   type ScheduleOptions,
 } from '@capacitor/local-notifications';
-import type { Schedule, Reminder, Category } from '../../types/nyanudge';
+
 import { pickMessage } from '../i18n';
 import i18n from '../i18n';
 

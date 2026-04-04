@@ -1,11 +1,11 @@
 
-export type Category = 'water' | 'meal' | 'exercise' | 'bathroom' | 'medicine';
-export type SoundMode = 'sound_vibration' | 'vibration_only' | 'silent';
-export type Character = 'mochi' | 'sora' | 'kuro';
-export type Theme = 'system' | 'light' | 'dark';
-export type NotificationStyle = 'standard' | 'compact';
+type Category = 'water' | 'meal' | 'exercise' | 'bathroom' | 'medicine';
+type SoundMode = 'sound_vibration' | 'vibration_only' | 'silent';
+type Character = 'mochi' | 'sora' | 'kuro';
+type Theme = 'system' | 'light' | 'dark';
+type NotificationStyle = 'standard' | 'compact';
 
-export interface Schedule {
+interface Schedule {
   id: string;
   reminderId: string;
   type: 'fixed' | 'interval';
@@ -16,7 +16,7 @@ export interface Schedule {
   notifId?: number;
 }
 
-export interface Reminder {
+interface Reminder {
   id: string;
   category: Category;
   label: string;
@@ -31,7 +31,7 @@ export interface Reminder {
   updatedAt: number;
 }
 
-export interface Preferences {
+interface Preferences {
   // Notifications
   defaultSoundMode: SoundMode;
   notificationStyle: NotificationStyle;
@@ -49,7 +49,7 @@ export interface Preferences {
   isOnboardingComplete: boolean;
 }
 
-export interface DefaultReminder {
+interface DefaultReminder {
   id: string;
   category: Category;
   label: string;

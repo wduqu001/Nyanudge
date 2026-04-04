@@ -16,7 +16,7 @@ import './App.css';
 function App() {
   const { t } = useTranslation();
   useNotificationSetup();
-  const { preferences, isLoaded, setLoaded } = usePreferencesStore();
+  const { preferences, isLoaded, setLoaded, loadPreferences } = usePreferencesStore();
   const isOnboardingComplete = preferences.isOnboardingComplete;
   const { setReminders, setLoaded: setRemindersLoaded } = useRemindersStore();
   const { setStats, setRecentCompletions } = useStatsStore();
@@ -40,19 +40,45 @@ function App() {
   }, [preferences.language, i18n]);
 
   useEffect(() => {
-    // Simulate DB load
-    setTimeout(() => {
-      setLoaded(true);
-      setReminders(defaultReminders as any);
-      setRemindersLoaded(true);
-      if (import.meta.env.DEV) {
-        setStats(mockStats);
-        setRecentCompletions(mockRecentCompletions);
-      } else {
-        setStats({});
-        setRecentCompletions([]);
+    // Real DB load
+    const initDb = async () => {
+      try {
+        // Initialize SQLite & Run Migrations
+        await import('./core/db/database').then(({ dbManager }) => dbManager.init());
+        
+        // Seed if first run
+        const { ReminderService } = await import('./core/db/ReminderService');
+        const { PreferenceService } = await import('./core/db/PreferenceService');
+        
+        await ReminderService.seedIfEmpty();
+        
+        // Load data
+        const reminders = await ReminderService.getAllReminders();
+        setReminders(reminders);
+        setRemindersLoaded(true);
+
+        const loadedPrefs = await PreferenceService.getPreferences();
+        if (Object.keys(loadedPrefs).length > 0) {
+          loadPreferences(loadedPrefs);
+        }
+
+        if (import.meta.env.DEV) {
+          setStats(mockStats);
+          setRecentCompletions(mockRecentCompletions);
+        } else {
+          setStats({});
+          setRecentCompletions([]);
+        }
+
+        setLoaded(true);
+      } catch (err) {
+        console.error('Failed to initialize app database:', err);
+        // Fallback to loaded anyway so the app can start (though with issues)
+        setLoaded(true);
       }
-    }, 500);
+    };
+
+    initDb();
   }, []);
 
   if (!isLoaded) {

@@ -1,0 +1,19 @@
+/* CatSora.module.css
+   Sora — grey tabby, calm and static by design.
+   No animations. Sora's composure is intentional.
+*/
+
+.catWrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+}
+
+.catSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}

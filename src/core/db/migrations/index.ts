@@ -24,6 +24,7 @@ export const migrations: Migration[] = [
         "snooze_mins" INTEGER DEFAULT 10,
         "character" TEXT DEFAULT 'mochi',
         "custom_message" TEXT,
+        "archived" INTEGER DEFAULT 0,
         "created_at" INTEGER NOT NULL,
         "updated_at" INTEGER NOT NULL
       );

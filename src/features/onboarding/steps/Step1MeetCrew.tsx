@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePreferencesStore } from '../../../core/store/preferencesStore';
-import type { Character } from '../../../types/nyanudge';
+
 import styles from '../OnboardingFlow.module.css';
 
 export const Step1MeetCrew: React.FC = () => {

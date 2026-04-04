@@ -2,21 +2,17 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useRemindersStore } from '../../core/store/remindersStore';
-import type { Category, Reminder } from '../../types/nyanudge';
+import { usePreferencesStore } from '../../core/store/preferencesStore';
+
 import { Card } from '../../shared/components/Card/Card';
 import { Toggle } from '../../shared/components/Toggle/Toggle';
 import { FAB } from '../../shared/components/FAB/FAB';
 import { BottomNav } from '../../shared/components/BottomNav/BottomNav';
-import { LottiePlayer } from '../../shared/animations';
-import { 
-  WaterIcon, 
-  MealIcon, 
-  ExerciseIcon, 
-  BathroomIcon, 
-  MedicineIcon,
-  MenuIcon,
-  CogIcon
-} from '../../shared/components/Icons';
+import { AnimatedCatMochi } from '../../shared/components/AnimatedCatMochi/AnimatedCatMochi';
+import { AnimatedCatKuro } from '../../shared/components/KuroCat/AnimatedCatKuro';
+import { CatSora } from '../../shared/components/SoraCat/CatSora';
+import { CogIcon, MenuIcon, WaterIcon, MealIcon, ExerciseIcon, BathroomIcon, MedicineIcon } from '../../shared/components/Icons';
+import { formatLocalizedTime } from '../../shared/utils/dateUtils';
 import './HomeScreen.css';
 
 const CategoryIcon = ({ category, enabled }: { category: Category, enabled: boolean }) => {
@@ -49,9 +45,10 @@ const CATEGORY_BG_COLORS: Record<Category, string> = {
 };
 
 export const HomeScreen: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { reminders, toggleReminder } = useRemindersStore();
+  const { preferences } = usePreferencesStore();
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const handleToggle = (id: string, e?: React.MouseEvent) => {
@@ -69,9 +66,12 @@ export const HomeScreen: React.FC = () => {
     if (!schedule) return 'No schedule';
     
     if (schedule.type === 'interval') {
-      return `${t('actions.every')} ${schedule.timeValue} ${t('edit_reminder.minutes')} · ${schedule.startTime}-${schedule.endTime}`;
+      const start = formatLocalizedTime(schedule.startTime, i18n.language);
+      const end = formatLocalizedTime(schedule.endTime, i18n.language);
+      return `${t('actions.every')} ${schedule.timeValue} ${t('edit_reminder.minutes')} · ${start}-${end}`;
     } else {
-      return `${t('actions.at')} ${schedule.timeValue}`;
+      const atTime = formatLocalizedTime(schedule.timeValue, i18n.language);
+      return `${t('actions.at')} ${atTime}`;
     }
   };
 
@@ -89,11 +89,13 @@ export const HomeScreen: React.FC = () => {
 
       <section className="hero-section">
         <div className="hero-cat-container">
-          <LottiePlayer animationKey="cat_idle" />
+          {preferences.character === 'mochi' && <AnimatedCatMochi />}
+          {preferences.character === 'kuro'  && <AnimatedCatKuro />}
+          {preferences.character === 'sora'  && <CatSora />}
         </div>
         <div className="next-up-pill">{t('home.next_up', { time: '14 min' })}</div>
         <div className="hero-copy">{t('categories.water.name')}</div>
-        <div className="hero-sub">{t('home.hero_sub', { name: 'Mochi' })}</div>
+        <div className="hero-sub">{t('home.hero_sub', { name: preferences.character.charAt(0).toUpperCase() + preferences.character.slice(1) })}</div>
       </section>
 
       <section className="streak-banner">
@@ -154,13 +156,17 @@ export const HomeScreen: React.FC = () => {
               </div>
               
               {expandedId === reminder.id && (
-                <div className="reminder-card-expanded">
+                  <div className="reminder-card-expanded">
                   <div className="expanded-divider" />
                   <div className="quick-actions">
-                    <div className="quick-info">
-                      <span className="quick-label">{t('home.quick_edit.next_fire')}</span>
-                      <span className="quick-value">3:30 PM {t('actions.today')}</span>
-                    </div>
+                    {reminder.enabled && (
+                      <div className="quick-info">
+                        <span className="quick-label">{t('home.quick_edit.next_fire')}</span>
+                        <span className="quick-value">
+                          {formatLocalizedTime(reminder.schedules[0]?.timeValue || '08:00', i18n.language)} {t('actions.today')}
+                        </span>
+                      </div>
+                    )}
                     <button 
                       className="edit-full-button"
                       onClick={(e) => {

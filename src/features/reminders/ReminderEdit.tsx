@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useRemindersStore } from '../../core/store/remindersStore';
-import type { Reminder, Schedule, SoundMode, Character } from '../../types/nyanudge';
+
 import { NyaButton } from '../../shared/components/Button/NyaButton';
 import { Toggle } from '../../shared/components/Toggle/Toggle';
 import { NyaSelect } from '../../shared/components/Select/NyaSelect';
 import { NyaHeader } from '../../shared/components/Header/NyaHeader';
 import { CharacterSelect } from '../../shared/components/CharacterSelect/CharacterSelect';
+import { getLocalizedWeekdays } from '../../shared/utils/dateUtils';
 import './ReminderEdit.css';
 
 const categoryColorMapping: Record<string, 'water' | 'food' | 'exercise' | 'bathroom' | 'medicine'> = {
@@ -21,7 +22,7 @@ const categoryColorMapping: Record<string, 'water' | 'food' | 'exercise' | 'bath
 export const ReminderEdit: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { reminders, updateReminder, addReminder } = useRemindersStore();
   const isNew = id === 'new';
 
@@ -144,7 +145,7 @@ export const ReminderEdit: React.FC = () => {
     updateMainSchedule({ daysOfWeek: newDays });
   };
 
-  const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+  const days = getLocalizedWeekdays(i18n.language);
 
   return (
     <div className="reminder-edit-container">

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Category, SoundMode, Character, Schedule, Reminder } from '../../types/nyanudge';
+
 
 export type { Category, SoundMode, Character, Schedule, Reminder };
 
@@ -18,6 +18,7 @@ interface RemindersState {
 }
 
 import { scheduleReminder, cancelReminder } from '../notifications/scheduler';
+import { ReminderService } from '../db/ReminderService';
 
 export const useRemindersStore = create<RemindersState>((set, get) => ({
   reminders: [],
@@ -43,6 +44,9 @@ export const useRemindersStore = create<RemindersState>((set, get) => ({
       schedules: reminder.schedules.map(s => ({ ...s, notifId: s.notifId ?? Math.floor(Math.random() * 2_000_000) }))
     };
     set((state) => ({ reminders: [...state.reminders, newReminder] }));
+    
+    ReminderService.addReminder(newReminder).catch(err => console.error('[Store] Error saving reminder:', err));
+
     if (newReminder.enabled && !newReminder.archived) {
       scheduleReminder(newReminder);
     }
@@ -66,6 +70,8 @@ export const useRemindersStore = create<RemindersState>((set, get) => ({
       }),
     }));
 
+    ReminderService.updateReminder(id, changes).catch(err => console.error('[Store] Error updating reminder:', err));
+
     const newR = get().reminders.find((r) => r.id === id);
     if (newR && newR.enabled && !newR.archived) {
       scheduleReminder(newR);
@@ -79,6 +85,8 @@ export const useRemindersStore = create<RemindersState>((set, get) => ({
     set((state) => ({
       reminders: state.reminders.filter((r) => r.id !== id),
     }));
+
+    ReminderService.deleteReminder(id).catch(err => console.error('[Store] Error deleting reminder:', err));
   },
 
   toggleReminder: (id) => {
@@ -90,6 +98,10 @@ export const useRemindersStore = create<RemindersState>((set, get) => ({
         r.id === id ? { ...r, enabled: !r.enabled, updatedAt: Date.now() } : r
       ),
     }));
+
+    if (oldR) {
+      ReminderService.updateReminder(id, { enabled: !oldR.enabled }).catch(err => console.error('[Store] Error toggling UI reminder:', err));
+    }
 
     const newR = get().reminders.find((r) => r.id === id);
     if (newR && newR.enabled && !newR.archived) {

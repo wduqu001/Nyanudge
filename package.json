@@ -51,6 +51,7 @@
     "eslint-plugin-storybook": "^10.3.4",
     "globals": "^17.4.0",
     "playwright": "^1.59.1",
+    "sql.js": "^1.11.0",
     "storybook": "^10.3.4",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.58.0",

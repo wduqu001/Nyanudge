@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { getLocalizedWeekdays } from '../../../shared/utils/dateUtils';
 import styles from './HeatmapCalendar.module.css';
 
 interface HeatmapCalendarProps {
@@ -21,9 +22,7 @@ export const HeatmapCalendar: React.FC<HeatmapCalendarProps> = ({ completions, t
     return acc;
   }, {} as Record<string, number>);
 
-  const weekdays = i18n.language.startsWith('pt') 
-    ? ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'] 
-    : ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+  const weekdays = getLocalizedWeekdays(i18n.language);
   
   const monthName = today.toLocaleString(i18n.language, { month: 'long' });
 

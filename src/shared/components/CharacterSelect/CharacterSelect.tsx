@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import type { Character } from '../../../types/nyanudge';
+
 import styles from './CharacterSelect.module.css';
 
 interface CharacterSelectProps {
