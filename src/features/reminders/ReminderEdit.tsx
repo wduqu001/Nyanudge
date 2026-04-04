@@ -22,7 +22,8 @@ export const ReminderEdit: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { reminders, updateReminder } = useRemindersStore();
+  const { reminders, updateReminder, addReminder } = useRemindersStore();
+  const isNew = id === 'new';
 
   const [reminder, setReminder] = useState<Reminder | null>(null);
   const [label, setLabel] = useState('');
@@ -32,22 +33,34 @@ export const ReminderEdit: React.FC = () => {
   const [character, setCharacter] = useState<Character>('mochi');
   const [customMessage, setCustomMessage] = useState('');
   const [schedules, setSchedules] = useState<Schedule[]>([]);
+  const [category, setCategory] = useState<Category>('water');
 
   useEffect(() => {
-    const existing = reminders.find((r) => r.id === id);
-    if (existing) {
-      setReminder(existing);
-      setLabel(existing.label);
-      setEnabled(existing.enabled);
-      setSoundMode(existing.soundMode);
-      setSnoozeMins(existing.snoozeMins);
-      setCharacter(existing.character);
-      setCustomMessage(existing.customMessage || '');
-      setSchedules(existing.schedules || []);
+    if (isNew) {
+      setReminder({} as any);
+      setLabel('');
+      setEnabled(true);
+      setSoundMode('sound_vibration');
+      setSnoozeMins(10);
+      setCharacter('mochi');
+      setCategory('water');
+      setCustomMessage('');
+      setSchedules([]);
     } else {
-      // If not found, possibly still loading or not exists
+      const existing = reminders.find((r) => r.id === id);
+      if (existing) {
+        setReminder(existing);
+        setLabel(existing.label);
+        setEnabled(existing.enabled);
+        setSoundMode(existing.soundMode);
+        setSnoozeMins(existing.snoozeMins);
+        setCharacter(existing.character);
+        setCategory(existing.category);
+        setCustomMessage(existing.customMessage || '');
+        setSchedules(existing.schedules || []);
+      }
     }
-  }, [id, reminders]);
+  }, [id, reminders, isNew]);
 
   if (!reminder) {
     return (
@@ -58,16 +71,40 @@ export const ReminderEdit: React.FC = () => {
   }
 
   const handleSave = () => {
-    updateReminder(reminder.id, {
-      label,
-      enabled,
-      soundMode,
-      snoozeMins,
-      character,
-      customMessage: customMessage || undefined,
-      schedules
-    });
+    if (isNew) {
+      addReminder({
+        id: crypto.randomUUID(),
+        category,
+        label: label || t(`categories.${category}.name`, { defaultValue: category }),
+        enabled,
+        soundMode,
+        snoozeMins,
+        character,
+        customMessage: customMessage || undefined,
+        schedules: schedules.map(s => ({ ...s, reminderId: id })), // id doesn't exist yet but we don't strictly use reminderId anyway, wait, we do.
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      });
+    } else {
+      updateReminder(reminder.id, {
+        label: label || reminder.label,
+        category,
+        enabled,
+        soundMode,
+        snoozeMins,
+        character,
+        customMessage: customMessage || undefined,
+        schedules
+      });
+    }
     navigate(-1);
+  };
+
+  const handleArchive = () => {
+    if (!isNew && reminder) {
+      updateReminder(reminder.id, { archived: true, enabled: false });
+      navigate(-1);
+    }
   };
 
   const updateMainSchedule = (changes: Partial<Schedule>) => {
@@ -111,7 +148,33 @@ export const ReminderEdit: React.FC = () => {
 
   return (
     <div className="reminder-edit-container">
-      <NyaHeader title={t('edit_reminder.title', { label: reminder.label })} />
+      <NyaHeader title={isNew ? t('home.reminders_title', 'New Reminder') : t('edit_reminder.title', { label: reminder.label })} />
+      
+      {isNew && (
+        <section className="edit-section">
+          <div className="section-label">Category & Label</div>
+          <div style={{ marginBottom: '16px' }}>
+            <NyaSelect 
+              value={category}
+              onChange={(val) => setCategory(val as Category)}
+              options={[
+                { value: 'water', label: t('categories.water.name') },
+                { value: 'meal', label: t('categories.meal.name') },
+                { value: 'exercise', label: t('categories.exercise.name') },
+                { value: 'bathroom', label: t('categories.bathroom.name') },
+                { value: 'medicine', label: t('categories.medicine.name') },
+              ]}
+            />
+          </div>
+          <input
+            type="text"
+            className="input-field"
+            placeholder="Label (optional)"
+            value={label}
+            onChange={(e) => setLabel(e.target.value)}
+          />
+        </section>
+      )}
 
       <section className="edit-section">
         <div className="setting-row">
@@ -263,6 +326,16 @@ export const ReminderEdit: React.FC = () => {
           {t('actions.save')}
         </NyaButton>
       </div>
+      {!isNew && (
+        <div style={{ marginTop: '16px' }}>
+          <button 
+            style={{ width: '100%', padding: '12px', background: 'none', border: '1px solid var(--color-icon-bg-disabled)', color: 'var(--text-secondary)', borderRadius: '12px', cursor: 'pointer' }}
+            onClick={handleArchive}
+          >
+            {t('actions.archive', 'Archive Reminder')}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

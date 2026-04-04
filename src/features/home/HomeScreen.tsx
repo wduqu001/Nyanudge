@@ -5,6 +5,8 @@ import { useRemindersStore } from '../../core/store/remindersStore';
 import type { Category, Reminder } from '../../types/nyanudge';
 import { Card } from '../../shared/components/Card/Card';
 import { Toggle } from '../../shared/components/Toggle/Toggle';
+import { FAB } from '../../shared/components/FAB/FAB';
+import { BottomNav } from '../../shared/components/BottomNav/BottomNav';
 import { LottiePlayer } from '../../shared/animations';
 import { 
   WaterIcon, 
@@ -106,7 +108,7 @@ export const HomeScreen: React.FC = () => {
       <div className="section-label">{t('home.reminders_title')}</div>
 
       <section className="reminders-list">
-        {reminders.map((reminder: Reminder) => {
+        {reminders.filter(r => !r.archived).map((reminder: Reminder) => {
           const enabled = reminder.enabled;
           const bgConfig = enabled ? CATEGORY_BG_COLORS[reminder.category] : 'var(--color-icon-bg-disabled)';
 
@@ -178,35 +180,10 @@ export const HomeScreen: React.FC = () => {
         })}
       </section>
 
-      <nav className="bottom-nav">
-        <button className="nav-item nav-item-active" onClick={() => navigate('/')}>
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M3 9.5L10 3l7 6.5V17a1 1 0 01-1 1H5a1 1 0 01-1-1V9.5z" stroke="currentColor" strokeWidth="1.4" fill="none" />
-            <rect x="7" y="12" width="6" height="6" rx="1" fill="currentColor" opacity="0.4" />
-          </svg>
-          {t('home.nav.home')}
-        </button>
-        <button className="nav-item" onClick={() => navigate('/history')}>
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <rect x="3" y="4" width="14" height="13" rx="2" stroke="currentColor" strokeWidth="1.4" />
-            <line x1="7" y1="2" x2="7" y2="6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-            <line x1="13" y1="2" x2="13" y2="6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-            <line x1="3" y1="9" x2="17" y2="9" stroke="currentColor" strokeWidth="1" />
-          </svg>
-          {t('home.nav.history')}
-        </button>
-        <button className="nav-item" onClick={() => navigate('/settings')}>
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="1.4" />
-            <circle cx="10" cy="10" r="2.5" stroke="currentColor" strokeWidth="1.2" />
-            <line x1="10" y1="3" x2="10" y2="6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-            <line x1="10" y1="14" x2="10" y2="17" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-            <line x1="3" y1="10" x2="6" y2="10" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-            <line x1="14" y1="10" x2="17" y2="10" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-          </svg>
-          {t('home.nav.settings')}
-        </button>
-      </nav>
+      <FAB onClick={() => navigate('/reminder/new')} aria-label="Add Reminder" />
+
+      <BottomNav />
     </div>
   );
 };
+

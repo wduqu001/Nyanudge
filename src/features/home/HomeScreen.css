@@ -300,3 +300,26 @@
 .nav-item:hover {
   opacity: 0.8;
 }
+
+.fab {
+  position: absolute;
+  bottom: 80px;
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 28px;
+  background-color: var(--accent);
+  color: #fff;
+  border: none;
+  box-shadow: 0 4px 12px rgba(233, 123, 34, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: transform 0.2s;
+}
+
+.fab:active {
+  transform: scale(0.95);
+}

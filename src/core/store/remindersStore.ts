@@ -32,7 +32,7 @@ export const useRemindersStore = create<RemindersState>((set, get) => ({
     set({ reminders: updated, isLoaded: true });
     updated.forEach(r => {
       cancelReminder(r).finally(() => {
-        if (r.enabled) scheduleReminder(r);
+        if (r.enabled && !r.archived) scheduleReminder(r);
       });
     });
   },
@@ -43,7 +43,7 @@ export const useRemindersStore = create<RemindersState>((set, get) => ({
       schedules: reminder.schedules.map(s => ({ ...s, notifId: s.notifId ?? Math.floor(Math.random() * 2_000_000) }))
     };
     set((state) => ({ reminders: [...state.reminders, newReminder] }));
-    if (newReminder.enabled) {
+    if (newReminder.enabled && !newReminder.archived) {
       scheduleReminder(newReminder);
     }
   },
@@ -67,7 +67,7 @@ export const useRemindersStore = create<RemindersState>((set, get) => ({
     }));
 
     const newR = get().reminders.find((r) => r.id === id);
-    if (newR && newR.enabled) {
+    if (newR && newR.enabled && !newR.archived) {
       scheduleReminder(newR);
     }
   },
@@ -92,7 +92,7 @@ export const useRemindersStore = create<RemindersState>((set, get) => ({
     }));
 
     const newR = get().reminders.find((r) => r.id === id);
-    if (newR && newR.enabled) {
+    if (newR && newR.enabled && !newR.archived) {
       scheduleReminder(newR);
     }
   },

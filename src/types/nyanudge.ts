@@ -26,6 +26,7 @@ export interface Reminder {
   character: Character;
   customMessage?: string;
   schedules: Schedule[];
+  archived?: boolean;
   createdAt: number;
   updatedAt: number;
 }
@@ -56,6 +57,7 @@ export interface DefaultReminder {
   soundMode: SoundMode;
   snoozeMins: number;
   character: Character;
+  archived?: boolean;
   createdAt: number;
   updatedAt: number;
 }
