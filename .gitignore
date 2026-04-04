@@ -53,7 +53,9 @@ storybook-static/
 ._*
 .Spotlight-V100
 .Trashes
-Icon?
+# Specifically ignore the hidden macOS Icon\r file, but NOT the icons/ directory
+Icon[
+]
 ehthumbs.db
 Thumbs.db
 
