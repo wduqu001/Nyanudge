@@ -111,7 +111,15 @@
   },
   "history": {
     "title": "History & Stats",
-    "subtitle": "View completion history and habits."
+    "subtitle": "View completion history and habits.",
+    "heatmap_title": "Activity Heatmap",
+    "stats_title": "Daily Overview",
+    "category_stats_title": "Category Stats",
+    "recent_title": "Recent Activity",
+    "no_data": "No completions recorded yet. Keep it up!",
+    "current_streak": "Total Streaks",
+    "streak_record": "Longest Streak",
+    "total_completions": "Total Done"
   },
   "settings": {
     "title": "Settings",

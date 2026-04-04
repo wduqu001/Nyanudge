@@ -1,0 +1,180 @@
+.container {
+  padding: 24px;
+  background: var(--surface-bg);
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  margin-right: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  color: var(--text-primary);
+}
+
+.backButton:hover {
+  background: var(--surface-overlay);
+}
+
+.headerText h1 {
+  font-size: 1.75rem;
+  font-weight: 850;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.headerText p {
+  margin: 4px 0 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.statsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+}
+
+.sectionHeader h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.categorySection {
+  margin-top: 32px;
+}
+
+.categoryList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.categoryCard {
+  background: var(--surface-card);
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border-subtle);
+}
+
+.categoryHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.categoryName {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.categoryStreak {
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-accent-400);
+  background: var(--surface-overlay);
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+
+.categoryMetric {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.progressBar {
+  height: 6px;
+  background: var(--surface-bg);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease-out;
+}
+
+.recentSection {
+  margin-top: 32px;
+}
+
+.emptyState {
+  padding: 40px;
+  text-align: center;
+  background: var(--surface-card);
+  border-radius: 16px;
+  color: var(--text-muted);
+  border: 1px dashed var(--border-subtle);
+}
+
+.logList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.logItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: var(--surface-card);
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  border: 1px solid var(--border-subtle);
+}
+
+.logInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.logCategory {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.logLabel {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.logTime {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}

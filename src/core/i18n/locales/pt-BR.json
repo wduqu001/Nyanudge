@@ -114,8 +114,16 @@
     }
   },
   "history": {
-    "title": "Histórico e Stats",
-    "subtitle": "Veja seu histórico de conclusão e hábitos."
+    "title": "Histórico",
+    "subtitle": "Veja seu progresso e hábitos.",
+    "heatmap_title": "Mapa de Atividade",
+    "stats_title": "Visão Geral",
+    "category_stats_title": "Estatísticas",
+    "recent_title": "Atividade Recente",
+    "no_data": "Nenhuma conclusão registrada ainda. Continue assim!",
+    "current_streak": "Total de Sequências",
+    "streak_record": "Recorde de Sequência",
+    "total_completions": "Total Concluído"
   },
   "edit_reminder": {
     "title": "Editar {{label}}",

@@ -115,7 +115,15 @@
   },
   "history": {
     "title": "履歴と統計",
-    "subtitle": "完了履歴と習慣を確認しましょう。"
+    "subtitle": "完了履歴と習慣を確認しましょう。",
+    "heatmap_title": "アクティビティ・ヒートマップ",
+    "stats_title": "デイリー概要",
+    "category_stats_title": "カテゴリー統計",
+    "recent_title": "最近の履歴",
+    "no_data": "記録はまだありません。その調子で頑張りましょう！",
+    "current_streak": "合計継続日数",
+    "streak_record": "最長継続記録",
+    "total_completions": "完了数"
   },
   "settings": {
     "title": "設定",

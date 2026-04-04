@@ -115,7 +115,15 @@
   },
   "history": {
     "title": "Historial y estadísticas",
-    "subtitle": "Información sobre tus hábitos."
+    "subtitle": "Información sobre tus hábitos.",
+    "heatmap_title": "Mapa de actividad",
+    "stats_title": "Resumen diario",
+    "category_stats_title": "Estadísticas por categoría",
+    "recent_title": "Actividad reciente",
+    "no_data": "No hay registros grabados. ¡Sigue así!",
+    "current_streak": "Total de rachas",
+    "streak_record": "Racha más larga",
+    "total_completions": "Total completado"
   },
   "settings": {
     "title": "Ajustes",

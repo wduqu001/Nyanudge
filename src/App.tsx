@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useRemindersStore } from './core/store/remindersStore';
-import { defaultReminders } from './core/db/seed';
+import { useStatsStore } from './core/store/statsStore';
+import { defaultReminders, mockStats, mockRecentCompletions } from './core/db/seed';
 import { HomeScreen } from './features/home/HomeScreen';
 import { OnboardingFlow } from './features/onboarding/OnboardingFlow';
 import { ReminderEdit } from './features/reminders/ReminderEdit';
@@ -16,6 +17,7 @@ function App() {
   const { preferences, isLoaded, setLoaded } = usePreferencesStore();
   const isOnboardingComplete = preferences.isOnboardingComplete;
   const { setReminders, setLoaded: setRemindersLoaded } = useRemindersStore();
+  const { setStats, setRecentCompletions } = useStatsStore();
 
   useEffect(() => {
     // Sync theme
@@ -27,12 +29,27 @@ function App() {
     }
   }, [preferences.theme]);
 
+  const { i18n } = useTranslation();
+  useEffect(() => {
+    // Sync language
+    if (i18n.language !== preferences.language) {
+      i18n.changeLanguage(preferences.language);
+    }
+  }, [preferences.language, i18n]);
+
   useEffect(() => {
     // Simulate DB load
     setTimeout(() => {
       setLoaded(true);
       setReminders(defaultReminders as any);
       setRemindersLoaded(true);
+      if (import.meta.env.DEV) {
+        setStats(mockStats);
+        setRecentCompletions(mockRecentCompletions);
+      } else {
+        setStats({});
+        setRecentCompletions([]);
+      }
     }, 500);
   }, []);
 

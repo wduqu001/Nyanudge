@@ -134,7 +134,11 @@ export const HomeScreen: React.FC = () => {
                     <CategoryIcon category={reminder.category} enabled={enabled} />
                   </div>
                   <div className="reminder-card-text">
-                    <h3 style={{ color: textColor }}>{reminder.label}</h3>
+                    <h3 style={{ color: textColor }}>
+                      {reminder.label === t(`categories.${reminder.category}.name`, { lng: 'en' }) 
+                        ? t(`categories.${reminder.category}.name`) 
+                        : reminder.label}
+                    </h3>
                     <p style={{ color: subtextColor }}>
                       {formatSchedule(reminder)}
                     </p>
