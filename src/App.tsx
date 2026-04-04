@@ -10,10 +10,12 @@ import { SettingsScreen } from './features/settings/SettingsScreen';
 import { HistoryScreen } from './features/history/HistoryScreen';
 import { usePreferencesStore } from './core/store/preferencesStore';
 import { useTranslation } from 'react-i18next';
+import { useNotificationSetup } from './core/notifications/useNotificationSetup';
 import './App.css';
 
 function App() {
   const { t } = useTranslation();
+  useNotificationSetup();
   const { preferences, isLoaded, setLoaded } = usePreferencesStore();
   const isOnboardingComplete = preferences.isOnboardingComplete;
   const { setReminders, setLoaded: setRemindersLoaded } = useRemindersStore();
