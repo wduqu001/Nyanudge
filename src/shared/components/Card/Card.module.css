@@ -1,11 +1,11 @@
 .card {
   background-color: var(--surface-card);
   border: 0.5px solid var(--border-subtle);
-  border-radius: 12px;
-  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-sm);
   position: relative;
   overflow: hidden;
   text-align: left;
@@ -26,8 +26,8 @@
   top: 0;
   left: 0;
   bottom: 0;
-  width: 4px;
-  border-radius: 12px 0 0 12px;
+  width: var(--space-xs);
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
   background-color: var(--color-neutral-300); /* default disabled color */
   transition: background-color 0.2s ease;
 }

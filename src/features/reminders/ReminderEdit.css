@@ -1,5 +1,5 @@
 .reminder-edit-container {
-  padding: 24px;
+  padding: var(--space-xl);
   background-color: var(--surface-bg);
   min-height: 100vh;
   color: var(--text-primary);
@@ -9,7 +9,7 @@
 .edit-header {
   display: flex;
   align-items: center;
-  margin-bottom: 32px;
+  margin-bottom: var(--space-2xl);
 }
 
 .back-button {
@@ -17,62 +17,62 @@
   border: none;
   color: var(--text-primary);
   cursor: pointer;
-  padding: 8px;
-  margin-right: 12px;
+  padding: var(--space-sm);
+  margin-right: var(--space-md);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .edit-title {
-  font-size: 24px;
-  font-weight: 700;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
   margin: 0;
 }
 
 .edit-section {
-  margin-bottom: 32px;
+  margin-bottom: var(--space-2xl);
 }
 
 .section-label {
-  font-size: 13px;
-  font-weight: 700;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  padding: 10px 16px 8px;
+  padding: var(--space-sm) var(--space-lg) var(--space-sm);
 }
 
 .setting-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px;
+  padding: var(--space-lg);
   background-color: var(--surface-card);
   border: 1px solid var(--border-subtle);
-  border-radius: 12px;
-  margin-bottom: 12px;
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-md);
 }
 
 .setting-label {
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   color: var(--text-primary);
 }
 
 .setting-desc {
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   color: var(--text-secondary);
-  margin-top: 4px;
+  margin-top: var(--space-xs);
 }
 
 .input-field {
   width: 100%;
-  padding: 12px 16px;
+  padding: var(--space-md) var(--space-lg);
   background-color: var(--surface-card);
   border: 1px solid var(--border-subtle);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   color: var(--text-primary);
-  font-size: 16px;
+  font-size: var(--font-size-base);
   font-family: inherit;
   outline: none;
   transition: border-color 0.2s;
@@ -84,18 +84,18 @@
 
 .schedule-type-selector {
   display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
 }
 
 .type-button {
   flex: 1;
-  padding: 10px;
-  border-radius: 8px;
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border-subtle);
   background-color: var(--surface-card);
   color: var(--text-secondary);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -104,25 +104,25 @@
   background-color: var(--accent);
   color: var(--color-neutral-900);
   border-color: var(--accent);
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 .time-row {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
 }
 
 .time-input {
   flex: 1;
-  padding: 10px;
-  border-radius: 8px;
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border-subtle);
   background-color: var(--surface-card);
   color: var(--text-primary);
   font-family: inherit;
-  font-size: 15px;
+  font-size: var(--font-size-base);
   outline: none;
   transition: border-color 0.2s;
 }
@@ -139,7 +139,7 @@
 .days-selector {
   display: flex;
   justify-content: space-between;
-  margin-top: 8px;
+  margin-top: var(--space-sm);
 }
 
 .day-circle {
@@ -150,8 +150,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
-  font-weight: 700;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
   cursor: pointer;
   transition: all 0.2s;
   color: var(--text-secondary);
@@ -173,10 +173,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 12px;
+  padding: var(--space-md);
   background-color: var(--surface-card);
   border: 1px solid var(--border-subtle);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -193,14 +193,14 @@
 }
 
 .character-name {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
 }
 
 .action-buttons {
   display: flex;
-  gap: 12px;
-  margin-top: 40px;
+  gap: var(--space-md);
+  margin-top: var(--space-2xl);
 }
 
 .select-wrapper {
@@ -210,12 +210,12 @@
 
 .select-wrapper select {
   width: 100%;
-  padding: 12px 16px;
+  padding: var(--space-md) var(--space-lg);
   background-color: var(--surface-card);
   border: 1px solid var(--border-subtle);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   color: var(--text-primary);
-  font-size: 16px;
+  font-size: var(--font-size-base);
   appearance: none;
   cursor: pointer;
 }

@@ -1,5 +1,5 @@
 .header {
-  padding: 16px 24px;
+  padding: var(--space-lg) var(--space-xl);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -15,8 +15,8 @@
   border: none;
   color: var(--text-primary);
   cursor: pointer;
-  padding: 12px;
-  margin-left: -12px;
+  padding: var(--space-md);
+  margin-left: calc(var(--space-md) * -1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -29,8 +29,8 @@
 }
 
 .title {
-  font-size: 20px;
-  font-weight: 700;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
   color: var(--text-primary);
   margin: 0;
   flex: 1;
@@ -38,5 +38,5 @@
 }
 
 .spacer {
-  width: 24px;
+  width: var(--space-xl);
 }

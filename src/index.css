@@ -22,21 +22,21 @@ html, body {
 
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
 }
 
 h1 {
-  font-size: 28px;
-  font-weight: 700;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
 }
 
 h2 {
-  font-size: 20px;
+  font-size: var(--font-size-lg);
 }
 
 p, span, div {
-  font-size: 16px;
-  font-weight: 400;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
 }
 
 button, input, select {

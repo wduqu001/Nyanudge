@@ -2,14 +2,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 12px 24px;
-  border-radius: 9999px; /* Pill shape */
-  font-weight: 600;
-  font-size: 16px;
+  padding: var(--space-md) var(--space-xl);
+  border-radius: var(--radius-full); /* Pill shape */
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-base);
   cursor: pointer;
   border: none;
   transition: all 0.2s ease;
-  gap: 8px;
+  gap: var(--space-sm);
 }
 
 .button:disabled {
@@ -20,7 +20,7 @@
 .primary {
   background-color: var(--accent);
   color: #FFFFFF;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 @media (prefers-color-scheme: dark) {
