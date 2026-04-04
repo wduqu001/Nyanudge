@@ -90,7 +90,7 @@
 
 .next-up-pill {
   background-color: var(--accent);
-  color: #fff;
+  color: var(--color-neutral-900);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   padding: var(--space-xs) var(--space-md);
@@ -226,8 +226,9 @@
 
 .quick-actions {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-md);
 }
 
 .quick-info {

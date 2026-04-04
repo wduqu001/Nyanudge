@@ -229,5 +229,13 @@
       "weekends": "週末",
       "custom": "カスタム"
     }
+  },
+  "aria": {
+    "close_modal": "モーダルを閉じる",
+    "go_back": "戻る",
+    "main_navigation": "メインナビゲーション",
+    "menu": "メニュー",
+    "settings": "設定",
+    "add_reminder": "リマインダーを追加"
   }
 }

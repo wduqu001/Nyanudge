@@ -105,7 +105,7 @@
     "streak_message": "Racha de {{count}} días — ¡sigue así!",
     "reminders_title": "Tus recordatorios",
     "quick_edit": {
-      "next_fire": "Próximo aviso"
+      "next_fire": "Próximo"
     },
     "nav": {
       "home": "Inicio",
@@ -229,5 +229,13 @@
       "weekends": "Fines de semana",
       "custom": "Personalizado"
     }
+  },
+  "aria": {
+    "close_modal": "Cerrar modal",
+    "go_back": "Atrás",
+    "main_navigation": "Navegación principal",
+    "menu": "Menú",
+    "settings": "Ajustes",
+    "add_reminder": "Añadir recordatorio"
   }
 }

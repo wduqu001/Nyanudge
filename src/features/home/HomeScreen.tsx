@@ -76,16 +76,16 @@ export const HomeScreen: React.FC = () => {
   return (
     <div className="home-container">
       <header className="home-header">
-        <button className="icon-button" aria-label="Menu" onClick={() => navigate('/history')}>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <button className="icon-button" aria-label={t('aria.menu')} onClick={() => navigate('/history')}>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <rect y="3" width="16" height="1.5" rx="1" fill="currentColor" opacity="0.6" />
             <rect y="7" width="12" height="1.5" rx="1" fill="currentColor" opacity="0.6" />
             <rect y="11" width="16" height="1.5" rx="1" fill="currentColor" opacity="0.6" />
           </svg>
         </button>
         <h1 className="home-title">{t('app.name', 'NyaNudge')}</h1>
-        <button className="icon-button" aria-label="Settings" onClick={() => navigate('/settings')}>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <button className="icon-button" aria-label={t('aria.settings')} onClick={() => navigate('/settings')}>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <circle cx="8" cy="8" r="2.2" stroke="currentColor" strokeWidth="1.4" opacity="0.6" />
             <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.6" />
           </svg>
@@ -129,14 +129,16 @@ export const HomeScreen: React.FC = () => {
               className={`reminder-card ${expandedId === reminder.id ? 'expanded' : ''}`}
               onClick={() => handleCardClick(reminder.id)}
               categoryColor={enabled ? categoryColorMapping[reminder.category] : undefined}
+              aria-expanded={expandedId === reminder.id}
+              aria-label={reminder.label}
             >
               <div className="reminder-card-main">
                 <div className="reminder-card-content">
-                  <div className="reminder-card-icon" style={{ background: bgConfig }}>
+                  <div className="reminder-card-icon" style={{ background: bgConfig }} aria-hidden="true">
                     <CategoryIcon category={reminder.category} enabled={enabled} />
                   </div>
                   <div className="reminder-card-text">
-                    <h3 style={{ color: textColor }}>
+                    <h3 id={`label-${reminder.id}`} style={{ color: textColor }}>
                       {reminder.label === t(`categories.${reminder.category}.name`, { lng: 'en' }) 
                         ? t(`categories.${reminder.category}.name`) 
                         : reminder.label}
@@ -150,6 +152,7 @@ export const HomeScreen: React.FC = () => {
                       checked={reminder.enabled}
                       onChange={(_, e) => handleToggle(reminder.id, e)}
                       categoryColor={categoryColorMapping[reminder.category]}
+                      aria-labelledby={`label-${reminder.id}`}
                     />
                   </div>
                 </div>
@@ -180,7 +183,7 @@ export const HomeScreen: React.FC = () => {
         })}
       </section>
 
-      <FAB onClick={() => navigate('/reminder/new')} aria-label="Add Reminder" />
+      <FAB onClick={() => navigate('/reminder/new')} aria-label={t('aria.add_reminder')} />
 
       <BottomNav />
     </div>

@@ -101,7 +101,7 @@
     "streak_message": "{{count}}-day streak — keep going!",
     "reminders_title": "Your reminders",
     "quick_edit": {
-      "next_fire": "Next fire time"
+      "next_fire": "Next up"
     },
     "nav": {
       "home": "Home",
@@ -239,5 +239,13 @@
     "go_back": "Go back",
     "take_home": "Take me home",
     "footer": "error page"
+  },
+  "aria": {
+    "close_modal": "Close modal",
+    "go_back": "Go back",
+    "main_navigation": "Main navigation",
+    "menu": "Menu",
+    "settings": "Settings",
+    "add_reminder": "Add reminder"
   }
 }

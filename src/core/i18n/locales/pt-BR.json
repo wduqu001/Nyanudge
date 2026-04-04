@@ -105,7 +105,7 @@
     "streak_message": "Sequência de {{count}} dias — continue assim!",
     "reminders_title": "Seus lembretes",
     "quick_edit": {
-      "next_fire": "Próximo disparo"
+      "next_fire": "Próximo"
     },
     "nav": {
       "home": "Início",
@@ -229,5 +229,13 @@
       "description": "Escolha como você gostaria de ser cutucado.",
       "sound_mode": "Som e vibração da notificação"
     }
+  },
+  "aria": {
+    "close_modal": "Fechar modal",
+    "go_back": "Voltar",
+    "main_navigation": "Navegação principal",
+    "menu": "Menu",
+    "settings": "Configurações",
+    "add_reminder": "Adicionar lembrete"
   }
 }

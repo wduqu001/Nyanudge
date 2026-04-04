@@ -1,4 +1,5 @@
 import React, { type ReactNode, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import styles from './Modal.module.css';
 import { X } from 'lucide-react';
 
@@ -10,6 +11,7 @@ export interface ModalProps {
 }
 
 export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
+  const { t } = useTranslation();
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -31,7 +33,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
           {title && <h2 className={styles.title}>{title}</h2>}
-          <button className={styles.closeButton} onClick={onClose} aria-label="Close modal">
+          <button className={styles.closeButton} onClick={onClose} aria-label={t('aria.close_modal')}>
             <X size={24} />
           </button>
         </div>

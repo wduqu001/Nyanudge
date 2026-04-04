@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { ArrowLeft } from 'lucide-react';
 import styles from './Header.module.css';
 
@@ -16,6 +17,7 @@ export const NyaHeader: React.FC<NyaHeaderProps> = ({
   showBack = true, 
   rightContent 
 }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const handleBack = () => {
@@ -32,7 +34,7 @@ export const NyaHeader: React.FC<NyaHeaderProps> = ({
         <button 
           className={styles.backButton} 
           onClick={handleBack} 
-          aria-label="Go back"
+          aria-label={t('aria.go_back')}
         >
           <ArrowLeft size={24} />
         </button>

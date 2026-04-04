@@ -7,9 +7,19 @@ export interface ToggleProps {
   disabled?: boolean;
   label?: string;
   categoryColor?: 'water' | 'food' | 'exercise' | 'bathroom' | 'medicine';
+  'aria-labelledby'?: string;
+  'aria-label'?: string;
 }
 
-export const Toggle: React.FC<ToggleProps> = ({ checked, onChange, disabled, label, categoryColor }) => {
+export const Toggle: React.FC<ToggleProps> = ({ 
+  checked, 
+  onChange, 
+  disabled, 
+  label, 
+  categoryColor, 
+  'aria-labelledby': ariaLabelledBy,
+  'aria-label': ariaLabel
+}) => {
   const cn = [
     styles.toggle,
     checked ? styles.checked : '',
@@ -24,8 +34,11 @@ export const Toggle: React.FC<ToggleProps> = ({ checked, onChange, disabled, lab
         type="button"
         className={cn}
         onClick={(e) => !disabled && onChange(!checked, e)}
-        aria-pressed={checked}
+        role="switch"
+        aria-checked={checked}
         disabled={disabled}
+        aria-label={label || ariaLabel}
+        aria-labelledby={ariaLabelledBy}
       >
         <span className={styles.thumb} />
       </button>

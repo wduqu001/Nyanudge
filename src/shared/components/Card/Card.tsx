@@ -1,7 +1,7 @@
 import React, { type ReactNode } from 'react';
 import styles from './Card.module.css';
 
-export interface CardProps {
+export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
   categoryColor?: 'water' | 'food' | 'exercise' | 'bathroom' | 'medicine';
   onClick?: () => void;
@@ -13,6 +13,7 @@ export const Card: React.FC<CardProps> = ({
   categoryColor,
   onClick,
   className = '',
+  ...props
 }) => {
   const isClickable = !!onClick;
   const cn = [
@@ -23,7 +24,13 @@ export const Card: React.FC<CardProps> = ({
   ].filter(Boolean).join(' ');
 
   return (
-    <div className={cn} onClick={onClick} role={isClickable ? 'button' : undefined} tabIndex={isClickable ? 0 : undefined}>
+    <div 
+      className={cn} 
+      onClick={onClick} 
+      role={isClickable ? 'button' : undefined} 
+      tabIndex={isClickable ? 0 : undefined}
+      {...props}
+    >
       {children}
     </div>
   );
