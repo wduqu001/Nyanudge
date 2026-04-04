@@ -7,21 +7,22 @@ NyaNudge is a delightful mobile health companion that transforms daily habits in
 
 ## ✨ Features
 
-- **Cat-Powered Delights**: 8+ core vector animations (Lottie) featuring Mochi the cat.
-- **Smart Reminders**: 5 default health categories (Water, Meal, Exercise, Bathroom, Meds) with intelligently calculated schedules.
-- **Privacy First**: Local SQLite database with versioned migrations (Drizzle ORM). No data ever leaves your device.
-- **Tailored Experience**: Choose your cat character, set custom notification sounds, and toggle themes (Light/Dark mode).
-- **Streak Tracking**: Maintain your consistency and impress your cat crew with multi-day streaks.
+- **Animated Cat Characters**: Meet the crew! **Mochi** (the surprised one), **Kuro** (the mischievous one), and **Sora** (the calm one). Mochi and Kuro featuring interactive React-based SVGs with mouse-tracking and random behaviors.
+- **SQLite Persistence**: Full CRUD operations using `@capacitor-community/sqlite`. Supports mobile (native) and web (WASM/sql.js) environments.
+- **Smart Reminders**: 5 default health categories (Water, Meal, Exercise, Bathroom, Meds) with intelligently calculated fixed and interval schedules.
+- **Localization Infrastructure**: Built-in support for multiple languages (English & Portuguese BR fully implemented) with automatic date and time formatting (AM/PM vs 24h).
+- **Privacy First**: Local-only processing. No data ever leaves your device.
+- **Streak Tracking**: Maintain consistency and impress your cat crew with multi-day streaks and completion history with a visual activity heatmap.
 
 ## 🛠 Tech Stack
 
 - **Framework**: [React 19](https://react.dev/) + [Vite 8](https://vite.dev/)
 - **Native Bridge**: [Capacitor 8](https://capacitorjs.com/)
-- **State**: [Zustand](https://docs.pmnd.rs/zustand/getting-started/introduction)
-- **Database**: [SQLite](https://sqlite.org/) via `@capacitor-community/sqlite` + [Drizzle ORM](https://orm.drizzle.team/)
-- **Animations**: [Lottie-web](https://github.com/airbnb/lottie-web)
-- **Styling**: Vanilla CSS with CSS Modules & Design Tokens
-- **Testing**: [Vitest](https://vitest.dev/) & [Storybook](https://storybook.js.org/)
+- **State**: [Zustand](https://docs.pmnd.rs/zustand/getting-started/introduction) (Persistent middleware for database synchronization)
+- **Database**: [SQLite](https://sqlite.org/) via `@capacitor-community/sqlite`. Custom service layer for mapping snake_case SQL to camelCase TypeScript.
+- **Animations**: [Lottie-web](https://github.com/airbnb/lottie-web) & Interactive React SVGs
+- **Styling**: Vanilla CSS with Design Tokens & CSS Modules
+- **i18n**: [i18next](https://www.i18next.com/) with region-aware formatting.
 
 ## 🚀 Getting Started
 
@@ -49,14 +50,14 @@ npm run storybook
 
 ```text
 src/
-├── core/           # Database, Notification scheduling, i18n
-├── features/       # Feature-specific components (Home, Settings, etc.)
-├── shared/         # Common UI library & Animation registry
-└── assets/         # Lottie JSONs, sound files, and static images
+├── core/           # Database Manager, sql services, i18n
+├── features/       # Feature-specific modules (Home, History, Settings, Reminders)
+├── shared/         # Common UI library, Animation registry, and global utilities
+└── assets/         # SVGs, Lottie JSONs, and sound files
 ```
 
-## 🐱 Animation Registry
-The app uses a custom registry in `src/shared/animations` to manage Mochi's moods and movements. Every notification trigger corresponds to a unique motion-spec animation.
+## 🐱 Animation & Character System
+Characters like Mochi and Kuro use a combination of random event loops (blinking, ear twitching) and mouse-tracking eye movement. 
 
 ---
 Built with ❤️ and many 🐾 by the NyaNudge team.
