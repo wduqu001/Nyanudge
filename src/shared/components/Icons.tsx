@@ -81,3 +81,45 @@ export const CheckIcon: React.FC<IconProps> = ({ size = 20, color = 'currentColo
     <polyline points="20 6 9 17 4 12" />
   </svg>
 );
+
+export const HomeIcon: React.FC<IconProps> = ({ size = 20, color = 'currentColor', className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 20 20" fill="none" className={className} aria-hidden="true">
+    <path d="M3 9.5L10 3l7 6.5V17a1 1 0 01-1 1H5a1 1 0 01-1-1V9.5z" stroke={color} strokeWidth="1.4" fill="none" />
+    <rect x="7" y="12" width="6" height="6" rx="1" fill={color} opacity="0.4" />
+  </svg>
+);
+
+export const HistoryIcon: React.FC<IconProps> = ({ size = 20, color = 'currentColor', className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 20 20" fill="none" className={className} aria-hidden="true">
+    <rect x="3" y="4" width="14" height="13" rx="2" stroke={color} strokeWidth="1.4" />
+    <line x1="7" y1="2" x2="7" y2="6" stroke={color} strokeWidth="1.4" strokeLinecap="round" />
+    <line x1="13" y1="2" x2="13" y2="6" stroke={color} strokeWidth="1.4" strokeLinecap="round" />
+    <line x1="3" y1="9" x2="17" y2="9" stroke={color} strokeWidth="1" />
+  </svg>
+);
+
+export const SettingsIcon: React.FC<IconProps> = ({ size = 20, color = 'currentColor', className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 20 20" fill="none" className={className} aria-hidden="true">
+    <circle cx="10" cy="10" r="7" stroke={color} strokeWidth="1.4" />
+    <circle cx="10" cy="10" r="2.5" stroke={color} strokeWidth="1.2" />
+    <line x1="10" y1="3" x2="10" y2="6" stroke={color} strokeWidth="1.4" strokeLinecap="round" />
+    <line x1="10" y1="14" x2="10" y2="17" stroke={color} strokeWidth="1.4" strokeLinecap="round" />
+    <line x1="3" y1="10" x2="6" y2="10" stroke={color} strokeWidth="1.4" strokeLinecap="round" />
+    <line x1="14" y1="10" x2="17" y2="10" stroke={color} strokeWidth="1.4" strokeLinecap="round" />
+  </svg>
+);
+
+export const MenuIcon: React.FC<IconProps> = ({ size = 16, color = 'currentColor', className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 16 16" fill="none" className={className} aria-hidden="true">
+    <rect y="3" width="16" height="1.5" rx="1" fill={color} opacity="0.6" />
+    <rect y="7" width="12" height="1.5" rx="1" fill={color} opacity="0.6" />
+    <rect y="11" width="16" height="1.5" rx="1" fill={color} opacity="0.6" />
+  </svg>
+);
+
+export const CogIcon: React.FC<IconProps> = ({ size = 16, color = 'currentColor', className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 16 16" fill="none" className={className} aria-hidden="true">
+    <circle cx="8" cy="8" r="2.2" stroke={color} strokeWidth="1.4" opacity="0.6" />
+    <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41" stroke={color} strokeWidth="1.2" strokeLinecap="round" opacity="0.6" />
+  </svg>
+);

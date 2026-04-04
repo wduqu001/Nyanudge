@@ -13,7 +13,9 @@ import {
   MealIcon, 
   ExerciseIcon, 
   BathroomIcon, 
-  MedicineIcon 
+  MedicineIcon,
+  MenuIcon,
+  CogIcon
 } from '../../shared/components/Icons';
 import './HomeScreen.css';
 
@@ -77,18 +79,11 @@ export const HomeScreen: React.FC = () => {
     <div className="home-container">
       <header className="home-header">
         <button className="icon-button" aria-label={t('aria.menu')} onClick={() => navigate('/history')}>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-            <rect y="3" width="16" height="1.5" rx="1" fill="currentColor" opacity="0.6" />
-            <rect y="7" width="12" height="1.5" rx="1" fill="currentColor" opacity="0.6" />
-            <rect y="11" width="16" height="1.5" rx="1" fill="currentColor" opacity="0.6" />
-          </svg>
+          <MenuIcon size={16} />
         </button>
         <h1 className="home-title">{t('app.name', 'NyaNudge')}</h1>
         <button className="icon-button" aria-label={t('aria.settings')} onClick={() => navigate('/settings')}>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-            <circle cx="8" cy="8" r="2.2" stroke="currentColor" strokeWidth="1.4" opacity="0.6" />
-            <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.6" />
-          </svg>
+          <CogIcon size={16} />
         </button>
       </header>
 
