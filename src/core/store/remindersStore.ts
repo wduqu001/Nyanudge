@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 
-export type { Category, SoundMode, Character, Schedule, Reminder };
+
 
 interface RemindersState {
   reminders: Reminder[];

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useRemindersStore } from './core/store/remindersStore';
 import { useStatsStore } from './core/store/statsStore';
-import { defaultReminders, mockStats, mockRecentCompletions } from './core/db/seed';
+import { mockStats, mockRecentCompletions } from './core/db/seed';
 import { HomeScreen } from './features/home/HomeScreen';
 import { OnboardingFlow } from './features/onboarding/OnboardingFlow';
 import { ReminderEdit } from './features/reminders/ReminderEdit';
