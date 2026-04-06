@@ -29,6 +29,8 @@ NyaNudge is a delightful mobile health companion that transforms daily habits in
 ### Prerequisites
 - Node.js (v20+)
 - npm or pnpm
+- Java JDK 17 or higher
+- Android SDK (v34+)
 
 ### Installation
 ```bash
@@ -45,6 +47,34 @@ We use Storybook to develop and document our shared component library and animat
 # Start Storybook
 npm run storybook
 ```
+### Build (Android)
+
+To generate an Android APK, ensure you have the Android SDK properly configured.
+
+1.  **Configure Android SDK**:
+    Create or edit `android/local.properties` and add the path to your Android SDK:
+    ```properties
+    sdk.dir=/path/to/your/android/sdk
+    ```
+    *(On macOS with Homebrew, this is typically `/opt/homebrew/share/android-commandlinetools`)*.
+
+2.  **Build the Web Application**:
+    ```bash
+    npm run build
+    ```
+
+3.  **Sync with Capacitor**:
+    ```bash
+    npx cap sync
+    ```
+
+4.  **Generate the APK**:
+    Navigate to the `android` directory and run the Gradle wrapper:
+    ```bash
+    cd android
+    ./gradlew assembleDebug
+    ```
+    The generated APK will be located at: `android/app/build/outputs/apk/debug/app-debug.apk`.
 
 ## 📂 Project Structure
 
