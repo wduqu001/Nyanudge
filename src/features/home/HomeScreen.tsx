@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useRemindersStore } from '../../core/store/remindersStore';
 import { usePreferencesStore } from '../../core/store/preferencesStore';
+import { useStatsStore } from '../../core/store/statsStore';
 
 import { Card } from '../../shared/components/Card/Card';
 import { Toggle } from '../../shared/components/Toggle/Toggle';
@@ -49,7 +50,14 @@ export const HomeScreen: React.FC = () => {
   const navigate = useNavigate();
   const { reminders, toggleReminder } = useRemindersStore();
   const { preferences } = usePreferencesStore();
+  const { stats } = useStatsStore();
   const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  // Calculate max current streak across all categories
+  const statsList = Object.values(stats);
+  const maxStreak = statsList.length > 0 
+    ? Math.max(...statsList.map(s => s.currentStreak)) 
+    : 0;
 
   const handleToggle = (id: string, e?: React.MouseEvent) => {
     e?.stopPropagation();
@@ -98,9 +106,11 @@ export const HomeScreen: React.FC = () => {
         <div className="hero-sub">{t('home.hero_sub', { name: preferences.character.charAt(0).toUpperCase() + preferences.character.slice(1) })}</div>
       </section>
 
-      <section className="streak-banner">
-        🔥 <span>{t('home.streak_message', { count: 3 })}</span>
-      </section>
+      {maxStreak > 0 && (
+        <section className="streak-banner">
+          🔥 <span>{t('home.streak_message', { count: maxStreak })}</span>
+        </section>
+      )}
 
       <div className="section-label">{t('home.reminders_title')}</div>
 
