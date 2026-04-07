@@ -18,15 +18,7 @@
         android:strokeLineCap="round"
         android:fillColor="#00000000"/>
 
-    <!-- Body -->
-    <path
-        android:pathData="M54,66 A20,15 0 1 1 54,66.01"
-        android:fillColor="#F0EEE8"/>
-    <ellipse
-        android:cx="54"
-        android:cy="66"
-        android:rx="20"
-        android:ry="15"/>
+    <!-- Body (Ellipse as Path) -->
     <path
         android:pathData="M34,66 A20,15 0 1 0 74,66 A20,15 0 1 0 34,66 Z"
         android:fillColor="#F0EEE8"/>
