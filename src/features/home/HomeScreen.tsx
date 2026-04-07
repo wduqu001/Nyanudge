@@ -4,11 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { useRemindersStore } from '../../core/store/remindersStore';
 import { usePreferencesStore } from '../../core/store/preferencesStore';
 import { useStatsStore } from '../../core/store/statsStore';
-import { calculateNextFireTime } from '../../core/notifications/scheduler';
+import { calculateNextFireTime, snoozeReminder } from '../../core/notifications/scheduler';
 
 import { Card } from '../../shared/components/Card/Card';
 import { Toggle } from '../../shared/components/Toggle/Toggle';
 import { FAB } from '../../shared/components/FAB/FAB';
+import { LocalNotifications, type PendingResult } from '@capacitor/local-notifications';
 import { BottomNav } from '../../shared/components/BottomNav/BottomNav';
 import { AnimatedCatMochi } from '../../shared/components/AnimatedCatMochi/AnimatedCatMochi';
 import { AnimatedCatKuro } from '../../shared/components/KuroCat/AnimatedCatKuro';
@@ -49,10 +50,20 @@ const CATEGORY_BG_COLORS: Record<Category, string> = {
 export const HomeScreen: React.FC = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const { reminders, toggleReminder } = useRemindersStore();
+  const { reminders, toggleReminder, completeReminder, pendingNotifAction, setPendingNotifAction } = useRemindersStore();
   const { preferences } = usePreferencesStore();
   const { stats } = useStatsStore();
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [pendingNotifs, setPendingNotifs] = useState<PendingResult | null>(null);
+  const [, setTick] = useState(0);
+
+  // Re-calculate "Next Up" every minute
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setTick(t => t + 1);
+    }, 60000);
+    return () => clearInterval(timer);
+  }, []);
 
   // Calculate max current streak across all categories
   const statsList = Object.values(stats);
@@ -131,7 +142,11 @@ export const HomeScreen: React.FC = () => {
         <button className="icon-button" aria-label={t('aria.menu')} onClick={() => navigate('/history')}>
           <MenuIcon size={16} />
         </button>
-        <h1 className="home-title">{t('app.name', 'NyaNudge')}</h1>
+        <h1 className="home-title" onClick={async () => {
+          const pending = await LocalNotifications.getPending();
+          setPendingNotifs(pending);
+          setTimeout(() => setPendingNotifs(null), 10000); // Hide after 10s
+        }}>{t('app.name', 'NyaNudge')}</h1>
         <button className="icon-button" aria-label={t('aria.settings')} onClick={() => navigate('/settings')}>
           <CogIcon size={16} />
         </button>
@@ -159,6 +174,33 @@ export const HomeScreen: React.FC = () => {
         
         <div className="hero-sub">{t('home.hero_sub', { name: preferences.character.charAt(0).toUpperCase() + preferences.character.slice(1) })}</div>
       </section>
+
+      {pendingNotifs && (
+        <div style={{ margin: '0 20px', padding: 12, background: '#eee', borderRadius: 8, fontSize: 10, maxHeight: 200, overflow: 'auto', border: '1px solid #ccc' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+            <strong>Debug: Pending ({pendingNotifs.notifications.length})</strong>
+            <div style={{ display: 'flex', gap: 4 }}>
+              <button onClick={async () => {
+                await LocalNotifications.schedule({
+                  notifications: [{
+                    id: 999,
+                    title: 'Test Meow!',
+                    body: 'Firing in 5 seconds...',
+                    schedule: { at: new Date(Date.now() + 5000) },
+                    channelId: 'nyanudge_default'
+                  }]
+                });
+              }} style={{ fontSize: 9 }}>Test 5s</button>
+              <button onClick={() => LocalNotifications.requestPermissions()} style={{ fontSize: 9 }}>Perms</button>
+            </div>
+          </div>
+          {pendingNotifs.notifications.map(n => (
+            <div key={n.id} style={{ borderBottom: '1px solid #ccc', padding: '2px 0' }}>
+              ID: {n.id} | {n.title} | {n.schedule?.at ? new Date(n.schedule.at).toLocaleTimeString() : 'No time'}
+            </div>
+          ))}
+        </div>
+      )}
 
       {maxStreak > 0 && (
         <section className="streak-banner">
@@ -231,15 +273,37 @@ export const HomeScreen: React.FC = () => {
                         </span>
                       </div>
                     )}
-                    <button 
-                      className="edit-full-button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/reminder/${reminder.id}`);
-                      }}
-                    >
-                      {t('actions.edit_full', 'Edit Settings')}
-                    </button>
+                    <div style={{ display: 'flex', gap: 8, width: '100%' }}>
+                      <button 
+                        className="complete-button"
+                        style={{ 
+                          flex: 1, 
+                          background: 'var(--color-primary)', 
+                          color: 'white', 
+                          border: 'none', 
+                          padding: '8px 16px', 
+                          borderRadius: '20px',
+                          fontWeight: 'bold',
+                          cursor: 'pointer'
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          completeReminder(reminder.id);
+                        }}
+                      >
+                        {t('actions.done', 'Done')}
+                      </button>
+                      <button 
+                        className="edit-full-button"
+                        style={{ flex: 1 }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/reminder/${reminder.id}`);
+                        }}
+                      >
+                        {t('actions.edit_full', 'Edit Settings')}
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
@@ -249,6 +313,116 @@ export const HomeScreen: React.FC = () => {
       </section>
 
       <FAB onClick={() => navigate('/reminder/new')} aria-label={t('aria.add_reminder')} />
+
+      {/* ── Notification tap action sheet ──────────────────────────────── */}
+      {pendingNotifAction && (() => {
+        const rem = reminders.find(r => r.id === pendingNotifAction.reminderId);
+        const catColor = rem ? CATEGORY_COLORS[rem.category] : 'var(--accent)';
+        return (
+          <>
+            {/* Backdrop */}
+            <div
+              onClick={() => setPendingNotifAction(null)}
+              style={{
+                position: 'fixed', inset: 0,
+                background: 'rgba(0,0,0,0.45)',
+                zIndex: 200,
+                animation: 'fadeIn 0.2s ease'
+              }}
+            />
+            {/* Sheet */}
+            <div style={{
+              position: 'fixed', bottom: 0, left: 0, right: 0,
+              background: 'var(--surface-bg)',
+              borderRadius: '20px 20px 0 0',
+              padding: '24px 24px 40px',
+              zIndex: 201,
+              boxShadow: '0 -8px 32px rgba(0,0,0,0.18)',
+              animation: 'slideUp 0.28s cubic-bezier(.22,1,.36,1)'
+            }}>
+              {/* Handle bar */}
+              <div style={{ width: 40, height: 4, background: 'var(--border-subtle)', borderRadius: 2, margin: '0 auto 20px' }} />
+
+              {/* Reminder label */}
+              <div style={{ textAlign: 'center', marginBottom: 20 }}>
+                <div style={{
+                  width: 52, height: 52, borderRadius: 16,
+                  background: `${catColor}22`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  margin: '0 auto 10px'
+                }}>
+                  {rem && <CategoryIcon category={rem.category} enabled />}
+                </div>
+                <p style={{ margin: 0, fontWeight: 700, fontSize: 18, color: 'var(--text-primary)' }}>
+                  {pendingNotifAction.label}
+                </p>
+                <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-secondary)' }}>
+                  {t('home.notif_action_subtitle', 'O que deseja fazer?')}
+                </p>
+              </div>
+
+              {/* Actions */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <button
+                  onClick={() => {
+                    completeReminder(pendingNotifAction.reminderId);
+                    setPendingNotifAction(null);
+                  }}
+                  style={{
+                    padding: '14px 0',
+                    borderRadius: 14,
+                    border: 'none',
+                    background: catColor,
+                    color: '#fff',
+                    fontSize: 16,
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    width: '100%'
+                  }}
+                >
+                  ✓ {t('actions.done', 'Marcar como Feito')}
+                </button>
+
+                <button
+                  onClick={() => {
+                    if (rem) snoozeReminder(0, rem);
+                    setPendingNotifAction(null);
+                  }}
+                  style={{
+                    padding: '14px 0',
+                    borderRadius: 14,
+                    border: '1.5px solid var(--border-subtle)',
+                    background: 'transparent',
+                    color: 'var(--text-primary)',
+                    fontSize: 16,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    width: '100%'
+                  }}
+                >
+                  ⏱ {t('home.notif_next_time', 'Próxima vez')}
+                </button>
+
+                <button
+                  onClick={() => setPendingNotifAction(null)}
+                  style={{
+                    padding: '10px 0',
+                    borderRadius: 14,
+                    border: 'none',
+                    background: 'transparent',
+                    color: 'var(--text-muted)',
+                    fontSize: 14,
+                    cursor: 'pointer',
+                    width: '100%'
+                  }}
+                >
+                  {t('actions.cancel', 'Fechar')}
+                </button>
+              </div>
+            </div>
+          </>
+        );
+      })()}
 
       <BottomNav />
     </div>

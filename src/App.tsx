@@ -3,7 +3,7 @@ import { StatusBar, Style } from '@capacitor/status-bar';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useRemindersStore } from './core/store/remindersStore';
 import { useStatsStore } from './core/store/statsStore';
-import { mockStats, mockRecentCompletions } from './core/db/seed';
+import { mockStats } from './core/db/seed';
 import { HomeScreen } from './features/home/HomeScreen';
 import { OnboardingFlow } from './features/onboarding/OnboardingFlow';
 import { ReminderEdit } from './features/reminders/ReminderEdit';
@@ -17,11 +17,17 @@ import { PreferenceService } from './core/db/PreferenceService';
 import { dbManager } from './core/db/database';
 import './App.css';
 
+// Expose Zustand store to window so native notification listeners
+// (which run outside the React tree) can read state and call actions.
+(window as any).remindersStore = useRemindersStore;
+
 function App() {
-  const { t } = useTranslation();
+  const { i18n } = useTranslation();
   useNotificationSetup();
+
   const { preferences, isLoaded, setLoaded, loadPreferences } = usePreferencesStore();
   const isOnboardingComplete = preferences.isOnboardingComplete;
+
   const { setReminders, setLoaded: setRemindersLoaded } = useRemindersStore();
   const { setStats, setRecentCompletions } = useStatsStore();
 
@@ -37,7 +43,6 @@ function App() {
       root.setAttribute('data-theme', preferences.theme);
     }
 
-    // Sync native status bar to match CSS variables
     try {
       StatusBar.setStyle({ style: isDark ? Style.Dark : Style.Light }).catch(() => {});
       StatusBar.setBackgroundColor({ color: isDark ? '#141412' : '#FAFAF9' }).catch(() => {});
@@ -46,25 +51,18 @@ function App() {
     }
   }, [preferences.theme]);
 
-  const { i18n } = useTranslation();
   useEffect(() => {
-    // Sync language
     if (i18n.language !== preferences.language) {
       i18n.changeLanguage(preferences.language);
     }
   }, [preferences.language, i18n]);
 
   useEffect(() => {
-    // Real DB load
     const initDb = async () => {
       try {
-        // Initialize SQLite & Run Migrations
         await dbManager.init();
-        
-        // Seed if first run
         await ReminderService.seedIfEmpty();
-        
-        // Load data
+
         const reminders = await ReminderService.getAllReminders();
         setReminders(reminders);
         setRemindersLoaded(true);
@@ -74,29 +72,30 @@ function App() {
           loadPreferences(loadedPrefs);
         }
 
+        // Load completions from DB — persists across restarts
+        const completions = await ReminderService.getRecentCompletions();
+        setRecentCompletions(completions);
+
+        // Stats seeded in DEV only; production stats are calculated from completion_log
         if (import.meta.env.DEV) {
           setStats(mockStats);
-          setRecentCompletions(mockRecentCompletions);
         } else {
           setStats({});
-          setRecentCompletions([]);
         }
 
         setLoaded(true);
       } catch (err) {
         console.error('Failed to initialize app database:', err);
-        // Fallback to loaded anyway so the app can start (though with issues)
         setLoaded(true);
       }
     };
-
     initDb();
   }, []);
 
   if (!isLoaded) {
     return (
       <div style={{ display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center' }}>
-        {t('app.loading')}
+        Loading...
       </div>
     );
   }

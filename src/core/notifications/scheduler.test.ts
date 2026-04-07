@@ -77,9 +77,10 @@ describe('scheduler', () => {
       };
       vi.setSystemTime(new Date(2026, 4, 10, 12, 0));
       await scheduleReminder(reminder);
-      const notif = vi.mocked(LocalNotifications.schedule).mock.calls[0][0].notifications[0];
-      expect(notif.id).toBe(999);
-      expect(notif.title).toBe('categories.water.name');
+      const calls = vi.mocked(LocalNotifications.schedule).mock.calls;
+      const notif = calls[0]?.[0]?.notifications?.[0];
+      expect(notif?.id).toBe(999);
+      expect(notif?.title).toBe('categories.water.name');
     });
 
     it('does not schedule if disabled', async () => {
@@ -101,10 +102,11 @@ describe('scheduler', () => {
       const now = new Date(2026, 4, 10, 10, 0);
       vi.setSystemTime(now);
       await snoozeReminder(123, reminder);
-      const notif = vi.mocked(LocalNotifications.schedule).mock.calls[0][0].notifications[0];
-      expect(notif.id).toBe(123);
-      expect(notif.extra.isSnoozed).toBe(true);
-      expect(notif.schedule.at.getTime()).toBe(now.getTime() + 15 * 60_000);
+      const calls = vi.mocked(LocalNotifications.schedule).mock.calls;
+      const notif = calls[0]?.[0]?.notifications?.[0];
+      expect(notif?.id).toBe(123);
+      expect(notif?.extra?.isSnoozed).toBe(true);
+      expect(notif?.schedule?.at?.getTime()).toBe(now.getTime() + 15 * 60_000);
     });
   });
 });
