@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { useStatsStore } from '../core/store/statsStore';
 
 describe('StatsStore', () => {
@@ -40,9 +40,9 @@ describe('StatsStore', () => {
     const { stats } = useStatsStore.getState();
     
     expect(stats['water']).toBeDefined();
-    expect(stats['water'].currentStreak).toBe(1);
-    expect(stats['water'].longestStreak).toBe(1);
-    expect(stats['water'].lastCompletedDate).toBe('2023-10-05');
+    expect(stats['water']!.currentStreak).toBe(1);
+    expect(stats['water']!.longestStreak).toBe(1);
+    expect(stats['water']!.lastCompletedDate).toBe('2023-10-05');
   });
 
   it('incrementStreak does not increment again on the same day', () => {
@@ -54,7 +54,7 @@ describe('StatsStore', () => {
     useStatsStore.getState().incrementStreak('water');
     
     const { stats } = useStatsStore.getState();
-    expect(stats['water'].currentStreak).toBe(1);
+    expect(stats['water']!.currentStreak).toBe(1);
   });
 
   it('incrementStreak increments across multiple days', () => {
@@ -67,9 +67,9 @@ describe('StatsStore', () => {
     useStatsStore.getState().incrementStreak('water');
     
     const { stats } = useStatsStore.getState();
-    expect(stats['water'].currentStreak).toBe(2);
-    expect(stats['water'].longestStreak).toBe(2);
-    expect(stats['water'].lastCompletedDate).toBe('2023-10-06');
+    expect(stats['water']!.currentStreak).toBe(2);
+    expect(stats['water']!.longestStreak).toBe(2);
+    expect(stats['water']!.lastCompletedDate).toBe('2023-10-06');
   });
 
   it('resetStreak resets the current streak but keeps the longest streak', () => {
@@ -88,9 +88,9 @@ describe('StatsStore', () => {
     useStatsStore.getState().resetStreak('water');
     const { stats } = useStatsStore.getState();
     
-    expect(stats['water'].currentStreak).toBe(0);
-    expect(stats['water'].longestStreak).toBe(10); // Should be preserved
-    expect(stats['water'].lastCompletedDate).toBe('2023-10-05'); // Should be preserved
+    expect(stats['water']!.currentStreak).toBe(0);
+    expect(stats['water']!.longestStreak).toBe(10); // Should be preserved
+    expect(stats['water']!.lastCompletedDate).toBe('2023-10-05'); // Should be preserved
   });
 
   it('addCompletion adds to recentCompletions and keeps up to 200 entries', () => {
@@ -113,6 +113,6 @@ describe('StatsStore', () => {
     // Should only keep 200
     expect(useStatsStore.getState().recentCompletions.length).toBe(200);
     // The most recently added (id '249') should be at the front
-    expect(useStatsStore.getState().recentCompletions[0].id).toBe('249');
+    expect(useStatsStore.getState().recentCompletions[0]!.id).toBe('249');
   });
 });

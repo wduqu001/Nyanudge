@@ -65,8 +65,9 @@ describe('RemindersStore', () => {
     useRemindersStore.getState().updateReminder('r1', { label: 'Drink More Water', enabled: false });
 
     const updated = useRemindersStore.getState().reminders[0];
-    expect(updated.label).toBe('Drink More Water');
-    expect(updated.enabled).toBe(false);
+    expect(updated!).toBeDefined();
+    expect(updated!.label).toBe('Drink More Water');
+    expect(updated!.enabled).toBe(false);
 
     expect(cancelReminder).toHaveBeenCalled(); // Should have canceled old
     expect(ReminderService.updateReminder).toHaveBeenCalledWith('r1', expect.objectContaining({ label: 'Drink More Water' }));
@@ -89,7 +90,7 @@ describe('RemindersStore', () => {
 
     // Toggle off
     useRemindersStore.getState().toggleReminder('r1');
-    expect(useRemindersStore.getState().reminders[0].enabled).toBe(false);
+    expect(useRemindersStore.getState().reminders[0]!.enabled).toBe(false);
     expect(cancelReminder).toHaveBeenCalled();
     expect(ReminderService.updateReminder).toHaveBeenCalledWith('r1', { enabled: false });
 
@@ -97,7 +98,7 @@ describe('RemindersStore', () => {
 
     // Toggle on
     useRemindersStore.getState().toggleReminder('r1');
-    expect(useRemindersStore.getState().reminders[0].enabled).toBe(true);
+    expect(useRemindersStore.getState().reminders[0]!.enabled).toBe(true);
     expect(ReminderService.updateReminder).toHaveBeenCalledWith('r1', { enabled: true });
     expect(scheduleReminder).toHaveBeenCalled();
   });
