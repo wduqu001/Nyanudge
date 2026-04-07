@@ -7,6 +7,13 @@ const meta: Meta<typeof AnimatedCatMochi> = {
   parameters: {
     layout: 'centered',
   },
+  decorators: [
+    (Story) => (
+      <div style={{ width: '300px', height: '300px' }}>
+        <Story />
+      </div>
+    ),
+  ],
   tags: ['autodocs'],
 };
 
