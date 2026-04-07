@@ -6,13 +6,16 @@ const meta: Meta<typeof BottomNav> = {
   title: 'Shared/BottomNav',
   component: BottomNav,
   decorators: [
-    (Story) => (
-      <MemoryRouter initialEntries={['/']}>
-        <div style={{ width: '400px', height: '100px', position: 'relative', background: 'var(--surface-bg)' }}>
-          <Story />
-        </div>
-      </MemoryRouter>
-    ),
+    (Story, context) => {
+      const initialEntries = context.parameters.initialEntries || ['/'];
+      return (
+        <MemoryRouter initialEntries={initialEntries}>
+          <div style={{ width: '400px', height: '100px', position: 'relative', background: 'var(--surface-bg)' }}>
+            <Story />
+          </div>
+        </MemoryRouter>
+      );
+    },
   ],
   parameters: {
     layout: 'fullscreen',
@@ -26,25 +29,13 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
 
 export const AtHistory: Story = {
-  decorators: [
-    (Story) => (
-      <MemoryRouter initialEntries={['/history']}>
-        <div style={{ width: '400px', height: '100px', position: 'relative', background: 'var(--surface-bg)' }}>
-          <Story />
-        </div>
-      </MemoryRouter>
-    ),
-  ],
+  parameters: {
+    initialEntries: ['/history'],
+  },
 };
 
 export const AtSettings: Story = {
-  decorators: [
-    (Story) => (
-      <MemoryRouter initialEntries={['/settings']}>
-        <div style={{ width: '400px', height: '100px', position: 'relative', background: 'var(--surface-bg)' }}>
-          <Story />
-        </div>
-      </MemoryRouter>
-    ),
-  ],
+  parameters: {
+    initialEntries: ['/settings'],
+  },
 };
