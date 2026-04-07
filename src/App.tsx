@@ -12,6 +12,9 @@ import { HistoryScreen } from './features/history/HistoryScreen';
 import { usePreferencesStore } from './core/store/preferencesStore';
 import { useTranslation } from 'react-i18next';
 import { useNotificationSetup } from './core/notifications/useNotificationSetup';
+import { ReminderService } from './core/db/ReminderService';
+import { PreferenceService } from './core/db/PreferenceService';
+import { dbManager } from './core/db/database';
 import './App.css';
 
 function App() {
@@ -56,12 +59,9 @@ function App() {
     const initDb = async () => {
       try {
         // Initialize SQLite & Run Migrations
-        await import('./core/db/database').then(({ dbManager }) => dbManager.init());
+        await dbManager.init();
         
         // Seed if first run
-        const { ReminderService } = await import('./core/db/ReminderService');
-        const { PreferenceService } = await import('./core/db/PreferenceService');
-        
         await ReminderService.seedIfEmpty();
         
         // Load data
