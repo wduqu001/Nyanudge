@@ -6,38 +6,26 @@ import { AnimatedMeal } from './AnimatedMeal';
 import { AnimatedMedicine } from './AnimatedMedicine';
 import { AnimatedExercise } from './AnimatedExercise';
 import { AnimatedSleep } from './AnimatedSleep';
+import { AnimatedBathroom } from './AnimatedBathroom';
 
 interface LottiePlayerProps {
-  /** The specific animation key from the registry */
   animationKey: AnimationKey;
-  /** Whether the animation should loop; defaults to the metadata value for the key */
   loop?: boolean;
-  /** Whether the animation should play automatically; defaults to true */
   autoplay?: boolean;
-  /** Optional completion callback */
   onComplete?: () => void;
-  /** Custom CSS classes for the container */
   className?: string;
-  /** Inline styles for the container */
   style?: React.CSSProperties;
 }
 
-/** Keys that have been migrated to custom Mochi-style SVG components */
 const CUSTOM_SVG_KEYS = new Set<AnimationKey>([
   'cat_water',
   'cat_meal',
   'cat_medicine',
   'cat_exercise',
   'cat_sleep',
+  'cat_bathroom',
 ]);
 
-/**
- * LottiePlayer — unified animation renderer.
- * 
- * Checks whether the requested animation key has been migrated to a 
- * custom SVG component (decouple architecture). If so, renders the SVG.
- * Otherwise, falls back to the Lottie JSON renderer.
- */
 export const LottiePlayer: React.FC<LottiePlayerProps> = ({
   animationKey,
   loop,
@@ -84,6 +72,7 @@ export const LottiePlayer: React.FC<LottiePlayerProps> = ({
         case 'cat_medicine': return <AnimatedMedicine />;
         case 'cat_exercise': return <AnimatedExercise />;
         case 'cat_sleep':    return <AnimatedSleep />;
+        case 'cat_bathroom': return <AnimatedBathroom />;
         default:             return null;
       }
     };
