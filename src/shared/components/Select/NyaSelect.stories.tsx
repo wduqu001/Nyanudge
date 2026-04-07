@@ -30,7 +30,7 @@ const options = [
 
 export const Default: Story = {
   render: (args) => {
-    const [value, setValue] = useState(options[0].value);
+    const [value, setValue] = useState(options[0]!.value);
     return <NyaSelect {...args} value={value} onChange={setValue} />;
   },
   args: {
