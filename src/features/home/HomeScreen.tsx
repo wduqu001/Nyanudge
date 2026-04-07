@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useRemindersStore } from '../../core/store/remindersStore';
 import { usePreferencesStore } from '../../core/store/preferencesStore';
 import { useStatsStore } from '../../core/store/statsStore';
+import { calculateNextFireTime } from '../../core/notifications/scheduler';
 
 import { Card } from '../../shared/components/Card/Card';
 import { Toggle } from '../../shared/components/Toggle/Toggle';
@@ -64,6 +65,47 @@ export const HomeScreen: React.FC = () => {
     toggleReminder(id);
   };
 
+  // Find the next upcoming reminder
+  const nextReminderInfo = React.useMemo(() => {
+    let earliestDate: Date | null = null;
+    let nextReminder: Reminder | null = null;
+
+    reminders.forEach(r => {
+      if (!r.enabled || r.archived) return;
+      r.schedules.forEach(s => {
+        const fire = calculateNextFireTime(s);
+        if (fire && (!earliestDate || fire < earliestDate)) {
+          earliestDate = fire;
+          nextReminder = r;
+        }
+      });
+    });
+
+    if (!earliestDate || !nextReminder) return null;
+
+    const diffMs = (earliestDate as Date).getTime() - Date.now();
+    const diffMins = Math.round(diffMs / (1000 * 60));
+    
+    let timeStr = '';
+    if (diffMins < 1) {
+      timeStr = t('home.now', 'Now');
+    } else if (diffMins < 60) {
+      timeStr = `${diffMins} ${t('edit_reminder.minutes')}`;
+    } else if (diffMins < 1440) { // Less than a day
+      const hours = Math.floor(diffMins / 60);
+      const remainingMins = diffMins % 60;
+      timeStr = remainingMins > 0 ? `${hours}h ${remainingMins}m` : `${hours}h`;
+    } else {
+      const days = Math.floor(diffMins / 1440);
+      timeStr = `${days}d+`;
+    }
+
+    return {
+      reminder: nextReminder as Reminder,
+      timeStr
+    };
+  }, [reminders, t]);
+
   const handleCardClick = (id: string) => {
     setExpandedId(expandedId === id ? null : id);
   };
@@ -101,8 +143,20 @@ export const HomeScreen: React.FC = () => {
           {preferences.character === 'kuro'  && <AnimatedCatKuro />}
           {preferences.character === 'sora'  && <CatSora />}
         </div>
-        <div className="next-up-pill">{t('home.next_up', { time: '14 min' })}</div>
-        <div className="hero-copy">{t('categories.water.name')}</div>
+
+        {nextReminderInfo ? (
+          <>
+            <div className="next-up-pill">{t('home.next_up', { time: nextReminderInfo.timeStr })}</div>
+            <div className="hero-copy">
+              {nextReminderInfo.reminder.label === t(`categories.${nextReminderInfo.reminder.category}.name`, { lng: 'en' }) 
+                ? t(`categories.${nextReminderInfo.reminder.category}.name`) 
+                : nextReminderInfo.reminder.label}
+            </div>
+          </>
+        ) : (
+          <div className="hero-copy">{t('home.no_reminders', 'No active reminders')}</div>
+        )}
+        
         <div className="hero-sub">{t('home.hero_sub', { name: preferences.character.charAt(0).toUpperCase() + preferences.character.slice(1) })}</div>
       </section>
 
@@ -200,4 +254,3 @@ export const HomeScreen: React.FC = () => {
     </div>
   );
 };
-

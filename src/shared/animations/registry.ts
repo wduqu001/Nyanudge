@@ -1,5 +1,5 @@
 import catIdle from '../../assets/lottie/cat_idle.json';
-import catWater from '../../assets/lottie/cat_water.json';
+import loadingWater from '../../assets/lottie/Loading_water.json';
 import catMeal from '../../assets/lottie/cat_meal.json';
 import catExercise from '../../assets/lottie/cat_exercise.json';
 import catBathroom from '../../assets/lottie/cat_bathroom.json';
@@ -12,14 +12,19 @@ import catSleep from '../../assets/lottie/cat_sleep.json';
  * respective Lottie JSON data. This allows for central management 
  * and dynamic selection of animations.
  * 
- * TODO: IMPROVE ASSETS - Show only the task category animation (e.g. water drop, food).
- * There is no need for the cat to be baked into these animations. 
- * This allows the user's selected character (Mochi, Sora, Kuro) to be 
- * rendered independently.
+ * NOTE: The following keys are now successfully migrated to specialized 
+ * SVG components in LottiePlayer.tsx to decouple task visuals from cat characters:
+ *  - cat_water     -> AnimatedWater.tsx
+ *  - cat_meal      -> AnimatedMeal.tsx
+ *  - cat_medicine  -> AnimatedMedicine.tsx
+ * 
+ * TODO: IMPROVE ASSETS - Complete the migration for the remaining categories:
+ *  - cat_exercise
+ *  - cat_bathroom
  */
 export const animationRegistry = {
   cat_idle: catIdle,
-  cat_water: catWater,
+  cat_water: loadingWater,
   cat_meal: catMeal,
   cat_exercise: catExercise,
   cat_bathroom: catBathroom,
