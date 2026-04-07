@@ -89,5 +89,8 @@ src/
 ## 🐱 Animation & Character System
 Characters like Mochi and Kuro use a combination of random event loops (blinking, ear twitching) and mouse-tracking eye movement. 
 
+### Future Animation Direction 🚀
+We are currently moving towards decoupling the specific cat characters from the task-based animations (water, food, medicine). The goal is to show **only the task category animation** (the object) so that these can be dynamically paired with whichever cat character the user has selected.
+
 ---
 Built with ❤️ and many 🐾 by the NyaNudge team.

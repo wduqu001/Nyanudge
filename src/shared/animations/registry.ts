@@ -11,6 +11,11 @@ import catSleep from '../../assets/lottie/cat_sleep.json';
  * AnimationRegistry maps the animation keys used in the app to their 
  * respective Lottie JSON data. This allows for central management 
  * and dynamic selection of animations.
+ * 
+ * TODO: IMPROVE ASSETS - Show only the task category animation (e.g. water drop, food).
+ * There is no need for the cat to be baked into these animations. 
+ * This allows the user's selected character (Mochi, Sora, Kuro) to be 
+ * rendered independently.
  */
 export const animationRegistry = {
   cat_idle: catIdle,

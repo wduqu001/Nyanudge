@@ -21,6 +21,9 @@ interface LottiePlayerProps {
  * LottiePlayer is a wrapper for lottie-web that integrates with the NyaNudge 
  * animation registry. It handles loading, playback, and lifecycle of 
  * the vector animations.
+ * 
+ * NOTE FOR IMPROVEMENT: Shift focus to showing only the category animation (the task object)
+ * without the cat being bundled together.
  */
 export const LottiePlayer: React.FC<LottiePlayerProps> = ({
   animationKey,
