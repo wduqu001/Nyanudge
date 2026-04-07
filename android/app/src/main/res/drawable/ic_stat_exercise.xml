@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="@color/white">
+    <!-- Head -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M12,2 m-2.2,0 a2.2,2.2 0 1 0 4.4,0 a2.2,2.2 0 1 0 -4.4,0"/>
+    <!-- Running body: torso leaning forward -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M8,7 C8,7 10,6 12,6.5 C14,7 15.5,8.5 15,10 L13,10 L11.5,14 L14,18 L12.5,19 L9.5,14.5 L8,10.5 L6.5,13 L5,12 Z"/>
+    <!-- Arm reaching forward -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M13,9 L17,7 L17.5,8.5 L13.5,10.5 Z"/>
+    <!-- Front leg -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M11.5,14 L14,19.5 L15.5,19 L13,13.5 Z"/>
+    <!-- Back leg -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M10,13 L8,18.5 L6.5,18 L8.5,12.5 Z"/>
+</vector>

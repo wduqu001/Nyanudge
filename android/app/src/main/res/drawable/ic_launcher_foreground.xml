@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Adaptive icon foreground layer.
+  Canvas is 108×108dp; safe zone is the inner 72×72dp (18dp inset on each side).
+  Mochi is drawn inside the safe zone so no launcher crop clips the cat.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Tail -->
+    <path
+        android:pathData="M60,64 Q72,57 67,46"
+        android:strokeColor="#3A3835"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"/>
+
+    <!-- Body -->
+    <path
+        android:pathData="M54,66 A20,15 0 1 1 54,66.01"
+        android:fillColor="#F0EEE8"/>
+    <ellipse
+        android:cx="54"
+        android:cy="66"
+        android:rx="20"
+        android:ry="15"/>
+    <path
+        android:pathData="M34,66 A20,15 0 1 0 74,66 A20,15 0 1 0 34,66 Z"
+        android:fillColor="#F0EEE8"/>
+
+    <!-- Left ear -->
+    <path
+        android:pathData="M37,30 L30,16 L43,24 Z"
+        android:fillColor="#F0EEE8"/>
+    <path
+        android:pathData="M38,29 L32,18 L42,25 Z"
+        android:fillColor="#FFD4D4"/>
+
+    <!-- Right ear -->
+    <path
+        android:pathData="M71,30 L78,16 L65,24 Z"
+        android:fillColor="#F0EEE8"/>
+    <path
+        android:pathData="M70,29 L76,18 L66,25 Z"
+        android:fillColor="#FFD4D4"/>
+
+    <!-- Head -->
+    <path
+        android:pathData="M54,24 m-19,0 a19,19 0 1 0 38,0 a19,19 0 1 0 -38,0"
+        android:fillColor="#F0EEE8"/>
+
+    <!-- Left eye -->
+    <path
+        android:pathData="M45,23 m-4,0 a4,4.5 0 1 0 8,0 a4,4.5 0 1 0 -8,0"
+        android:fillColor="#2A2A2A"/>
+    <!-- Left eye shine -->
+    <path
+        android:pathData="M46.5,21 m-1.5,0 a1.5,1.5 0 1 0 3,0 a1.5,1.5 0 1 0 -3,0"
+        android:fillColor="#FFFFFF"/>
+
+    <!-- Right eye -->
+    <path
+        android:pathData="M63,23 m-4,0 a4,4.5 0 1 0 8,0 a4,4.5 0 1 0 -8,0"
+        android:fillColor="#2A2A2A"/>
+    <!-- Right eye shine -->
+    <path
+        android:pathData="M64.5,21 m-1.5,0 a1.5,1.5 0 1 0 3,0 a1.5,1.5 0 1 0 -3,0"
+        android:fillColor="#FFFFFF"/>
+
+    <!-- Nose -->
+    <path
+        android:pathData="M54,30 m-2,0 a2,1.5 0 1 0 4,0 a2,1.5 0 1 0 -4,0"
+        android:fillColor="#FFB3B3"/>
+
+    <!-- Mouth -->
+    <path
+        android:pathData="M49.5,33 Q54,36.5 58.5,33"
+        android:strokeColor="#C8C6C0"
+        android:strokeWidth="1.4"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"/>
+
+    <!-- Whiskers left -->
+    <path android:pathData="M56,30 L68,27" android:strokeColor="#C8C6C0" android:strokeWidth="0.9" android:fillColor="#00000000"/>
+    <path android:pathData="M56,32 L68,33" android:strokeColor="#C8C6C0" android:strokeWidth="0.9" android:fillColor="#00000000"/>
+    <!-- Whiskers right -->
+    <path android:pathData="M52,30 L40,27" android:strokeColor="#C8C6C0" android:strokeWidth="0.9" android:fillColor="#00000000"/>
+    <path android:pathData="M52,32 L40,33" android:strokeColor="#C8C6C0" android:strokeWidth="0.9" android:fillColor="#00000000"/>
+
+    <!-- Clock face outer ring (dark) -->
+    <path
+        android:pathData="M54,65 m-8.5,0 a8.5,8.5 0 1 0 17,0 a8.5,8.5 0 1 0 -17,0"
+        android:fillColor="#2C2C2A"
+        android:strokeColor="#E97B22"
+        android:strokeWidth="1.6"/>
+
+    <!-- Clock face inner (white dial) -->
+    <path
+        android:pathData="M54,65 m-6,0 a6,6 0 1 0 12,0 a6,6 0 1 0 -12,0"
+        android:fillColor="#FFFFFF"/>
+
+    <!-- Clock center dot -->
+    <path
+        android:pathData="M54,65 m-1.2,0 a1.2,1.2 0 1 0 2.4,0 a1.2,1.2 0 1 0 -2.4,0"
+        android:fillColor="#E97B22"/>
+
+    <!-- Clock minute hand (pointing up) -->
+    <path
+        android:pathData="M54,65 L54,59.5"
+        android:strokeColor="#E97B22"
+        android:strokeWidth="1.3"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"/>
+
+    <!-- Clock hour hand -->
+    <path
+        android:pathData="M54,65 L57.5,67"
+        android:strokeColor="#888780"
+        android:strokeWidth="1.1"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"/>
+
+</vector>

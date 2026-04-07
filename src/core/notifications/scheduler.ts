@@ -8,27 +8,35 @@ import i18n from '../i18n';
 
 // Maps each category to the appropriate sound file and channel
 const CATEGORY_CHANNEL: Record<Category, string> = {
-  water:    'nyanudge_default',
-  meal:     'nyanudge_default',
+  water: 'nyanudge_default',
+  meal: 'nyanudge_default',
   exercise: 'nyanudge_default',
   bathroom: 'nyanudge_default',
   medicine: 'nyanudge_medication',
 };
 
 const CATEGORY_SOUND: Record<Category, string> = {
-  water:    'chime_soft',
-  meal:     'bell_gentle',
+  water: 'chime_soft',
+  meal: 'bell_gentle',
   exercise: 'bell_gentle',
   bathroom: 'chime_soft',
   medicine: 'chime_persistent',
 };
 
 const CATEGORY_ANIMATION: Record<Category, string> = {
-  water:    'cat_water',
-  meal:     'cat_meal',
+  water: 'cat_water',
+  meal: 'cat_meal',
   exercise: 'cat_exercise',
   bathroom: 'cat_bathroom',
   medicine: 'cat_medicine',
+};
+
+const CATEGORY_ICONS: Record<string, string> = {
+  water: 'ic_stat_water',
+  meal: 'ic_stat_meal',
+  exercise: 'ic_stat_exercise',
+  bathroom: 'ic_stat_bathroom',
+  medicine: 'ic_stat_medicine',
 };
 
 /**
@@ -69,12 +77,12 @@ export function calculateNextFireTime(schedule: Schedule): Date | undefined {
   if (schedule.type === 'interval' && schedule.timeValue) {
     const intervalMins = parseInt(schedule.timeValue, 10);
     const startParts = (schedule.startTime ?? '07:00').split(':');
-    const endParts   = (schedule.endTime   ?? '21:00').split(':');
+    const endParts = (schedule.endTime ?? '21:00').split(':');
 
     const startH = Number(startParts[0]);
     const startM = Number(startParts[1]);
-    const endH   = Number(endParts[0]);
-    const endM   = Number(endParts[1]);
+    const endH = Number(endParts[0]);
+    const endM = Number(endParts[1]);
 
     if (isNaN(startH) || isNaN(startM) || isNaN(endH) || isNaN(endM)) return undefined;
 
@@ -125,6 +133,7 @@ export async function scheduleReminder(reminder: Reminder): Promise<void> {
       body: reminder.customMessage ?? pickMessage(reminder.category),
       schedule: { at: fireTime, repeats: false }, // re-schedule on each fire via action handler
       sound: reminder.soundMode !== 'silent' ? CATEGORY_SOUND[reminder.category as Category] : undefined,
+      smallIcon: CATEGORY_ICONS[reminder.category as Category],
       channelId: CATEGORY_CHANNEL[reminder.category as Category],
       extra: {
         reminderId: reminder.id,
@@ -171,6 +180,7 @@ export async function snoozeReminder(
         body: i18n.t(`snooze.${reminder.snoozeMins}`),
         schedule: { at: fireTime, repeats: false },
         sound: reminder.soundMode !== 'silent' ? CATEGORY_SOUND[reminder.category as Category] : undefined,
+        smallIcon: CATEGORY_ICONS[reminder.category as Category],
         channelId: CATEGORY_CHANNEL[reminder.category as Category],
         extra: {
           reminderId: reminder.id,

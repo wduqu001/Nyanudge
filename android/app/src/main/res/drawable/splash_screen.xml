@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Capacitor / Android 12 splash screen layer-list.
+  Background: brand dark.
+  Center: Mochi face — kept simple for instant render at startup.
+  Used in res/values/styles.xml as:
+    <item name="android:windowSplashScreenBackground">@color/splash_bg</item>
+    <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_screen</item>
+  Or for pre-API-31 via Capacitor's SplashScreen plugin pointing to this drawable.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Background fill -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#1A1512"/>
+        </shape>
+    </item>
+
+    <!-- Centered Mochi icon — 200dp × 200dp inset -->
+    <item
+        android:gravity="center"
+        android:width="200dp"
+        android:height="200dp"
+        android:drawable="@drawable/ic_launcher_foreground"/>
+
+</layer-list>
