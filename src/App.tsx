@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { StatusBar, Style } from '@capacitor/status-bar';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useRemindersStore } from './core/store/remindersStore';
 import { useStatsStore } from './core/store/statsStore';
@@ -24,10 +25,21 @@ function App() {
   useEffect(() => {
     // Sync theme
     const root = document.documentElement;
+    const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDark = preferences.theme === 'dark' || (preferences.theme === 'system' && isSystemDark);
+
     if (preferences.theme === 'system') {
       root.removeAttribute('data-theme');
     } else {
       root.setAttribute('data-theme', preferences.theme);
+    }
+
+    // Sync native status bar to match CSS variables
+    try {
+      StatusBar.setStyle({ style: isDark ? Style.Dark : Style.Light }).catch(() => {});
+      StatusBar.setBackgroundColor({ color: isDark ? '#141412' : '#FAFAF9' }).catch(() => {});
+    } catch (e) {
+      console.log('StatusBar not available', e);
     }
   }, [preferences.theme]);
 

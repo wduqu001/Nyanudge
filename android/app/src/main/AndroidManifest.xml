@@ -30,6 +30,11 @@
     </application>
 
     <!-- Permissions -->
-
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Android 13+ Push Notifications -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Android 12+ Exact Alarms -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <!-- Android 13+ Use Exact Alarms constraint -->
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
 </manifest>
