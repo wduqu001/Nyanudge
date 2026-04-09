@@ -93,14 +93,9 @@ export function calculateNextFireTime(schedule: Schedule): Date | undefined {
     // Before window starts today → fire at window start
     if (now < windowStart) return windowStart;
 
-    // Inside window → snap to the next clean slot aligned to windowStart
+    // Inside window → fire after one interval from NOW
     if (now <= windowEnd) {
-      const elapsedMs   = now.getTime() - windowStart.getTime();
-      const intervalMs  = intervalMins * 60_000;
-      // How many complete intervals have elapsed since the window opened?
-      const slotsElapsed = Math.floor(elapsedMs / intervalMs);
-      // Next slot = windowStart + (slotsElapsed + 1) intervals
-      const next = new Date(windowStart.getTime() + (slotsElapsed + 1) * intervalMs);
+      const next = new Date(now.getTime() + intervalMins * 60_000);
       if (next <= windowEnd) return next;
     }
 

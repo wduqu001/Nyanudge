@@ -67,9 +67,9 @@ describe('Scheduler Logic: calculateNextFireTime', () => {
       });
       
       expect(fireTime).toBeDefined();
-      // 08:00, 09:00, 10:00, 11:00... since 10:45 has passed, next is 11:00
+      // 10:45 + 60 mins = 11:45
       expect(fireTime?.getHours()).toBe(11);
-      expect(fireTime?.getMinutes()).toBe(0);
+      expect(fireTime?.getMinutes()).toBe(45);
       expect(fireTime?.getDate()).toBe(10);
     });
 
@@ -87,6 +87,21 @@ describe('Scheduler Logic: calculateNextFireTime', () => {
       expect(fireTime?.getHours()).toBe(8);
       expect(fireTime?.getMinutes()).toBe(0);
       expect(fireTime?.getDate()).toBe(11); // Rolling over to the 11th
+    });
+
+    it('schedules exactly 10 minutes from now for frequent medical intervals', () => {
+      // Current time is 17:18
+      vi.setSystemTime(new Date(2023, 9, 10, 17, 18, 0));
+      
+      const fireTime = calculateNextFireTime({
+        id: 'med-1', reminderId: 'r1', type: 'interval', timeValue: '10',
+        startTime: '08:00', endTime: '22:00'
+      });
+      
+      expect(fireTime).toBeDefined();
+      // User expects 17:18 + 10 = 17:28
+      expect(fireTime?.getHours()).toBe(17);
+      expect(fireTime?.getMinutes()).toBe(28);
     });
 
     it('returns undefined if required fields are missing', () => {
