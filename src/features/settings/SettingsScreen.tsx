@@ -1,6 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePreferencesStore } from '../../core/store/preferencesStore';
+import { useStatsStore } from '../../core/store/statsStore';
+import { ReminderService } from '../../core/db/ReminderService';
 import { NyaButton } from '../../shared/components/Button/NyaButton';
 import { Toggle } from '../../shared/components/Toggle/Toggle';
 import { NyaHeader } from '../../shared/components/Header/NyaHeader';
@@ -11,6 +13,7 @@ import styles from './SettingsScreen.module.css';
 export const SettingsScreen: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { preferences, updatePreference, resetPreferences } = usePreferencesStore();
+  const { setRecentCompletions, setStats } = useStatsStore();
 
   const handleLanguageChange = (newLang: string) => {
     updatePreference('language', newLang);
@@ -23,6 +26,13 @@ export const SettingsScreen: React.FC = () => {
 
   const handleClearHistory = () => {
     if (window.confirm(t('settings.data.clear_confirm'))) {
+      // Clear in-memory store immediately so the UI reflects the change
+      setRecentCompletions([]);
+      setStats({});
+      // Persist the wipe to the database
+      ReminderService.clearHistory().catch(err =>
+        console.error('[Settings] Failed to clear history from DB:', err)
+      );
       alert(t('settings.data.history_cleared'));
     }
   };

@@ -55,7 +55,9 @@ describe('scheduler', () => {
       vi.setSystemTime(now);
       const schedule: Schedule = { id: '1', reminderId: 'r1', type: 'interval', timeValue: '60', startTime: '07:00', endTime: '21:00' };
       const result = calculateNextFireTime(schedule);
+      // elapsed = 90 min from 07:00 → slotsElapsed = 1 → next slot = 07:00 + 2×60 = 09:00
       expect(result?.getHours()).toBe(9);
+      expect(result?.getMinutes()).toBe(0);
     });
 
     it('interval: pushes tomorrow if now is past end window', () => {

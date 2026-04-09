@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { useRemindersStore } from '../core/store/remindersStore';
+import { useStatsStore } from '../core/store/statsStore';
 import { scheduleReminder, cancelReminder } from '../core/notifications/scheduler';
 import { ReminderService } from '../core/db/ReminderService';
 
@@ -12,11 +13,12 @@ vi.mock('../core/db/ReminderService', () => ({
   ReminderService: {
     addReminder: vi.fn().mockResolvedValue(undefined),
     updateReminder: vi.fn().mockResolvedValue(undefined),
-    deleteReminder: vi.fn().mockResolvedValue(undefined)
+    deleteReminder: vi.fn().mockResolvedValue(undefined),
+    addCompletion: vi.fn().mockResolvedValue(undefined)
   }
 }));
 
-const mockReminder = {
+const mockReminder: Reminder = {
   id: 'r1',
   category: 'water' as const,
   label: 'Drink Water',
@@ -29,27 +31,71 @@ const mockReminder = {
   updatedAt: 1000
 };
 
+const archivedReminder: Reminder = {
+  ...mockReminder,
+  id: 'r2',
+  archived: true
+};
+
+const disabledReminder: Reminder = {
+  ...mockReminder,
+  id: 'r3',
+  enabled: false
+};
+
 describe('RemindersStore', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    useRemindersStore.setState({
-      reminders: [],
-      isLoaded: false
-    });
+    useRemindersStore.setState({ reminders: [], isLoaded: false, pendingNotifAction: null });
+    useStatsStore.setState({ stats: {}, recentCompletions: [], isLoaded: false });
   });
+
+  // ── setReminders ───────────────────────────────────────────────────────────
 
   it('setReminders sets the reminders and schedules active ones', async () => {
     useRemindersStore.getState().setReminders([mockReminder]);
-    
+
     expect(useRemindersStore.getState().reminders.length).toBe(1);
     expect(useRemindersStore.getState().isLoaded).toBe(true);
     expect(cancelReminder).toHaveBeenCalledWith(expect.objectContaining({ id: 'r1' }));
-    
-    // flush microtasks because setReminders calls scheduleReminder in a .finally() block
-    await Promise.resolve();
-    
+
+    await Promise.resolve(); // flush finally() microtask
+
     expect(scheduleReminder).toHaveBeenCalledWith(expect.objectContaining({ id: 'r1' }));
   });
+
+  it('setReminders does NOT schedule archived reminders', async () => {
+    useRemindersStore.getState().setReminders([archivedReminder]);
+
+    await Promise.resolve();
+
+    expect(cancelReminder).toHaveBeenCalled();
+    expect(scheduleReminder).not.toHaveBeenCalled();
+  });
+
+  it('setReminders does NOT schedule disabled reminders', async () => {
+    useRemindersStore.getState().setReminders([disabledReminder]);
+
+    await Promise.resolve();
+
+    expect(cancelReminder).toHaveBeenCalled();
+    expect(scheduleReminder).not.toHaveBeenCalled();
+  });
+
+  it('setReminders assigns notifId when it is missing', () => {
+    const reminderWithoutNotifId: Reminder = {
+      ...mockReminder,
+      schedules: [{ id: 's1', reminderId: 'r1', type: 'fixed', timeValue: '08:00' }]
+    };
+
+    useRemindersStore.getState().setReminders([reminderWithoutNotifId]);
+
+    const stored = useRemindersStore.getState().reminders[0]!;
+    expect(stored.schedules[0]!.notifId).toBeDefined();
+    expect(typeof stored.schedules[0]!.notifId).toBe('number');
+  });
+
+  // ── addReminder ────────────────────────────────────────────────────────────
 
   it('addReminder adds to state, DB, and schedules if active', () => {
     useRemindersStore.getState().addReminder(mockReminder);
@@ -59,21 +105,64 @@ describe('RemindersStore', () => {
     expect(scheduleReminder).toHaveBeenCalledWith(expect.objectContaining({ id: 'r1' }));
   });
 
+  it('addReminder does not schedule a disabled reminder', () => {
+    useRemindersStore.getState().addReminder(disabledReminder);
+
+    expect(scheduleReminder).not.toHaveBeenCalled();
+    expect(ReminderService.addReminder).toHaveBeenCalled();
+  });
+
+  it('addReminder does not schedule an archived reminder', () => {
+    useRemindersStore.getState().addReminder(archivedReminder);
+
+    expect(scheduleReminder).not.toHaveBeenCalled();
+  });
+
+  // ── updateReminder ─────────────────────────────────────────────────────────
+
   it('updateReminder updates state, DB, cancels old and schedules new', () => {
     useRemindersStore.setState({ reminders: [mockReminder] });
-    
+
     useRemindersStore.getState().updateReminder('r1', { label: 'Drink More Water', enabled: false });
 
     const updated = useRemindersStore.getState().reminders[0];
-    expect(updated!).toBeDefined();
     expect(updated!.label).toBe('Drink More Water');
     expect(updated!.enabled).toBe(false);
 
-    expect(cancelReminder).toHaveBeenCalled(); // Should have canceled old
+    expect(cancelReminder).toHaveBeenCalled();
     expect(ReminderService.updateReminder).toHaveBeenCalledWith('r1', expect.objectContaining({ label: 'Drink More Water' }));
-    // Shouldn't schedule because it is disabled
-    expect(scheduleReminder).not.toHaveBeenCalled();
+    expect(scheduleReminder).not.toHaveBeenCalled(); // disabled => no schedule
   });
+
+  it('updateReminder schedules when reminder is still enabled', () => {
+    useRemindersStore.setState({ reminders: [mockReminder] });
+
+    useRemindersStore.getState().updateReminder('r1', { label: 'Updated' });
+
+    expect(scheduleReminder).toHaveBeenCalledWith(expect.objectContaining({ id: 'r1' }));
+  });
+
+  it('updateReminder for a non-existent id does not throw and does not modify state', () => {
+    useRemindersStore.setState({ reminders: [mockReminder] });
+
+    expect(() => {
+      useRemindersStore.getState().updateReminder('unknown-id', { label: 'Ghost' });
+    }).not.toThrow();
+
+    expect(useRemindersStore.getState().reminders[0]!.label).toBe('Drink Water');
+  });
+
+  it('updateReminder stamps updatedAt', () => {
+    const now = 9_999_999;
+    vi.spyOn(Date, 'now').mockReturnValue(now);
+    useRemindersStore.setState({ reminders: [mockReminder] });
+
+    useRemindersStore.getState().updateReminder('r1', { label: 'New Label' });
+
+    expect(useRemindersStore.getState().reminders[0]!.updatedAt).toBe(now);
+  });
+
+  // ── deleteReminder ─────────────────────────────────────────────────────────
 
   it('deleteReminder removes from state, DB and cancels notification', () => {
     useRemindersStore.setState({ reminders: [mockReminder] });
@@ -85,10 +174,20 @@ describe('RemindersStore', () => {
     expect(ReminderService.deleteReminder).toHaveBeenCalledWith('r1');
   });
 
+  it('deleteReminder for a non-existent id does not modify state', () => {
+    useRemindersStore.setState({ reminders: [mockReminder] });
+
+    useRemindersStore.getState().deleteReminder('ghost');
+
+    expect(useRemindersStore.getState().reminders.length).toBe(1);
+  });
+
+  // ── toggleReminder ─────────────────────────────────────────────────────────
+
   it('toggleReminder flips the enabled state, updates DB, and schedules/cancels appropriately', () => {
     useRemindersStore.setState({ reminders: [mockReminder] });
 
-    // Toggle off
+    // Toggle OFF
     useRemindersStore.getState().toggleReminder('r1');
     expect(useRemindersStore.getState().reminders[0]!.enabled).toBe(false);
     expect(cancelReminder).toHaveBeenCalled();
@@ -96,16 +195,112 @@ describe('RemindersStore', () => {
 
     vi.clearAllMocks();
 
-    // Toggle on
+    // Toggle ON
     useRemindersStore.getState().toggleReminder('r1');
     expect(useRemindersStore.getState().reminders[0]!.enabled).toBe(true);
     expect(ReminderService.updateReminder).toHaveBeenCalledWith('r1', { enabled: true });
     expect(scheduleReminder).toHaveBeenCalled();
   });
 
-  it('toggleReminder un-archives if active?', () => {
-    // Current toggleReminder only changes 'enabled', it does not unarchive.
-    // So this is a documentation check: toggleReminder doesn't unarchive explicitly,
-    // but the schedule condition `&& !newR.archived` handles schedule logic.
+  it('toggleReminder on an archived reminder does not schedule even when enabled', () => {
+    useRemindersStore.setState({ reminders: [{ ...archivedReminder, enabled: false }] });
+
+    // Toggle "on" for an archived reminder
+    useRemindersStore.getState().toggleReminder('r2');
+    expect(useRemindersStore.getState().reminders[0]!.enabled).toBe(true);
+    expect(scheduleReminder).not.toHaveBeenCalled(); // archived guard must hold
+  });
+
+  // ── completeReminder ───────────────────────────────────────────────────────
+
+  it('completeReminder adds a completion entry to statsStore', () => {
+    useRemindersStore.setState({ reminders: [mockReminder] });
+
+    useRemindersStore.getState().completeReminder('r1');
+
+    const completions = useStatsStore.getState().recentCompletions;
+    expect(completions.length).toBe(1);
+    expect(completions[0]!.reminderId).toBe('r1');
+    expect(completions[0]!.category).toBe('water');
+    expect(completions[0]!.wasSkipped).toBe(false);
+  });
+
+  it('completeReminder increments the streak for the reminder category', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2023-10-10T12:00:00Z'));
+
+    useRemindersStore.setState({ reminders: [mockReminder] });
+
+    useRemindersStore.getState().completeReminder('r1');
+
+    const stats = useStatsStore.getState().stats;
+    expect(stats['water']!.currentStreak).toBe(1);
+    expect(stats['water']!.lastCompletedDate).toBe('2023-10-10');
+    vi.useRealTimers();
+  });
+
+  it('completeReminder persists the completion to the DB', () => {
+    useRemindersStore.setState({ reminders: [mockReminder] });
+
+    useRemindersStore.getState().completeReminder('r1');
+
+    expect(ReminderService.addCompletion).toHaveBeenCalledWith(
+      expect.objectContaining({ reminderId: 'r1', category: 'water', wasSkipped: false })
+    );
+  });
+
+  it('completeReminder is a no-op when the reminder does not exist', () => {
+    useRemindersStore.setState({ reminders: [] });
+
+    expect(() => {
+      useRemindersStore.getState().completeReminder('non-existent');
+    }).not.toThrow();
+
+    expect(useStatsStore.getState().recentCompletions.length).toBe(0);
+    expect(ReminderService.addCompletion).not.toHaveBeenCalled();
+  });
+
+  it('completeReminder does not double-count streak on the same day', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2023-10-10T08:00:00Z'));
+
+    useRemindersStore.setState({ reminders: [mockReminder] });
+
+    useRemindersStore.getState().completeReminder('r1');
+    vi.setSystemTime(new Date('2023-10-10T20:00:00Z'));
+    useRemindersStore.getState().completeReminder('r1');
+
+    expect(useStatsStore.getState().stats['water']!.currentStreak).toBe(1);
+    vi.useRealTimers();
+  });
+
+  // ── setPendingNotifAction ──────────────────────────────────────────────────
+
+  it('setPendingNotifAction stores the action and can be cleared', () => {
+    const action = { reminderId: 'r1', label: 'Drink Water', category: 'water' as const };
+
+    useRemindersStore.getState().setPendingNotifAction(action);
+    expect(useRemindersStore.getState().pendingNotifAction).toEqual(action);
+
+    useRemindersStore.getState().setPendingNotifAction(null);
+    expect(useRemindersStore.getState().pendingNotifAction).toBeNull();
+  });
+
+  // ── getReminderByCategory ──────────────────────────────────────────────────
+
+  it('getReminderByCategory returns the first matching reminder', () => {
+    const mealReminder: Reminder = { ...mockReminder, id: 'r4', category: 'meal' };
+    useRemindersStore.setState({ reminders: [mockReminder, mealReminder] });
+
+    const found = useRemindersStore.getState().getReminderByCategory('meal');
+    expect(found).toBeDefined();
+    expect(found!.id).toBe('r4');
+  });
+
+  it('getReminderByCategory returns undefined when no match exists', () => {
+    useRemindersStore.setState({ reminders: [mockReminder] });
+
+    const found = useRemindersStore.getState().getReminderByCategory('exercise');
+    expect(found).toBeUndefined();
   });
 });

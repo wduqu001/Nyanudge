@@ -141,4 +141,17 @@ export class ReminderService {
       wasSkipped:  !!row.was_skipped,
     }));
   }
+
+  /**
+   * Wipe all completion history and reset streak counters stored in the DB.
+   * Called by the "Clear History" action in Settings.
+   */
+  static async clearHistory(): Promise<void> {
+    const db = dbManager.connection;
+    await db.run('DELETE FROM completion_log');
+    // Reset streak columns so they are consistent with the empty log
+    await db.run(
+      'UPDATE reminders SET current_streak = 0, longest_streak = 0, last_completed_date = NULL'
+    );
+  }
 }

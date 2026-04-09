@@ -93,9 +93,14 @@ export function calculateNextFireTime(schedule: Schedule): Date | undefined {
     // Before window starts today → fire at window start
     if (now < windowStart) return windowStart;
 
-    // Inside window → fire after one interval from NOW
+    // Inside window → snap to the next clean slot aligned to windowStart
     if (now <= windowEnd) {
-      const next = new Date(now.getTime() + intervalMins * 60_000);
+      const elapsedMs   = now.getTime() - windowStart.getTime();
+      const intervalMs  = intervalMins * 60_000;
+      // How many complete intervals have elapsed since the window opened?
+      const slotsElapsed = Math.floor(elapsedMs / intervalMs);
+      // Next slot = windowStart + (slotsElapsed + 1) intervals
+      const next = new Date(windowStart.getTime() + (slotsElapsed + 1) * intervalMs);
       if (next <= windowEnd) return next;
     }
 
@@ -205,7 +210,7 @@ export async function scheduleReminder(reminder: Reminder): Promise<void> {
 
 /** Reschedule a notification for snooze. */
 export async function snoozeReminder(
-  _notifId: number,
+  notifId: number,
   reminder: Reminder,
 ): Promise<void> {
   const fireTime = new Date(Date.now() + reminder.snoozeMins * 60_000);
@@ -214,7 +219,7 @@ export async function snoozeReminder(
 
   await LocalNotifications.schedule({
     notifications: [{
-      id:           randomId(),
+      id:           notifId,  // reuse the same ID so the tray notification is replaced, not duplicated
       title,
       body:         i18n.t(`snooze.${reminder.snoozeMins}`),
       schedule:     { at: fireTime, repeats: false },
