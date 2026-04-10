@@ -32,78 +32,107 @@ export const useRemindersStore = create<RemindersState>((set, get) => ({
   pendingNotifAction: null,
 
   setReminders: (reminders) => {
-    const updated = reminders.map(r => ({
-      ...r,
-      schedules: r.schedules.map(s => ({ ...s, notifId: s.notifId ?? Math.floor(Math.random() * 2_000_000) }))
-    }));
-    set({ reminders: updated, isLoaded: true });
-    updated.forEach(r => {
-      cancelReminder(r).finally(() => {
-        if (r.enabled && !r.archived) scheduleReminder(r);
+    set({ reminders, isLoaded: true });
+    reminders.forEach(r => {
+      // local reference to avoid race conditions if 'r' changes
+      const current = r;
+      cancelReminder(current).finally(() => {
+        if (current.enabled && !current.archived) scheduleReminder(current);
       });
     });
   },
 
-  addReminder: (reminder) => {
-    const newReminder = {
-      ...reminder,
-      schedules: reminder.schedules.map(s => ({ ...s, notifId: s.notifId ?? Math.floor(Math.random() * 2_000_000) }))
-    };
-    set((state) => ({ reminders: [...state.reminders, newReminder] }));
-    ReminderService.addReminder(newReminder).catch(err => console.error('[Store] Error saving reminder:', err));
-    if (newReminder.enabled && !newReminder.archived) scheduleReminder(newReminder);
+  addReminder: async (reminder) => {
+    // Persist first to ensure data safety
+    try {
+      await ReminderService.addReminder(reminder);
+    } catch (err) {
+      console.error('[Store] Error saving reminder:', err);
+      return; // prevent adding state if DB fails
+    }
+
+    set((state) => ({ reminders: [...state.reminders, reminder] }));
+
+    // schedule
+    if (reminder.enabled && !reminder.archived) {
+      scheduleReminder(reminder);
+    }
   },
 
-  updateReminder: (id, changes) => {
+  updateReminder: async (id, changes) => {
     const oldR = get().reminders.find((r) => r.id === id);
-    if (oldR) cancelReminder(oldR);
 
+    // optimistic UI update
     set((state) => ({
       reminders: state.reminders.map((r) => {
         if (r.id === id) {
-          const updated = { ...r, ...changes, updatedAt: Date.now() };
-          updated.schedules = updated.schedules.map(s => ({
-            ...s,
-            notifId: s.notifId ?? Math.floor(Math.random() * 2_000_000)
-          }));
-          return updated;
+          return { ...r, ...changes, updatedAt: Date.now() };
         }
         return r;
       }),
     }));
 
-    ReminderService.updateReminder(id, changes).catch(err => console.error('[Store] Error updating reminder:', err));
+    // cancel old notifications to prevent ghosts
+    if (oldR) cancelReminder(oldR);
 
+    try {
+      await ReminderService.updateReminder(id, changes);
+    } catch (err) {
+      console.error('[Store] Error updating reminder:', err);
+      // Optional: Consider a rollback state if DB write fails
+    }
+
+    // Reschedule if needed
     const newR = get().reminders.find((r) => r.id === id);
-    if (newR && newR.enabled && !newR.archived) scheduleReminder(newR);
+    if (newR && newR.enabled && !newR.archived) {
+      scheduleReminder(newR);
+    }
   },
 
-  deleteReminder: (id) => {
+  deleteReminder: async (id) => {
     const oldR = get().reminders.find((r) => r.id === id);
-    if (oldR) cancelReminder(oldR);
+
+    // optimistic UI removal
     set((state) => ({ reminders: state.reminders.filter((r) => r.id !== id) }));
-    ReminderService.deleteReminder(id).catch(err => console.error('[Store] Error deleting reminder:', err));
+
+    if (oldR) cancelReminder(oldR);
+
+    try {
+      await ReminderService.deleteReminder(id);
+    } catch (err) {
+      console.error('[Store] Error deleting reminder:', err);
+    }
   },
 
-  toggleReminder: (id) => {
+  toggleReminder: async (id) => {
     const oldR = get().reminders.find((r) => r.id === id);
-    if (oldR) cancelReminder(oldR);
+    if (!oldR) return;
+
+    const newEnabledState = !oldR.enabled;
+
+    // cancel existing
+    cancelReminder(oldR);
 
     set((state) => ({
       reminders: state.reminders.map((r) =>
-        r.id === id ? { ...r, enabled: !r.enabled, updatedAt: Date.now() } : r
+        r.id === id ? { ...r, enabled: newEnabledState, updatedAt: Date.now() } : r
       ),
     }));
 
-    if (oldR) {
-      ReminderService.updateReminder(id, { enabled: !oldR.enabled }).catch(err => console.error('[Store] Error toggling reminder:', err));
+    try {
+      await ReminderService.updateReminder(id, { enabled: newEnabledState });
+    } catch (err) {
+      console.error('[Store] Error toggling reminder:', err);
     }
 
-    const newR = get().reminders.find((r) => r.id === id);
-    if (newR && newR.enabled && !newR.archived) scheduleReminder(newR);
+    // Reschedule if enabling
+    if (newEnabledState) {
+      const newR = get().reminders.find((r) => r.id === id);
+      if (newR && newR.enabled && !newR.archived) scheduleReminder(newR);
+    }
   },
 
-  completeReminder: (id: string) => {
+  completeReminder: async (id: string) => {
     const r = get().reminders.find(rem => rem.id === id);
     if (!r) return;
 
@@ -118,7 +147,29 @@ export const useRemindersStore = create<RemindersState>((set, get) => ({
 
     addCompletion(entry);
     incrementStreak(r.category);
+
+    // Update reminder anchor so the next interval starts from NOW
+    const now = Date.now();
+    set((state) => ({
+      reminders: state.reminders.map((rem) =>
+        rem.id === id ? { ...rem, updatedAt: now } : rem
+      ),
+    }));
+
+    // Persist Completion & Anchor
     ReminderService.addCompletion(entry).catch(err => console.error('[Store] Error saving completion:', err));
+    ReminderService.updateReminder(id, { updatedAt: now }).catch(() => { }); // Anchor it in DB too
+
+    // Reschedule
+    // only reschedule if the reminder has interval types. Fixed reminders don't need reescheduling
+    const hasInterval = r.schedules.some(s => s.type === 'interval');
+
+    if (hasInterval && r.enabled && !r.archived) {
+      const updatedR = get().reminders.find(rem => rem.id === id);
+      if (updatedR) {
+        scheduleReminder(updatedR);
+      }
+    }
   },
 
   setPendingNotifAction: (action) => set({ pendingNotifAction: action }),

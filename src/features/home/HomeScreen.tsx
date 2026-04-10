@@ -16,6 +16,7 @@ import { AnimatedCatKuro } from '../../shared/components/KuroCat/AnimatedCatKuro
 import { CatSora } from '../../shared/components/SoraCat/CatSora';
 import { CogIcon, MenuIcon, WaterIcon, MealIcon, ExerciseIcon, BathroomIcon, MedicineIcon } from '../../shared/components/Icons';
 import { formatLocalizedTime } from '../../shared/utils/dateUtils';
+import { DebugPanel } from './DebugPanel';
 import './HomeScreen.css';
 
 const CategoryIcon = ({ category, enabled }: { category: Category, enabled: boolean }) => {
@@ -83,8 +84,9 @@ export const HomeScreen: React.FC = () => {
 
     reminders.forEach(r => {
       if (!r.enabled || r.archived) return;
+      const cleanAnchor = Math.floor(Math.max(r.updatedAt || 0, r.createdAt || 0) / 60000) * 60000;
       r.schedules.forEach(s => {
-        const fire = calculateNextFireTime(s);
+        const fire = calculateNextFireTime(s, cleanAnchor);
         if (fire && (!earliestDate || fire < earliestDate)) {
           earliestDate = fire;
           nextReminder = r;
@@ -176,30 +178,7 @@ export const HomeScreen: React.FC = () => {
       </section>
 
       {pendingNotifs && (
-        <div style={{ margin: '0 20px', padding: 12, background: '#eee', borderRadius: 8, fontSize: 10, maxHeight: 200, overflow: 'auto', border: '1px solid #ccc' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-            <strong>Debug: Pending ({pendingNotifs.notifications.length})</strong>
-            <div style={{ display: 'flex', gap: 4 }}>
-              <button onClick={async () => {
-                await LocalNotifications.schedule({
-                  notifications: [{
-                    id: 999,
-                    title: 'Test Meow!',
-                    body: 'Firing in 5 seconds...',
-                    schedule: { at: new Date(Date.now() + 5000) },
-                    channelId: 'nyanudge_default'
-                  }]
-                });
-              }} style={{ fontSize: 9 }}>Test 5s</button>
-              <button onClick={() => LocalNotifications.requestPermissions()} style={{ fontSize: 9 }}>Perms</button>
-            </div>
-          </div>
-          {pendingNotifs.notifications.map(n => (
-            <div key={n.id} style={{ borderBottom: '1px solid #ccc', padding: '2px 0' }}>
-              ID: {n.id} | {n.title} | {n.schedule?.at ? new Date(n.schedule.at).toLocaleTimeString() : 'No time'}
-            </div>
-          ))}
-        </div>
+        <DebugPanel pendingNotifs={pendingNotifs} setPendingNotifs={setPendingNotifs} />
       )}
 
       {maxStreak > 0 && (
