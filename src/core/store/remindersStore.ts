@@ -16,11 +16,11 @@ interface RemindersState {
   pendingNotifAction: NotifTapAction | null;
 
   setReminders: (reminders: Reminder[]) => void;
-  addReminder: (reminder: Reminder) => void;
-  updateReminder: (id: string, changes: Partial<Reminder>) => void;
-  deleteReminder: (id: string) => void;
-  toggleReminder: (id: string) => void;
-  completeReminder: (id: string) => void;
+  addReminder: (reminder: Reminder) => Promise<void>;
+  updateReminder: (id: string, changes: Partial<Reminder>) => Promise<void>;
+  deleteReminder: (id: string) => Promise<void>;
+  toggleReminder: (id: string) => Promise<void>;
+  completeReminder: (id: string) => Promise<void>;
   setPendingNotifAction: (action: NotifTapAction | null) => void;
   setLoaded: (loaded: boolean) => void;
   getReminderByCategory: (category: Category) => Reminder | undefined;

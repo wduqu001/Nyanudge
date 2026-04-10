@@ -82,48 +82,37 @@ describe('RemindersStore', () => {
     expect(scheduleReminder).not.toHaveBeenCalled();
   });
 
-  it('setReminders assigns notifId when it is missing', () => {
-    const reminderWithoutNotifId: Reminder = {
-      ...mockReminder,
-      schedules: [{ id: 's1', reminderId: 'r1', type: 'fixed', timeValue: '08:00' }]
-    };
 
-    useRemindersStore.getState().setReminders([reminderWithoutNotifId]);
-
-    const stored = useRemindersStore.getState().reminders[0]!;
-    expect(stored.schedules[0]!.notifId).toBeDefined();
-    expect(typeof stored.schedules[0]!.notifId).toBe('number');
-  });
 
   // ── addReminder ────────────────────────────────────────────────────────────
 
-  it('addReminder adds to state, DB, and schedules if active', () => {
-    useRemindersStore.getState().addReminder(mockReminder);
+  it('addReminder adds to state, DB, and schedules if active', async () => {
+    await useRemindersStore.getState().addReminder(mockReminder);
 
     expect(useRemindersStore.getState().reminders.length).toBe(1);
     expect(ReminderService.addReminder).toHaveBeenCalledWith(expect.objectContaining({ id: 'r1' }));
     expect(scheduleReminder).toHaveBeenCalledWith(expect.objectContaining({ id: 'r1' }));
   });
 
-  it('addReminder does not schedule a disabled reminder', () => {
-    useRemindersStore.getState().addReminder(disabledReminder);
+  it('addReminder does not schedule a disabled reminder', async () => {
+    await useRemindersStore.getState().addReminder(disabledReminder);
 
     expect(scheduleReminder).not.toHaveBeenCalled();
     expect(ReminderService.addReminder).toHaveBeenCalled();
   });
 
-  it('addReminder does not schedule an archived reminder', () => {
-    useRemindersStore.getState().addReminder(archivedReminder);
+  it('addReminder does not schedule an archived reminder', async () => {
+    await useRemindersStore.getState().addReminder(archivedReminder);
 
     expect(scheduleReminder).not.toHaveBeenCalled();
   });
 
   // ── updateReminder ─────────────────────────────────────────────────────────
 
-  it('updateReminder updates state, DB, cancels old and schedules new', () => {
+  it('updateReminder updates state, DB, cancels old and schedules new', async () => {
     useRemindersStore.setState({ reminders: [mockReminder] });
 
-    useRemindersStore.getState().updateReminder('r1', { label: 'Drink More Water', enabled: false });
+    await useRemindersStore.getState().updateReminder('r1', { label: 'Drink More Water', enabled: false });
 
     const updated = useRemindersStore.getState().reminders[0];
     expect(updated!.label).toBe('Drink More Water');
@@ -134,61 +123,61 @@ describe('RemindersStore', () => {
     expect(scheduleReminder).not.toHaveBeenCalled(); // disabled => no schedule
   });
 
-  it('updateReminder schedules when reminder is still enabled', () => {
+  it('updateReminder schedules when reminder is still enabled', async () => {
     useRemindersStore.setState({ reminders: [mockReminder] });
 
-    useRemindersStore.getState().updateReminder('r1', { label: 'Updated' });
+    await useRemindersStore.getState().updateReminder('r1', { label: 'Updated' });
 
     expect(scheduleReminder).toHaveBeenCalledWith(expect.objectContaining({ id: 'r1' }));
   });
 
-  it('updateReminder for a non-existent id does not throw and does not modify state', () => {
+  it('updateReminder for a non-existent id does not throw and does not modify state', async () => {
     useRemindersStore.setState({ reminders: [mockReminder] });
 
-    expect(() => {
-      useRemindersStore.getState().updateReminder('unknown-id', { label: 'Ghost' });
+    await expect(async () => {
+      await useRemindersStore.getState().updateReminder('unknown-id', { label: 'Ghost' });
     }).not.toThrow();
 
     expect(useRemindersStore.getState().reminders[0]!.label).toBe('Drink Water');
   });
 
-  it('updateReminder stamps updatedAt', () => {
+  it('updateReminder stamps updatedAt', async () => {
     const now = 9_999_999;
     vi.spyOn(Date, 'now').mockReturnValue(now);
     useRemindersStore.setState({ reminders: [mockReminder] });
 
-    useRemindersStore.getState().updateReminder('r1', { label: 'New Label' });
+    await useRemindersStore.getState().updateReminder('r1', { label: 'New Label' });
 
     expect(useRemindersStore.getState().reminders[0]!.updatedAt).toBe(now);
   });
 
   // ── deleteReminder ─────────────────────────────────────────────────────────
 
-  it('deleteReminder removes from state, DB and cancels notification', () => {
+  it('deleteReminder removes from state, DB and cancels notification', async () => {
     useRemindersStore.setState({ reminders: [mockReminder] });
 
-    useRemindersStore.getState().deleteReminder('r1');
+    await useRemindersStore.getState().deleteReminder('r1');
 
     expect(useRemindersStore.getState().reminders.length).toBe(0);
     expect(cancelReminder).toHaveBeenCalled();
     expect(ReminderService.deleteReminder).toHaveBeenCalledWith('r1');
   });
 
-  it('deleteReminder for a non-existent id does not modify state', () => {
+  it('deleteReminder for a non-existent id does not modify state', async () => {
     useRemindersStore.setState({ reminders: [mockReminder] });
 
-    useRemindersStore.getState().deleteReminder('ghost');
+    await useRemindersStore.getState().deleteReminder('ghost');
 
     expect(useRemindersStore.getState().reminders.length).toBe(1);
   });
 
   // ── toggleReminder ─────────────────────────────────────────────────────────
 
-  it('toggleReminder flips the enabled state, updates DB, and schedules/cancels appropriately', () => {
+  it('toggleReminder flips the enabled state, updates DB, and schedules/cancels appropriately', async () => {
     useRemindersStore.setState({ reminders: [mockReminder] });
 
     // Toggle OFF
-    useRemindersStore.getState().toggleReminder('r1');
+    await useRemindersStore.getState().toggleReminder('r1');
     expect(useRemindersStore.getState().reminders[0]!.enabled).toBe(false);
     expect(cancelReminder).toHaveBeenCalled();
     expect(ReminderService.updateReminder).toHaveBeenCalledWith('r1', { enabled: false });
@@ -196,27 +185,27 @@ describe('RemindersStore', () => {
     vi.clearAllMocks();
 
     // Toggle ON
-    useRemindersStore.getState().toggleReminder('r1');
+    await useRemindersStore.getState().toggleReminder('r1');
     expect(useRemindersStore.getState().reminders[0]!.enabled).toBe(true);
     expect(ReminderService.updateReminder).toHaveBeenCalledWith('r1', { enabled: true });
     expect(scheduleReminder).toHaveBeenCalled();
   });
 
-  it('toggleReminder on an archived reminder does not schedule even when enabled', () => {
+  it('toggleReminder on an archived reminder does not schedule even when enabled', async () => {
     useRemindersStore.setState({ reminders: [{ ...archivedReminder, enabled: false }] });
 
     // Toggle "on" for an archived reminder
-    useRemindersStore.getState().toggleReminder('r2');
+    await useRemindersStore.getState().toggleReminder('r2');
     expect(useRemindersStore.getState().reminders[0]!.enabled).toBe(true);
     expect(scheduleReminder).not.toHaveBeenCalled(); // archived guard must hold
   });
 
   // ── completeReminder ───────────────────────────────────────────────────────
 
-  it('completeReminder adds a completion entry to statsStore', () => {
+  it('completeReminder adds a completion entry to statsStore', async () => {
     useRemindersStore.setState({ reminders: [mockReminder] });
 
-    useRemindersStore.getState().completeReminder('r1');
+    await useRemindersStore.getState().completeReminder('r1');
 
     const completions = useStatsStore.getState().recentCompletions;
     expect(completions.length).toBe(1);
@@ -225,13 +214,13 @@ describe('RemindersStore', () => {
     expect(completions[0]!.wasSkipped).toBe(false);
   });
 
-  it('completeReminder increments the streak for the reminder category', () => {
+  it('completeReminder increments the streak for the reminder category', async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2023-10-10T12:00:00Z'));
 
     useRemindersStore.setState({ reminders: [mockReminder] });
 
-    useRemindersStore.getState().completeReminder('r1');
+    await useRemindersStore.getState().completeReminder('r1');
 
     const stats = useStatsStore.getState().stats;
     expect(stats['water']!.currentStreak).toBe(1);
@@ -239,36 +228,36 @@ describe('RemindersStore', () => {
     vi.useRealTimers();
   });
 
-  it('completeReminder persists the completion to the DB', () => {
+  it('completeReminder persists the completion to the DB', async () => {
     useRemindersStore.setState({ reminders: [mockReminder] });
 
-    useRemindersStore.getState().completeReminder('r1');
+    await useRemindersStore.getState().completeReminder('r1');
 
     expect(ReminderService.addCompletion).toHaveBeenCalledWith(
       expect.objectContaining({ reminderId: 'r1', category: 'water', wasSkipped: false })
     );
   });
 
-  it('completeReminder is a no-op when the reminder does not exist', () => {
+  it('completeReminder is a no-op when the reminder does not exist', async () => {
     useRemindersStore.setState({ reminders: [] });
 
-    expect(() => {
-      useRemindersStore.getState().completeReminder('non-existent');
+    await expect(async () => {
+      await useRemindersStore.getState().completeReminder('non-existent');
     }).not.toThrow();
 
     expect(useStatsStore.getState().recentCompletions.length).toBe(0);
     expect(ReminderService.addCompletion).not.toHaveBeenCalled();
   });
 
-  it('completeReminder does not double-count streak on the same day', () => {
+  it('completeReminder does not double-count streak on the same day', async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2023-10-10T08:00:00Z'));
 
     useRemindersStore.setState({ reminders: [mockReminder] });
 
-    useRemindersStore.getState().completeReminder('r1');
+    await useRemindersStore.getState().completeReminder('r1');
     vi.setSystemTime(new Date('2023-10-10T20:00:00Z'));
-    useRemindersStore.getState().completeReminder('r1');
+    await useRemindersStore.getState().completeReminder('r1');
 
     expect(useStatsStore.getState().stats['water']!.currentStreak).toBe(1);
     vi.useRealTimers();

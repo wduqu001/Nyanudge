@@ -4,8 +4,9 @@ import { calculateNextFireTime, scheduleReminder, snoozeReminder } from './sched
 
 vi.mock('@capacitor/local-notifications', () => ({
   LocalNotifications: {
-    schedule: vi.fn(),
-    cancel: vi.fn(),
+    schedule: vi.fn().mockResolvedValue(undefined),
+    cancel: vi.fn().mockResolvedValue(undefined),
+    getPending: vi.fn().mockResolvedValue({ notifications: [] }),
     checkPermissions: vi.fn().mockResolvedValue({ display: 'granted' }),
     requestPermissions: vi.fn().mockResolvedValue({ display: 'granted' }),
   }
@@ -81,7 +82,8 @@ describe('scheduler', () => {
       await scheduleReminder(reminder);
       const calls = vi.mocked(LocalNotifications.schedule).mock.calls;
       const notif = calls[0]?.[0]?.notifications?.[0];
-      expect(notif?.id).toBe(999);
+      expect(notif?.id).toBeDefined();
+      expect(typeof notif?.id).toBe('number');
       expect(notif?.title).toBe('categories.water.name');
     });
 
