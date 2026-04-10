@@ -267,7 +267,7 @@ export async function scheduleReminder(reminder: Reminder): Promise<void> {
         notifications.push({
           ...common,
           id: generateId(`${schedIndex}-daily`), // Stable ID: e.g. "123-sched-0-daily"
-          schedule: { at: fireTime, repeats: true, every: 'day' },
+          schedule: { at: fireTime, repeats: true, every: 'day', allowWhileIdle: true },
         });
         totalScheduled++;
 
@@ -284,7 +284,7 @@ export async function scheduleReminder(reminder: Reminder): Promise<void> {
           notifications.push({
             ...common,
             id: generateId(`${schedIndex}-day-${i}`), // Stable ID: e.g. "123-sched-0-day-0"
-            schedule: { at: nextTime, repeats: false },
+            schedule: { at: nextTime, repeats: false, allowWhileIdle: true },
           });
 
           // Advance pointer to search for the next valid day
@@ -315,7 +315,7 @@ export async function scheduleReminder(reminder: Reminder): Promise<void> {
         notifications.push({
           ...common,
           id: generateId(`${schedIndex}-int-${i}`), // Stable ID: e.g. "123-sched-1-int-0"
-          schedule: { at: nextTime, repeats: false },
+          schedule: { at: nextTime, repeats: false, allowWhileIdle: true },
         });
 
         // Advance pointer 1 second past this fire time to find the next slot
@@ -350,7 +350,7 @@ export async function snoozeReminder(
       id: notifId,
       title,
       body: i18n.t(`snooze.${reminder.snoozeMins}`),
-      schedule: { at: fireTime, repeats: false },
+      schedule: { at: fireTime, repeats: false, allowWhileIdle: true },
       sound: reminder.soundMode !== 'silent' ? CATEGORY_SOUND[cat] : undefined,
       smallIcon: CATEGORY_ICONS[cat],
       channelId: CATEGORY_CHANNEL[cat],
