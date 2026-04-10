@@ -57,14 +57,15 @@ describe('Scheduler Logic: calculateNextFireTime', () => {
   });
 
   describe('Interval Type', () => {
-    it('schedules the next available slot within the window today', () => {
-      // Current time is 10:45 local
-      vi.setSystemTime(new Date(2023, 9, 10, 10, 45, 0));
+    it('schedules the next available slot within the window today (anchored)', () => {
+      // Current time is 10:45 local. Created at 10:45.
+      const now = new Date(2023, 9, 10, 10, 45, 0);
+      vi.setSystemTime(now);
       
       const fireTime = calculateNextFireTime({
         id: '1', reminderId: 'r1', type: 'interval', timeValue: '60', // every 60 mins
         startTime: '08:00', endTime: '20:00'
-      });
+      }, now.getTime());
       
       expect(fireTime).toBeDefined();
       // 10:45 + 60 mins = 11:45
@@ -89,7 +90,23 @@ describe('Scheduler Logic: calculateNextFireTime', () => {
       expect(fireTime?.getDate()).toBe(11); // Rolling over to the 11th
     });
 
-    it('schedules exactly 10 minutes from now for frequent medical intervals', () => {
+    it('schedules exactly 10 minutes from now when anchored to the starting moment', () => {
+      // Current time is 17:18
+      const now = new Date(2023, 9, 10, 17, 18, 0);
+      vi.setSystemTime(now);
+      
+      const fireTime = calculateNextFireTime({
+        id: 'med-1', reminderId: 'r1', type: 'interval', timeValue: '10',
+        startTime: '08:00', endTime: '22:00'
+      }, now.getTime()); // Anchor it at 'now'
+      
+      expect(fireTime).toBeDefined();
+      // Expect 17:18 + 10 = 17:28
+      expect(fireTime?.getHours()).toBe(17);
+      expect(fireTime?.getMinutes()).toBe(28);
+    });
+
+    it('snaps to the next clean slot when no anchor is provided', () => {
       // Current time is 17:18
       vi.setSystemTime(new Date(2023, 9, 10, 17, 18, 0));
       
@@ -99,9 +116,8 @@ describe('Scheduler Logic: calculateNextFireTime', () => {
       });
       
       expect(fireTime).toBeDefined();
-      // User expects 17:18 + 10 = 17:28
-      expect(fireTime?.getHours()).toBe(17);
-      expect(fireTime?.getMinutes()).toBe(28);
+      // Snap to 17:20 (00:00 + n * 10m)
+      expect(fireTime?.getMinutes()).toBe(20);
     });
 
     it('returns undefined if required fields are missing', () => {

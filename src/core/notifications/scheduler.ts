@@ -47,7 +47,7 @@ function randomId(): number {
 /**
  * Calculates the next fire time for a given schedule rule.
  */
-export function calculateNextFireTime(schedule: Schedule): Date | undefined {
+export function calculateNextFireTime(schedule: Schedule, anchor?: number): Date | undefined {
   const now = new Date();
 
   if (schedule.type === 'fixed' && schedule.timeValue) {
@@ -93,9 +93,14 @@ export function calculateNextFireTime(schedule: Schedule): Date | undefined {
     // Before window starts today → fire at window start
     if (now < windowStart) return windowStart;
 
-    // Inside window → fire after one interval from NOW
+    // Inside window → anchor to the moment it was created (or window start) to prevent drift on app restart
     if (now <= windowEnd) {
-      const next = new Date(now.getTime() + intervalMins * 60_000);
+      const anchorTime   = anchor ?? windowStart.getTime();
+      const intervalMs   = intervalMins * 60_000;
+      const elapsedSince = now.getTime() - anchorTime;
+      const slotsPassed  = Math.floor(elapsedSince / intervalMs);
+      
+      const next = new Date(anchorTime + (slotsPassed + 1) * intervalMs);
       if (next <= windowEnd) return next;
     }
 
@@ -178,16 +183,18 @@ export async function scheduleReminder(reminder: Reminder): Promise<void> {
       const windowEnd = new Date();
       windowEnd.setHours(Number(endParts[0]), Number(endParts[1]), 0, 0);
 
-      let nextTime = calculateNextFireTime(sched);
+      // Stable fire time anchored on when the reminder was created
+      let nextTime = calculateNextFireTime(sched, reminder.createdAt);
 
-      // Schedule next 8 one-shot slots — every slot gets a FRESH random ID
-      // so it never overwrites a notification that's already in the tray.
-      for (let i = 0; i < 8; i++) {
+      // Schedule next 64 one-shot slots (provides ~10 hours for 10-min interval) 
+      // every slot gets a FRESH random ID so it never overwrites a notification 
+      // that's already in the tray.
+      for (let i = 0; i < 64; i++) {
         if (!nextTime) break;
 
         notifications.push({
           ...common,
-          id:       randomId(),           // <── fresh ID every time
+          id:       randomId(),
           schedule: { at: new Date(nextTime), repeats: false },
         });
 

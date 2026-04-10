@@ -50,12 +50,12 @@ describe('scheduler', () => {
       expect(result?.getDay()).toBe(1);
     });
 
-    it('interval: schedules next slot within today window', () => {
+    it('interval: schedules next slot within today window (anchored)', () => {
       const now = new Date(2026, 4, 10, 8, 30); 
       vi.setSystemTime(now);
       const schedule: Schedule = { id: '1', reminderId: 'r1', type: 'interval', timeValue: '60', startTime: '07:00', endTime: '21:00' };
-      const result = calculateNextFireTime(schedule);
-      // 08:30 + 60 mins = 09:30
+      const result = calculateNextFireTime(schedule, now.getTime());
+      // Anchored at 08:30 + 60 mins = 09:30
       expect(result?.getHours()).toBe(9);
       expect(result?.getMinutes()).toBe(30);
     });
