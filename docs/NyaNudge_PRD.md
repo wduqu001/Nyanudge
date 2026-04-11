@@ -41,7 +41,7 @@ The name is playful, internationally recognizable, and — as of research date �
 A round icon featuring a minimalist cat face with two eyes, with one eye replaced by a small clock/timer shape — conveying both the cat mascot and the reminder purpose. Works on both light and dark launcher backgrounds.
 
 ### Package Name
-`com.nyanudge.app`
+`com.quoryn.nyanudge.app`
 
 ### Target Platform
 Android (primary), iOS (secondary — same codebase)
