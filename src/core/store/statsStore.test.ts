@@ -155,14 +155,14 @@ describe('StatsStore', () => {
     expect(stats['water']!.lastCompletedDate).toBe('2023-10-05');
   });
 
-  it('incrementStreak does not increment again on the same day', () => {
+  it('increments multiple times on the same day', () => {
     vi.setSystemTime(new Date('2023-10-05T12:00:00Z'));
     useStatsStore.getState().incrementStreak('water');
 
     vi.setSystemTime(new Date('2023-10-05T23:59:00Z'));
     useStatsStore.getState().incrementStreak('water');
 
-    expect(useStatsStore.getState().stats['water']!.currentStreak).toBe(1);
+    expect(useStatsStore.getState().stats['water']!.currentStreak).toBe(2);
   });
 
   it('incrementStreak increments across multiple days', () => {

@@ -74,11 +74,11 @@
     "30": "30 minutes?! The cat is disappointed. See you soon."
   },
   "streaks": {
-    "1": "Day 1! The journey begins. 🐾",
-    "3": "3 days in a row. The cat is impressed.",
-    "7": "One full week! You've unlocked the Proud Cat emoji. 🐱✨",
-    "14": "Two weeks of consistency. The cat bows respectfully.",
-    "30": "30-day streak! You are the human the cat always believed in."
+    "1": "First one! The journey begins. 🐾",
+    "3": "3 completed. The cat is impressed.",
+    "7": "7 completed! You've unlocked the Proud Cat emoji. 🐱✨",
+    "14": "14 completions. The cat bows respectfully.",
+    "30": "30 completions! You are the human the cat always believed in."
   },
   "actions": {
     "done": "Done",
@@ -98,7 +98,7 @@
   "home": {
     "next_up": "Next up in {{time}}",
     "hero_sub": "{{name}} is keeping an eye on things 👀",
-    "streak_message": "{{count}}-day streak — keep going!",
+    "streak_message": "{{count}} done — keep going!",
     "reminders_title": "Your reminders",
     "quick_edit": {
       "next_fire": "Next up"
@@ -117,8 +117,8 @@
     "category_stats_title": "Category Stats",
     "recent_title": "Recent Activity",
     "no_data": "No completions recorded yet. Keep it up!",
-    "current_streak": "Total Streaks",
-    "streak_record": "Longest Streak",
+    "current_streak": "Current Count",
+    "streak_record": "Best Count",
     "total_completions": "Total Done"
   },
   "settings": {

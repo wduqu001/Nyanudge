@@ -74,11 +74,11 @@
     "30": "¡¿30 minutos?! El gato está decepcionado. Nos vemos pronto."
   },
   "streaks": {
-    "1": "¡Día 1! El viaje comienza. 🐾",
-    "3": "3 días seguidos. El gato está impresionado.",
-    "7": "¡Una semana completa! Has desbloqueado el emoji de Gato Orgulloso. 🐱✨",
-    "14": "Dos semanas de constancia. El gato se inclina con respeto.",
-    "30": "¡Racha de 30 días! Eres el humano en el que el gato siempre creyó."
+    "1": "¡El primero! El viaje comienza. 🐾",
+    "3": "3 completados. El gato está impresionado.",
+    "7": "¡7 completados! Has desbloqueado el emoji de Gato Orgulloso. 🐱✨",
+    "14": "14 completados. El gato se inclina con respeto.",
+    "30": "¡30 completados! Eres el humano en el que el gato siempre creyó."
   },
   "actions": {
     "done": "Hecho",
@@ -102,7 +102,7 @@
   "home": {
     "next_up": "Siguiente en {{time}}",
     "hero_sub": "{{name}} te está vigilando 👀",
-    "streak_message": "Racha de {{count}} días — ¡sigue así!",
+    "streak_message": "{{count}} completados — ¡sigue así!",
     "reminders_title": "Tus recordatorios",
     "quick_edit": {
       "next_fire": "Próximo"
@@ -121,8 +121,8 @@
     "category_stats_title": "Estadísticas por categoría",
     "recent_title": "Actividad reciente",
     "no_data": "No hay registros grabados. ¡Sigue así!",
-    "current_streak": "Total de rachas",
-    "streak_record": "Racha más larga",
+    "current_streak": "Conteo actual",
+    "streak_record": "Mejor conteo",
     "total_completions": "Total completado"
   },
   "settings": {

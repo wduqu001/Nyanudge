@@ -209,7 +209,7 @@ describe('HistoryScreen', () => {
     renderHistory();
 
     expect(screen.getByText('categories.water.name')).toBeInTheDocument();
-    expect(screen.getByText('3d')).toBeInTheDocument(); // currentStreak display
+    expect(screen.getByText('3')).toBeInTheDocument(); // currentStreak display
   });
 
   it('renders an empty category list when stats is empty', () => {
@@ -218,6 +218,7 @@ describe('HistoryScreen', () => {
 
     // The section header still renders but no category cards
     expect(screen.getByText('history.category_stats_title')).toBeInTheDocument();
-    expect(screen.queryByText(/d$/)).not.toBeInTheDocument(); // no "Xd" streak labels
+    // No streak numbers being rendered
+    expect(screen.queryByText(/^\d+$/)).not.toBeInTheDocument(); 
   });
 });

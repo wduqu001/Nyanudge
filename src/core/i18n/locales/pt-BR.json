@@ -74,11 +74,11 @@
     "30": "30 minutos?! O gato tá decepcionado. Até já."
   },
   "streaks": {
-    "1": "Dia 1! A jornada começa. 🐾",
-    "3": "3 dias seguidos. O gato tá impressionado.",
-    "7": "Uma semana inteira! Você desbloqueou o emoji de gato orgulhoso. 🐱✨",
-    "14": "Duas semanas de consistência. O gato se inclina com respeito.",
-    "30": "Sequência de 30 dias! Você é o humano em que o gato sempre acreditou."
+    "1": "Primeiro de muitos! A jornada começa. 🐾",
+    "3": "3 concluídos. O gato está impressionado.",
+    "7": "7 concluídos! Você desbloqueou o emoji Gato Orgulhoso. 🐱✨",
+    "14": "14 concluídos. O gato faz uma reverência respeitosa.",
+    "30": "30 concluídos! Você é o humano em quem o gato sempre acreditou."
   },
   "actions": {
     "done": "Feito",
@@ -102,7 +102,7 @@
   "home": {
     "next_up": "Próximo em {{time}}",
     "hero_sub": "{{name}} está de olho em tudo 👀",
-    "streak_message": "Sequência de {{count}} dias — continue assim!",
+    "streak_message": "{{count}} feitos — continue assim!",
     "reminders_title": "Seus lembretes",
     "quick_edit": {
       "next_fire": "Próximo"
@@ -121,8 +121,8 @@
     "category_stats_title": "Estatísticas",
     "recent_title": "Atividade Recente",
     "no_data": "Nenhuma conclusão registrada ainda. Continue assim!",
-    "current_streak": "Total de Sequências",
-    "streak_record": "Recorde de Sequência",
+    "current_streak": "Contagem Atual",
+    "streak_record": "Melhor Contagem",
     "total_completions": "Total Concluído"
   },
   "edit_reminder": {

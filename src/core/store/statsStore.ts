@@ -68,9 +68,6 @@ export const useStatsStore = create<StatsState>((set, get) => ({
     const today = new Date().toISOString().slice(0, 10);
     const current = get().stats[category];
 
-    // Guard against double-counting same day
-    if (current?.lastCompletedDate === today) return;
-
     const newStreak = (current?.currentStreak ?? 0) + 1;
     const newLongest = Math.max(newStreak, current?.longestStreak ?? 0);
 

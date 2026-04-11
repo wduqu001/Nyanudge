@@ -73,11 +73,11 @@ export const HistoryScreen: React.FC = () => {
                 <span className={styles.categoryName}>{t(`categories.${category}.name`)}</span>
                 <span className={styles.categoryStreak}>
                   <Flame size={14} style={{ marginRight: 4 }} />
-                  {data.currentStreak}d
+                  {data.currentStreak}
                 </span>
               </div>
               <div className={styles.categoryMetric}>
-                <span>{t('history.streak_record')}: {data.longestStreak}d</span>
+                <span>{t('history.streak_record')}: {data.longestStreak}</span>
                 <span>{Math.round(data.completionRateLast7Days * 100)}%</span>
               </div>
               <div className={styles.progressBar}>

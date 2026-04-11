@@ -250,7 +250,7 @@ describe('RemindersStore', () => {
     expect(ReminderService.addCompletion).not.toHaveBeenCalled();
   });
 
-  it('completeReminder does not double-count streak on the same day', async () => {
+  it('completeReminder increments streak every time, even on the same day', async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2023-10-10T08:00:00Z'));
 
@@ -260,7 +260,7 @@ describe('RemindersStore', () => {
     vi.setSystemTime(new Date('2023-10-10T20:00:00Z'));
     await useRemindersStore.getState().completeReminder('r1');
 
-    expect(useStatsStore.getState().stats['water']!.currentStreak).toBe(1);
+    expect(useStatsStore.getState().stats['water']!.currentStreak).toBe(2);
     vi.useRealTimers();
   });
 
