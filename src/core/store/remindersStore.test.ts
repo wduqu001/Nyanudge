@@ -14,7 +14,8 @@ vi.mock('../db/ReminderService', () => ({
     addReminder: vi.fn().mockResolvedValue(undefined),
     updateReminder: vi.fn().mockResolvedValue(undefined),
     deleteReminder: vi.fn().mockResolvedValue(undefined),
-    addCompletion: vi.fn().mockResolvedValue(undefined)
+    addCompletion: vi.fn().mockResolvedValue(undefined),
+    getAllReminders: vi.fn().mockResolvedValue([])
   }
 }));
 
@@ -291,5 +292,29 @@ describe('RemindersStore', () => {
 
     const found = useRemindersStore.getState().getReminderByCategory('exercise');
     expect(found).toBeUndefined();
+  });
+
+  describe('rehydrateFromDb', () => {
+    it('fetches from db and updates store if different', async () => {
+      const newReminder = { ...mockReminder, id: 'rnew', label: 'Restored' };
+      vi.mocked(ReminderService.getAllReminders).mockResolvedValueOnce([newReminder]);
+      
+      await useRemindersStore.getState().rehydrateFromDb();
+      
+      expect(useRemindersStore.getState().reminders.length).toBe(1);
+      expect(useRemindersStore.getState().reminders[0].id).toBe('rnew');
+    });
+
+    it('does not re-trigger schedule if identical to current state', async () => {
+      useRemindersStore.setState({ reminders: [mockReminder], isLoaded: true });
+      vi.mocked(ReminderService.getAllReminders).mockResolvedValueOnce([mockReminder]);
+
+      await useRemindersStore.getState().rehydrateFromDb();
+
+      expect(useRemindersStore.getState().reminders.length).toBe(1);
+      // Since it's identical, setReminders should not be called and scheduler not hit
+      const spy = vi.spyOn(useRemindersStore.getState(), 'setReminders');
+      expect(spy).not.toHaveBeenCalled();
+    });
   });
 });

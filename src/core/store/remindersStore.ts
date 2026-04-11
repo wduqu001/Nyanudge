@@ -24,6 +24,7 @@ interface RemindersState {
   setPendingNotifAction: (action: NotifTapAction | null) => void;
   setLoaded: (loaded: boolean) => void;
   getReminderByCategory: (category: Category) => Reminder | undefined;
+  rehydrateFromDb: () => Promise<void>;
 }
 
 export const useRemindersStore = create<RemindersState>((set, get) => ({
@@ -178,4 +179,17 @@ export const useRemindersStore = create<RemindersState>((set, get) => ({
 
   getReminderByCategory: (category) =>
     get().reminders.find((r) => r.category === category),
+
+  rehydrateFromDb: async () => {
+    try {
+      const dbReminders = await ReminderService.getAllReminders();
+      const current = get().reminders;
+      // Reconcile and only reschedule if changed (simplified hydration)
+      if (JSON.stringify(dbReminders) !== JSON.stringify(current)) {
+         get().setReminders(dbReminders);
+      }
+    } catch (e) {
+      console.error('[Store] Hydration failed', e);
+    }
+  }
 }));

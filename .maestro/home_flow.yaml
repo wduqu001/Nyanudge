@@ -1,0 +1,13 @@
+appId: com.wduqu001.nyanudge
+---
+- launchApp
+- assertVisible: "Today's Reminders" # Verify Dashboard loads
+- tapOn: "Add Reminder" # Assumes there's an add button with this accessibility label or text
+- assertVisible: "Category"
+- tapOn: "Water"
+- tapOn: "Save"
+- assertVisible: "Water" # Verifies it appears in list
+- swipe:
+    direction: DOWN
+- tapOn: "History" # Check the Bottom Navigation or Drawer
+- assertVisible: "Completion History"

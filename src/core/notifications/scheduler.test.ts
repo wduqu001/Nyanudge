@@ -117,6 +117,21 @@ describe('scheduler', () => {
       await scheduleReminder(reminder);
       expect(LocalNotifications.schedule).not.toHaveBeenCalled();
     });
+
+    it('catches and logs error if LocalNotifications.schedule throws (e.g. permission denied or limit reached)', async () => {
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      vi.mocked(LocalNotifications.schedule).mockRejectedValueOnce(new Error('Permission Denied'));
+      
+      const reminder: Reminder = {
+        id: 'r_err', category: 'water', label: 'W', enabled: true, soundMode: 'silent', snoozeMins: 5, character: 'mochi', createdAt: 0, updatedAt: 0, schedules: [{ id: 's1', reminderId: 'r_err', type: 'fixed', timeValue: '10:00', notifId: 22 }]
+      };
+      
+      // Should not throw an unhandled promise rejection
+      await expect(scheduleReminder(reminder)).resolves.toBeUndefined();
+      expect(consoleSpy).toHaveBeenCalledWith(`Failed to schedule reminder r_err`, expect.any(Error));
+      
+      consoleSpy.mockRestore();
+    });
   });
 
   describe('snoozeReminder', () => {

@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { App as CapacitorApp } from '@capacitor/app';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useRemindersStore } from './core/store/remindersStore';
@@ -56,6 +57,19 @@ function App() {
       i18n.changeLanguage(preferences.language);
     }
   }, [preferences.language, i18n]);
+
+  useEffect(() => {
+    // 🐾 Rehydrate state from SQLite whenever app wakes from background sleep
+    const appStateSub = CapacitorApp.addListener('appStateChange', ({ isActive }) => {
+      if (isActive) {
+        useRemindersStore.getState().rehydrateFromDb();
+      }
+    });
+
+    return () => {
+      appStateSub.then(sub => sub.remove()).catch(() => {});
+    };
+  }, []);
 
   useEffect(() => {
     const initDb = async () => {
