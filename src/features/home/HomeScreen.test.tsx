@@ -1,15 +1,15 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { HomeScreen } from '../features/home/HomeScreen';
-import { useRemindersStore } from '../core/store/remindersStore';
-import { usePreferencesStore } from '../core/store/preferencesStore';
-import { useStatsStore } from '../core/store/statsStore';
-import { calculateNextFireTime } from '../core/notifications/scheduler';
+import { HomeScreen } from './HomeScreen';
+import { useRemindersStore } from '../../core/store/remindersStore';
+import { usePreferencesStore } from '../../core/store/preferencesStore';
+import { useStatsStore } from '../../core/store/statsStore';
+import { calculateNextFireTime } from '../../core/notifications/scheduler';
 
 // ── Mocks ──────────────────────────────────────────────────────────────────
 
-vi.mock('../core/notifications/scheduler', () => ({
+vi.mock('../../core/notifications/scheduler', () => ({
   calculateNextFireTime: vi.fn(),
   snoozeReminder: vi.fn().mockResolvedValue(undefined),
   cancelReminder: vi.fn().mockResolvedValue(undefined),
@@ -37,7 +37,7 @@ vi.mock('react-i18next', () => ({
 }));
 
 // Mock shared components to keep tests focused on HomeScreen logic
-vi.mock('../shared/components/Card/Card', () => ({
+vi.mock('../../shared/components/Card/Card', () => ({
   Card: ({ children, onClick, 'aria-label': ariaLabel }: any) => (
     <div data-testid="card" onClick={onClick} aria-label={ariaLabel}>
       {children}
@@ -45,25 +45,25 @@ vi.mock('../shared/components/Card/Card', () => ({
   )
 }));
 
-vi.mock('../shared/components/Toggle/Toggle', () => ({
+vi.mock('../../shared/components/Toggle/Toggle', () => ({
   Toggle: ({ checked, onChange }: any) => (
     <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked, e)} />
   )
 }));
 
 // Mock Lottie components or other heavy animations
-vi.mock('../shared/components/AnimatedCatMochi/AnimatedCatMochi', () => ({
+vi.mock('../../shared/components/AnimatedCatMochi/AnimatedCatMochi', () => ({
   AnimatedCatMochi: () => <div data-testid="cat-mochi">Mochi</div>
 }));
-vi.mock('../shared/components/KuroCat/AnimatedCatKuro', () => ({
+vi.mock('../../shared/components/KuroCat/AnimatedCatKuro', () => ({
   AnimatedCatKuro: () => <div data-testid="cat-kuro">Kuro</div>
 }));
-vi.mock('../shared/components/SoraCat/CatSora', () => ({
+vi.mock('../../shared/components/SoraCat/CatSora', () => ({
   CatSora: () => <div data-testid="cat-sora">Sora</div>
 }));
 
 // Mock Icons
-vi.mock('../shared/components/Icons', () => ({
+vi.mock('../../shared/components/Icons', () => ({
   CogIcon: () => <span>Cog</span>,
   MenuIcon: () => <span>Menu</span>,
   WaterIcon: () => <span>Water</span>,
@@ -74,7 +74,7 @@ vi.mock('../shared/components/Icons', () => ({
 }));
 
 // Mock Nav
-vi.mock('../shared/components/BottomNav/BottomNav', () => ({
+vi.mock('../../shared/components/BottomNav/BottomNav', () => ({
   BottomNav: () => <nav>BottomNav</nav>
 }));
 

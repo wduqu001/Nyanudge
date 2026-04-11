@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { usePreferencesStore } from '../core/store/preferencesStore';
-import { PreferenceService } from '../core/db/PreferenceService';
+import { usePreferencesStore } from './preferencesStore';
+import { PreferenceService } from '../db/PreferenceService';
 
-vi.mock('../core/db/PreferenceService', () => ({
+vi.mock('../db/PreferenceService', () => ({
   PreferenceService: {
     saveAll: vi.fn().mockResolvedValue(undefined),
     updatePreference: vi.fn().mockResolvedValue(undefined),

@@ -1,18 +1,18 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { HistoryScreen } from '../features/history/HistoryScreen';
-import { useStatsStore } from '../core/store/statsStore';
-import { useRemindersStore } from '../core/store/remindersStore';
+import { HistoryScreen } from './HistoryScreen';
+import { useStatsStore } from '../../core/store/statsStore';
+import { useRemindersStore } from '../../core/store/remindersStore';
 
 // ── Mocks ──────────────────────────────────────────────────────────────────
 
-vi.mock('../core/notifications/scheduler', () => ({
+vi.mock('../../core/notifications/scheduler', () => ({
   scheduleReminder: vi.fn().mockResolvedValue(undefined),
   cancelReminder: vi.fn().mockResolvedValue(undefined)
 }));
 
-vi.mock('../core/db/ReminderService', () => ({
+vi.mock('../../core/db/ReminderService', () => ({
   ReminderService: {
     addReminder: vi.fn().mockResolvedValue(undefined),
     updateReminder: vi.fn().mockResolvedValue(undefined),
@@ -29,13 +29,13 @@ vi.mock('react-i18next', () => ({
 }));
 
 // HeatmapCalendar depends on the real date; stub it to keep tests deterministic
-vi.mock('../features/history/components/HeatmapCalendar', () => ({
+vi.mock('./components/HeatmapCalendar', () => ({
   HeatmapCalendar: ({ completions }: { completions: unknown[] }) => (
     <div data-testid="heatmap">{completions.length} days</div>
   )
 }));
 
-vi.mock('../features/history/components/StatsCard', () => ({
+vi.mock('./components/StatsCard', () => ({
   StatsCard: ({ label, value }: { label: string; value: string | number }) => (
     <div data-testid={`stats-card-${label}`}>{label}: {value}</div>
   )

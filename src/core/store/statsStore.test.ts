@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { useStatsStore } from '../core/store/statsStore';
+import { useStatsStore } from './statsStore';
 
 describe('StatsStore', () => {
   beforeEach(() => {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatLocalizedTime, getLocalizedWeekdays } from '../shared/utils/dateUtils';
+import { formatLocalizedTime, getLocalizedWeekdays } from './dateUtils';
 
 describe('dateUtils', () => {
   describe('formatLocalizedTime', () => {

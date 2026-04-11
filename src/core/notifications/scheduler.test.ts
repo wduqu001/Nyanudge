@@ -69,6 +69,28 @@ describe('scheduler', () => {
       expect(result?.getDate()).toBe(11);
       expect(result?.getHours()).toBe(7);
     });
+
+    it('interval: snaps to the next clean slot when no anchor is provided', () => {
+      // Current time is 17:18
+      vi.setSystemTime(new Date(2023, 9, 10, 17, 18, 0));
+      
+      const fireTime = calculateNextFireTime({
+        id: 'med-1', reminderId: 'r1', type: 'interval', timeValue: '10',
+        startTime: '08:00', endTime: '22:00'
+      });
+      
+      expect(fireTime).toBeDefined();
+      // Snap to 17:20 (00:00 + n * 10m)
+      expect(fireTime?.getMinutes()).toBe(20);
+    });
+
+    it('returns undefined if required fields are missing', () => {
+      const fireTime = calculateNextFireTime({
+        id: '1', reminderId: 'r1', type: 'interval'
+        // Missing timeValue
+      } as any);
+      expect(fireTime).toBeUndefined();
+    });
   });
 
   describe('scheduleReminder', () => {

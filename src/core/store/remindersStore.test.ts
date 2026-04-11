@@ -1,15 +1,15 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { useRemindersStore } from '../core/store/remindersStore';
-import { useStatsStore } from '../core/store/statsStore';
-import { scheduleReminder, cancelReminder } from '../core/notifications/scheduler';
-import { ReminderService } from '../core/db/ReminderService';
+import { useRemindersStore } from './remindersStore';
+import { useStatsStore } from './statsStore';
+import { scheduleReminder, cancelReminder } from '../notifications/scheduler';
+import { ReminderService } from '../db/ReminderService';
 
-vi.mock('../core/notifications/scheduler', () => ({
+vi.mock('../notifications/scheduler', () => ({
   scheduleReminder: vi.fn().mockResolvedValue(undefined),
   cancelReminder: vi.fn().mockResolvedValue(undefined)
 }));
 
-vi.mock('../core/db/ReminderService', () => ({
+vi.mock('../db/ReminderService', () => ({
   ReminderService: {
     addReminder: vi.fn().mockResolvedValue(undefined),
     updateReminder: vi.fn().mockResolvedValue(undefined),

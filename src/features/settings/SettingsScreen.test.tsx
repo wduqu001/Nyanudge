@@ -9,21 +9,21 @@ import React from 'react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { SettingsScreen } from '../features/settings/SettingsScreen';
-import { usePreferencesStore } from '../core/store/preferencesStore';
-import { useStatsStore } from '../core/store/statsStore';
-import { ReminderService } from '../core/db/ReminderService';
+import { SettingsScreen } from './SettingsScreen';
+import { usePreferencesStore } from '../../core/store/preferencesStore';
+import { useStatsStore } from '../../core/store/statsStore';
+import { ReminderService } from '../../core/db/ReminderService';
 
 // ── Mocks ──────────────────────────────────────────────────────────────────
 
-vi.mock('../core/db/PreferenceService', () => ({
+vi.mock('../../core/db/PreferenceService', () => ({
   PreferenceService: {
     saveAll: vi.fn().mockResolvedValue(undefined),
     updatePreference: vi.fn().mockResolvedValue(undefined),
   }
 }));
 
-vi.mock('../core/db/ReminderService', () => ({
+vi.mock('../../core/db/ReminderService', () => ({
   ReminderService: {
     clearHistory: vi.fn().mockResolvedValue(undefined),
   }
@@ -37,23 +37,23 @@ vi.mock('react-i18next', () => ({
 }));
 
 // Mock shared components to keep tests focused on SettingsScreen logic
-vi.mock('../shared/components/Button/NyaButton', () => ({
+vi.mock('../../shared/components/Button/NyaButton', () => ({
   NyaButton: ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => (
     <button onClick={onClick}>{children}</button>
   )
 }));
 
-vi.mock('../shared/components/Header/NyaHeader', () => ({
+vi.mock('../../shared/components/Header/NyaHeader', () => ({
   NyaHeader: ({ title }: { title: string }) => <h1>{title}</h1>
 }));
 
-vi.mock('../shared/components/Toggle/Toggle', () => ({
+vi.mock('../../shared/components/Toggle/Toggle', () => ({
   Toggle: ({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) => (
     <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} />
   )
 }));
 
-vi.mock('../shared/components/CharacterSelect/CharacterSelect', () => ({
+vi.mock('../../shared/components/CharacterSelect/CharacterSelect', () => ({
   CharacterSelect: ({ onChange }: { onChange: (v: string) => void }) => (
     <select onChange={(e) => onChange(e.target.value)} data-testid="char-select">
       <option value="mochi">mochi</option>
@@ -61,7 +61,7 @@ vi.mock('../shared/components/CharacterSelect/CharacterSelect', () => ({
   )
 }));
 
-vi.mock('../shared/components/Select/NyaSelect', () => ({
+vi.mock('../../shared/components/Select/NyaSelect', () => ({
   NyaSelect: ({ value, onChange }: { value: string; onChange: (v: string) => void }) => (
     <select value={value} onChange={(e) => onChange(e.target.value)} data-testid={`select-${value}`}>
       <option value={value}>{value}</option>
