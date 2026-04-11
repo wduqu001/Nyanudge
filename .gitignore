@@ -82,5 +82,6 @@ playwright-report/
 blob-report/
 playwright/.cache
 
-# .agent folder
-.agent/
+# Android Signing
+*.keystore
+*.jks
