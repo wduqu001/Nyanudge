@@ -302,7 +302,7 @@ describe('RemindersStore', () => {
       await useRemindersStore.getState().rehydrateFromDb();
       
       expect(useRemindersStore.getState().reminders.length).toBe(1);
-      expect(useRemindersStore.getState().reminders[0].id).toBe('rnew');
+      expect(useRemindersStore.getState().reminders[0]!.id).toBe('rnew');
     });
 
     it('does not re-trigger schedule if identical to current state', async () => {

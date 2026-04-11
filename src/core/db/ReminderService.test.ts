@@ -41,9 +41,9 @@ describe('ReminderService', () => {
 
       const result = await ReminderService.getAllReminders();
       expect(result.length).toBe(1);
-      expect(result[0].id).toBe('rem-1');
-      expect(result[0].schedules.length).toBe(1);
-      expect(result[0].schedules[0].id).toBe('sch-1');
+      expect(result[0]!.id).toBe('rem-1');
+      expect(result[0]!.schedules.length).toBe(1);
+      expect(result[0]!.schedules[0]!.id).toBe('sch-1');
     });
   });
 

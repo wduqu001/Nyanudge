@@ -32,9 +32,9 @@ describe('PreferenceService', () => {
         ]
       });
       const prefs = await PreferenceService.getPreferences();
-      expect(prefs.hapticEnabled).toBe(true);
+      expect((prefs as any).hapticEnabled).toBe(true);
       expect(prefs.theme).toBe('dark');
-      expect(prefs.volume).toBe(50);
+      expect((prefs as any).volume).toBe(50);
     });
   });
 
