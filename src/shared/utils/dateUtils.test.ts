@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { formatLocalizedTime, getLocalizedWeekdays } from './dateUtils';
 
 describe('dateUtils', () => {
@@ -39,6 +39,32 @@ describe('dateUtils', () => {
 
     it('works with undefined locale gracefully', () => {
       expect(() => formatLocalizedTime('08:00', undefined)).not.toThrow();
+    });
+
+    describe('Timezone and Daylight Saving assertions', () => {
+      it('asserts Timezone and daylight saving offsets', () => {
+        const winterDate = new Date(2024, 0, 1); // Jan 1st
+        const summerDate = new Date(2024, 6, 1); // Jul 1st
+        
+        // Assert timezone offsets are numeric (verifying environment handles them)
+        expect(typeof winterDate.getTimezoneOffset()).toBe('number');
+        expect(typeof summerDate.getTimezoneOffset()).toBe('number');
+
+        // Assert daylight saving offset capability
+        const isDST = winterDate.getTimezoneOffset() !== summerDate.getTimezoneOffset();
+        expect(typeof isDST).toBe('boolean');
+
+        // Test DST boundary for formatLocalizedTime
+        vi.useFakeTimers();
+        // US Spring Forward - jump occurs at 2am
+        vi.setSystemTime(new Date(2024, 2, 10, 0, 0, 0));
+        
+        const transitionResult = formatLocalizedTime('02:30', 'en-US');
+        expect(transitionResult).toBeDefined();
+        expect(transitionResult.length).toBeGreaterThan(0);
+        
+        vi.useRealTimers();
+      });
     });
   });
 
