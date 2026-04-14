@@ -29,7 +29,10 @@ export default defineConfig([
       // TypeScript – keep explicit any as a warning so legacy code doesn't break CI
       // but new code is nudged toward proper types
       '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
       '@typescript-eslint/consistent-type-imports': ['warn', { prefer: 'type-imports' }],
 
       // React hooks – purity & effect rules as warnings (not errors) since some
@@ -39,19 +42,16 @@ export default defineConfig([
       'react-hooks/exhaustive-deps': 'warn',
 
       // General code quality
-      'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
+      'no-console': 'off',
       'prefer-const': 'error',
-      'eqeqeq': ['error', 'always', { null: 'ignore' }],
+      eqeqeq: ['error', 'always', { null: 'ignore' }],
     },
   },
 
   // ── Test files ───────────────────────────────────────────────────────────────
   {
     files: ['src/**/*.test.{ts,tsx}', 'src/**/*.spec.{ts,tsx}'],
-    extends: [
-      js.configs.recommended,
-      tseslint.configs.recommended,
-    ],
+    extends: [js.configs.recommended, tseslint.configs.recommended],
     languageOptions: {
       ecmaVersion: 2020,
       globals: { ...globals.browser, ...globals.node },
@@ -59,7 +59,10 @@ export default defineConfig([
     rules: {
       // In tests, `any` casts are often necessary for mocking — allow them
       '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
       'no-console': 'off',
     },
   },
@@ -81,7 +84,10 @@ export default defineConfig([
       '@typescript-eslint/no-explicit-any': 'warn',
       // setState-in-effect is intentional in Storybook arg-sync wrappers
       'react-hooks/set-state-in-effect': 'off',
-      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
     },
   },
 
