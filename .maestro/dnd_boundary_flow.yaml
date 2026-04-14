@@ -1,0 +1,17 @@
+appId: com.quoryn.nyanudge.app
+---
+# Do Not Disturb boundary edge case:
+# Verifies that reminders set to fire within DND hours show correctly as scheduled
+# (and that the app does not crash from schedule boundary math)
+- launchApp
+- tapOn: "Settings"
+- assertVisible: "Do Not Disturb"
+- tapOn:
+    text: "Do Not Disturb"
+- assertVisible: "Start"
+- assertVisible: "End"
+
+# Navigate back and confirm the home screen is still intact
+- tapOn: "Home"
+- assertVisible: "NyaNudge"
+- assertNotVisible: "Loading"

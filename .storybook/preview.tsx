@@ -30,7 +30,9 @@ const preview: Preview = {
     },
 
     a11y: {
-      test: 'todo'
+      // 'error' mode: a11y violations are treated as test failures.
+      // Use 'warn' to surface issues without blocking, 'todo' to disable.
+      test: 'error'
     }
   },
 

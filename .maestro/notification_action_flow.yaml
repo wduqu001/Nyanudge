@@ -1,0 +1,11 @@
+appId: com.quoryn.nyanudge.app
+---
+# Notification-driven flow: simulate opening app from a notification deep-link
+- launchApp:
+    arguments:
+      notifAction: "done"
+      reminderId: "water"
+- assertVisible: "NyaNudge" # Home screen header should show
+
+# Verify the home screen has loaded correctly after notification action
+- assertNotVisible: "Loading"

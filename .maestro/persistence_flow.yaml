@@ -1,0 +1,18 @@
+appId: com.quoryn.nyanudge.app
+---
+# SQLite persistence across background kill:
+# 1. Open app and verify at least one reminder exists
+# 2. Kill the app to simulate Android OS background purge
+# 3. Re-launch and verify reminders survived (persistence test)
+- launchApp
+- assertVisible: "NyaNudge"
+- assertNotVisible: "No active reminders"
+
+# Simulate background kill & restore
+- stopApp
+- launchApp
+
+# Reminders must still be present — confirms SQLite persisted state
+- assertVisible: "NyaNudge"
+- assertNotVisible: "No active reminders"
+- assertNotVisible: "Loading"
