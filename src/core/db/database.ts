@@ -23,10 +23,21 @@ class DatabaseManager {
         }
       }
       
+      const isNative = platform === 'ios' || platform === 'android';
+      const isEncrypted = isNative;
+      const encryptionMode = isNative ? 'encryption' : 'no-encryption';
+
+      if (isNative) {
+        // For production, retrieve this secret securely from native key storage.
+        // For this portfolio piece, a static passphrase enables the SQLCipher implementation.
+        console.log('[DatabaseManager] Applying SQLCipher encryption at rest.');
+        await this.sqlite.setEncryptionSecret('NyanudgeSecurePassphrase2026!');
+      }
+
       this.db = await this.sqlite.createConnection(
         'nyanudge_v1', 
-        false, 
-        'no-encryption', 
+        isEncrypted, 
+        encryptionMode, 
         1, 
         false
       );
