@@ -92,6 +92,7 @@
     "back": "戻る",
     "finish": "始めよう！",
     "select": "選ぶ",
+    "archive": "アーカイブする",
     "edit_full": "設定を編集",
     "disabled": "無効",
     "at": "開始:",
@@ -102,9 +103,12 @@
   "home": {
     "next_up": "次の予定まで {{time}}",
     "no_reminders": "有効なリマインダーはありません",
+    "no_schedule": "スケジュールなし",
     "hero_sub": "{{name}} が見守っています 👀",
     "streak_message": "{{count}}回達成 — その調子です！",
     "reminders_title": "リマインダー",
+    "notif_action_subtitle": "どうしますか？",
+    "notif_next_time": "次回",
     "quick_edit": {
       "next_fire": "次の通知"
     },
@@ -216,6 +220,8 @@
     "schedule_section": "スケジュール",
     "repeat_section": "繰り返し",
     "appearance_section": "外見",
+    "category_label_section": "カテゴリーとラベル",
+    "label_placeholder": "ラベル（任意）",
     "custom_message_label": "カスタムメッセージ",
     "custom_message_placeholder": "空白にするとデフォルトを使用します",
     "type_fixed": "固定時間",

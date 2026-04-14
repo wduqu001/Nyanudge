@@ -92,6 +92,7 @@
     "back": "Atrás",
     "finish": "¡Vamos!",
     "select": "Elegir",
+    "archive": "Archivar recordatorio",
     "edit_full": "Editar configuración",
     "disabled": "Desactivado",
     "at": "A las",
@@ -102,9 +103,12 @@
   "home": {
     "next_up": "Siguiente en {{time}}",
     "no_reminders": "Sin recordatorios activos",
+    "no_schedule": "Sin horario",
     "hero_sub": "{{name}} te está vigilando 👀",
     "streak_message": "{{count}} completados — ¡sigue así!",
     "reminders_title": "Tus recordatorios",
+    "notif_action_subtitle": "¿Qué quieres hacer?",
+    "notif_next_time": "Próxima vez",
     "quick_edit": {
       "next_fire": "Próximo"
     },
@@ -216,6 +220,8 @@
     "schedule_section": "HORARIO",
     "repeat_section": "REPETIR",
     "appearance_section": "APARIENCIA",
+    "category_label_section": "Categoría y nombre",
+    "label_placeholder": "Nombre (opcional)",
     "custom_message_label": "Mensaje personalizado",
     "custom_message_placeholder": "Dejar en blanco para usar el predeterminado",
     "type_fixed": "Horas fijas",

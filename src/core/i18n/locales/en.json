@@ -88,6 +88,7 @@
     "disable": "Disable",
     "save": "Save",
     "cancel": "Cancel",
+    "archive": "Archive Reminder",
     "edit_full": "Edit Settings",
     "disabled": "Disabled",
     "at": "At",
@@ -98,9 +99,12 @@
   "home": {
     "next_up": "Next up in {{time}}",
     "no_reminders": "No active reminders",
+    "no_schedule": "No schedule",
     "hero_sub": "{{name}} is keeping an eye on things 👀",
     "streak_message": "{{count}} done — keep going!",
     "reminders_title": "Your reminders",
+    "notif_action_subtitle": "What would you like to do?",
+    "notif_next_time": "Next time",
     "quick_edit": {
       "next_fire": "Next up"
     },
@@ -218,6 +222,8 @@
     "schedule_section": "SCHEDULE",
     "repeat_section": "REPEAT",
     "appearance_section": "APPEARANCE",
+    "category_label_section": "Category & Label",
+    "label_placeholder": "Label (optional)",
     "custom_message_label": "Custom message",
     "custom_message_placeholder": "Leave blank to use default",
     "type_fixed": "Fixed times",

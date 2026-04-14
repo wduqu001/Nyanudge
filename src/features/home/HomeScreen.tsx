@@ -126,7 +126,7 @@ export const HomeScreen: React.FC = () => {
   const formatSchedule = (reminder: Reminder) => {
     if (!reminder.enabled) return t('actions.disabled');
     const schedule = reminder.schedules && reminder.schedules[0];
-    if (!schedule) return 'No schedule';
+    if (!schedule) return t('home.no_schedule');
     
     if (schedule.type === 'interval') {
       const start = formatLocalizedTime(schedule.startTime, i18n.language);
@@ -336,7 +336,7 @@ export const HomeScreen: React.FC = () => {
                   {pendingNotifAction.label}
                 </p>
                 <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-secondary)' }}>
-                  {t('home.notif_action_subtitle', 'O que deseja fazer?')}
+                  {t('home.notif_action_subtitle')}
                 </p>
               </div>
 
@@ -359,7 +359,7 @@ export const HomeScreen: React.FC = () => {
                     width: '100%'
                   }}
                 >
-                  ✓ {t('actions.done', 'Marcar como Feito')}
+                  ✓ {t('actions.done')}
                 </button>
 
                 <button
@@ -379,7 +379,7 @@ export const HomeScreen: React.FC = () => {
                     width: '100%'
                   }}
                 >
-                  ⏱ {t('home.notif_next_time', 'Próxima vez')}
+                  ⏱ {t('home.notif_next_time')}
                 </button>
 
                 <button
@@ -395,7 +395,7 @@ export const HomeScreen: React.FC = () => {
                     width: '100%'
                   }}
                 >
-                  {t('actions.cancel', 'Fechar')}
+                  {t('actions.cancel')}
                 </button>
               </div>
             </div>

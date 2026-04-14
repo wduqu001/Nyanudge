@@ -149,11 +149,11 @@ export const ReminderEdit: React.FC = () => {
 
   return (
     <div className="reminder-edit-container">
-      <NyaHeader title={isNew ? t('home.reminders_title', 'New Reminder') : t('edit_reminder.title', { label: reminder.label })} />
+      <NyaHeader title={isNew ? t('home.reminders_title') : t('edit_reminder.title', { label: reminder.label })} />
       
       {isNew && (
         <section className="edit-section">
-          <div className="section-label">Category & Label</div>
+          <div className="section-label">{t('edit_reminder.category_label_section')}</div>
           <div style={{ marginBottom: '16px' }}>
             <NyaSelect 
               value={category}
@@ -170,7 +170,7 @@ export const ReminderEdit: React.FC = () => {
           <input
             type="text"
             className="input-field"
-            placeholder="Label (optional)"
+            placeholder={t('edit_reminder.label_placeholder')}
             value={label}
             onChange={(e) => setLabel(e.target.value)}
           />
@@ -333,7 +333,7 @@ export const ReminderEdit: React.FC = () => {
             style={{ width: '100%', padding: '12px', background: 'none', border: '1px solid var(--color-icon-bg-disabled)', color: 'var(--text-secondary)', borderRadius: '12px', cursor: 'pointer' }}
             onClick={handleArchive}
           >
-            {t('actions.archive', 'Archive Reminder')}
+            {t('actions.archive')}
           </button>
         </div>
       )}

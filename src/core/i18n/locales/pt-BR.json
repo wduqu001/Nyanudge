@@ -92,6 +92,7 @@
     "back": "Voltar",
     "finish": "Vamos nessa!",
     "select": "Escolher",
+    "archive": "Arquivar Lembrete",
     "edit_full": "Editar Configurações",
     "disabled": "Desativado",
     "at": "Às",
@@ -102,9 +103,12 @@
   "home": {
     "next_up": "Próximo em {{time}}",
     "no_reminders": "Nenhum lembrete ativo",
+    "no_schedule": "Sem agendamento",
     "hero_sub": "{{name}} está de olho em tudo 👀",
     "streak_message": "{{count}} feitos — continue assim!",
     "reminders_title": "Seus lembretes",
+    "notif_action_subtitle": "O que deseja fazer?",
+    "notif_next_time": "Próxima vez",
     "quick_edit": {
       "next_fire": "Próximo"
     },
@@ -135,6 +139,8 @@
     "schedule_section": "AGENDAMENTO",
     "repeat_section": "REPETIR",
     "appearance_section": "APARÊNCIA",
+    "category_label_section": "Categoria e Nome",
+    "label_placeholder": "Nome (opcional)",
     "custom_message_label": "Mensagem personalizada",
     "custom_message_placeholder": "Em branco para mensagem padrão",
     "type_fixed": "Horários fixos",
