@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePreferencesStore } from '../../core/store/preferencesStore';
 import { useStatsStore } from '../../core/store/statsStore';
@@ -8,12 +8,30 @@ import { Toggle } from '../../shared/components/Toggle/Toggle';
 import { NyaHeader } from '../../shared/components/Header/NyaHeader';
 import { CharacterSelect } from '../../shared/components/CharacterSelect/CharacterSelect';
 import { NyaSelect } from '../../shared/components/Select/NyaSelect';
+import { CrashReporterModal } from './CrashReporterModal';
 import styles from './SettingsScreen.module.css';
 
 export const SettingsScreen: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { preferences, updatePreference, resetPreferences } = usePreferencesStore();
   const { setRecentCompletions, setStats } = useStatsStore();
+
+  // 5-tap debug panel unlock
+  const [tapCount, setTapCount] = useState(0);
+  const [showDebugPanel, setShowDebugPanel] = useState(false);
+  const tapResetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleVersionTap = () => {
+    if (tapResetTimer.current) clearTimeout(tapResetTimer.current);
+    const next = tapCount + 1;
+    setTapCount(next);
+    if (next >= 5) {
+      setTapCount(0);
+      setShowDebugPanel(true);
+    } else {
+      tapResetTimer.current = setTimeout(() => setTapCount(0), 2000);
+    }
+  };
 
   const handleLanguageChange = (newLang: string) => {
     updatePreference('language', newLang);
@@ -38,6 +56,7 @@ export const SettingsScreen: React.FC = () => {
   };
 
   return (
+    <>
     <div className={styles.container}>
       <NyaHeader title={t('settings.title')} />
 
@@ -188,11 +207,28 @@ export const SettingsScreen: React.FC = () => {
             </NyaButton>
           </div>
 
-          <div className={styles.versionInfo}>
+          <div
+            className={styles.versionInfo}
+            onClick={handleVersionTap}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => e.key === 'Enter' && handleVersionTap()}
+            aria-label="App version — tap 5 times for debug panel"
+          >
             {t('settings.data.app_version')} {t('settings.data.version_format', { version: '1.0.0', build: '1' })}
+            {tapCount > 0 && tapCount < 5 && (
+              <span style={{ display: 'block', fontSize: 11, marginTop: 4, opacity: 0.6 }}>
+                {5 - tapCount} more tap{5 - tapCount !== 1 ? 's' : ''} to open debug panel
+              </span>
+            )}
           </div>
         </section>
       </div>
     </div>
+
+    {showDebugPanel && (
+      <CrashReporterModal onClose={() => setShowDebugPanel(false)} />
+    )}
+  </>
   );
 };
