@@ -22,6 +22,21 @@ export class ErrorBoundary extends Component<Props, State> {
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('Uncaught error:', error, errorInfo);
+    
+    // Minimal local telemetry for native WebView debugging
+    try {
+      const logs = JSON.parse(localStorage.getItem('nyanudge_crash_logs') || '[]');
+      logs.unshift({
+        timestamp: new Date().toISOString(),
+        error: error.message,
+        stack: error.stack,
+        componentStack: errorInfo.componentStack
+      });
+      // Keep only last 10 logs
+      localStorage.setItem('nyanudge_crash_logs', JSON.stringify(logs.slice(0, 10)));
+    } catch (e) {
+      console.error('Failed to save crash log to local storage', e);
+    }
   }
 
   private resetErrorBoundary = () => {
