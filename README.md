@@ -59,25 +59,8 @@ We test true Android behaviors (status bar clipping, background restorations, an
    maestro test .maestro/home_flow.yaml
    ```
 
-
-### Testing & Quality
-NyaNudge enforces an 80% test coverage minimum using Vitest and React Testing Library. To ensure our SQLite persistence and hybrid background lifecycles work smoothly, run:
-
-```bash
-# Run unit and component coverage
-npm run test -- --coverage
-```
-
-**Native End-to-End Testing (Maestro)**
-We test true Android behaviors (status bar clipping, background restorations, and Native Notifications limits) using [Maestro](https://maestro.mobile.dev/).
-1. Install Maestro: `curl -Ls "https://get.maestro.mobile.dev" | bash`
-2. Run automated flows against your built emulator/device:
-   ```bash
-   maestro test .maestro/home_flow.yaml
-   ```
-
-
 ### Component Documentation (Storybook)
+
 ```bash
 npm run storybook
 ```
