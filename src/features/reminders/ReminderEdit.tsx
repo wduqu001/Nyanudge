@@ -26,7 +26,9 @@ export const ReminderEdit: React.FC = () => {
   const { reminders, updateReminder, addReminder } = useRemindersStore();
   const isNew = id === 'new';
 
-  const [reminder, setReminder] = useState<Reminder | null>(null);
+  // New reminders are immediately ready (defaults set by useState initialisers).
+  // Existing reminders need to wait for the effect to find and load them.
+  const [isLoaded, setIsLoaded] = useState(() => isNew);
   const [label, setLabel] = useState('');
   const [enabled, setEnabled] = useState(true);
   const [soundMode, setSoundMode] = useState<SoundMode>('sound_vibration');
@@ -35,19 +37,11 @@ export const ReminderEdit: React.FC = () => {
   const [customMessage, setCustomMessage] = useState('');
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [category, setCategory] = useState<Category>('water');
+  // Keep a stable reference to the existing reminder for non-new flows
+  const [reminder, setReminder] = useState<Reminder | null>(null);
 
   useEffect(() => {
-    if (isNew) {
-      setReminder({} as any);
-      setLabel('');
-      setEnabled(true);
-      setSoundMode('sound_vibration');
-      setSnoozeMins(10);
-      setCharacter('mochi');
-      setCategory('water');
-      setCustomMessage('');
-      setSchedules([]);
-    } else {
+    if (!isNew) {
       const existing = reminders.find((r) => r.id === id);
       if (existing) {
         setReminder(existing);
@@ -59,11 +53,12 @@ export const ReminderEdit: React.FC = () => {
         setCategory(existing.category);
         setCustomMessage(existing.customMessage || '');
         setSchedules(existing.schedules || []);
+        setIsLoaded(true);
       }
     }
   }, [id, reminders, isNew]);
 
-  if (!reminder) {
+  if (!isLoaded) {
     return (
       <div className="reminder-edit-container">
         <p>{t('edit_reminder.loading')}</p>
@@ -87,15 +82,15 @@ export const ReminderEdit: React.FC = () => {
         updatedAt: Date.now()
       });
     } else {
-      updateReminder(reminder.id, {
-        label: label || reminder.label,
+      updateReminder(reminder!.id, {
+        label: label || reminder!.label,
         category,
         enabled,
         soundMode,
         snoozeMins,
         character,
         customMessage: customMessage || undefined,
-        schedules
+        schedules,
       });
     }
     navigate(-1);
@@ -113,9 +108,9 @@ export const ReminderEdit: React.FC = () => {
     if (newSchedules.length === 0) {
       newSchedules.push({
         id: crypto.randomUUID(),
-        reminderId: reminder.id,
-        type: reminder.category === 'water' || reminder.category === 'bathroom' ? 'interval' : 'fixed',
-        ...changes
+        reminderId: reminder?.id ?? '',
+        type: category === 'water' || category === 'bathroom' ? 'interval' : 'fixed',
+        ...changes,
       });
     } else {
       const first = newSchedules[0];
@@ -127,11 +122,11 @@ export const ReminderEdit: React.FC = () => {
   };
 
   const mainSchedule = schedules[0] || {
-    type: reminder.category === 'water' || reminder.category === 'bathroom' ? 'interval' : 'fixed',
-    timeValue: reminder.category === 'water' || reminder.category === 'bathroom' ? '120' : '08:00',
+    type: category === 'water' || category === 'bathroom' ? 'interval' : 'fixed',
+    timeValue: category === 'water' || category === 'bathroom' ? '120' : '08:00',
     daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
     startTime: '07:00',
-    endTime: '21:00'
+    endTime: '21:00',
   };
 
   const toggleDay = (dayIndex: number) => {

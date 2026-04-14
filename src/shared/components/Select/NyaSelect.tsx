@@ -10,7 +10,7 @@ interface Option {
 interface NyaSelectProps {
   options: Option[];
   value: string | number;
-  onChange: (value: any) => void;
+  onChange: (value: string | number) => void;
   className?: string;
 }
 

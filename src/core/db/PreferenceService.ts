@@ -8,7 +8,7 @@ export class PreferenceService {
     const db = dbManager.connection;
     const res = await db.query(`SELECT * FROM ${this.TABLE}`);
     
-    const prefs: any = {};
+    const prefs: Partial<Preferences> = {};
     if (res.values) {
       for (const row of res.values) {
         let value = row.value;
@@ -23,7 +23,7 @@ export class PreferenceService {
     return prefs;
   }
 
-  static async updatePreference(key: string, value: any): Promise<void> {
+  static async updatePreference(key: string, value: string | number | boolean): Promise<void> {
     const db = dbManager.connection;
     const now = Date.now();
     const strValue = String(value);

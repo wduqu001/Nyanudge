@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Modal } from './Modal';
 import { NyaButton as Button } from '../Button/NyaButton';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const meta: Meta<typeof Modal> = {
   title: 'Shared/Modal',
@@ -32,7 +32,9 @@ const meta: Meta<typeof Modal> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const ModalWithState = (args: any) => {
+type ModalArgs = React.ComponentProps<typeof Modal> & { onClose?: () => void };
+
+const ModalWithState = (args: ModalArgs) => {
   const [isOpen, setIsOpen] = useState(args.isOpen || false);
 
   useEffect(() => {

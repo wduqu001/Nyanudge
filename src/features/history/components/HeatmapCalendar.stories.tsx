@@ -51,7 +51,7 @@ export const WithoutTitle: Story = {
   },
 };
 
-export const empty: Story = {
+export const Empty: Story = {
   args: {
     completions: [],
     title: 'No Activity Yet',

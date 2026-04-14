@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   CrashLog,
   getCrashLogs,
@@ -14,14 +14,10 @@ interface Props {
 }
 
 export const CrashReporterModal: React.FC<Props> = ({ onClose }) => {
-  const [logs, setLogs] = useState<CrashLog[]>([]);
+  const [logs, setLogs] = useState<CrashLog[]>(() => getCrashLogs());
   const [enabled, setEnabled] = useState(isCrashReporterEnabled());
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    setLogs(getCrashLogs());
-  }, []);
 
   const handleToggleEnabled = () => {
     const next = !enabled;

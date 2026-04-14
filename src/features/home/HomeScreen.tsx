@@ -56,12 +56,12 @@ export const HomeScreen: React.FC = () => {
   const { stats } = useStatsStore();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [pendingNotifs, setPendingNotifs] = useState<PendingResult | null>(null);
-  const [, setTick] = useState(0);
+  const [currentTime, setCurrentTime] = useState(() => Date.now());
 
   // Re-calculate "Next Up" every minute
   React.useEffect(() => {
     const timer = setInterval(() => {
-      setTick(t => t + 1);
+      setCurrentTime(Date.now());
     }, 60000);
     return () => clearInterval(timer);
   }, []);
@@ -96,7 +96,7 @@ export const HomeScreen: React.FC = () => {
 
     if (!earliestDate || !nextReminder) return null;
 
-    const diffMs = (earliestDate as Date).getTime() - Date.now();
+    const diffMs = (earliestDate as Date).getTime() - currentTime;
     const diffMins = Math.round(diffMs / (1000 * 60));
     
     let timeStr = '';
@@ -117,7 +117,7 @@ export const HomeScreen: React.FC = () => {
       reminder: nextReminder as Reminder,
       timeStr
     };
-  }, [reminders, t]);
+  }, [reminders, t, currentTime]);
 
   const handleCardClick = (id: string) => {
     setExpandedId(expandedId === id ? null : id);

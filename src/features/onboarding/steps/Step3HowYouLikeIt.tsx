@@ -23,7 +23,7 @@ export const Step3HowYouLikeIt: React.FC = () => {
           <div
             key={opt.value}
             className={`${styles.card} ${preferences.defaultSoundMode === opt.value ? styles.cardSelected : ''}`}
-            onClick={() => updatePreference('defaultSoundMode', opt.value as any)}
+            onClick={() => updatePreference('defaultSoundMode', opt.value as SoundMode)}
           >
             <div style={{
               width: '40px',

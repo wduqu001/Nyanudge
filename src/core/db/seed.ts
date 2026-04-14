@@ -148,12 +148,12 @@ export const mockStats = {
     lastCompletedDate: null,
     completionRateLast7Days: 0.20,
   },
-} as any;
+} satisfies Record<string, { category: string; currentStreak: number; longestStreak: number; lastCompletedDate: string | null; completionRateLast7Days: number }>;
 
 export const mockRecentCompletions = [
   { id: crypto.randomUUID(), reminderId: waterId, category: 'water', completedAt: Date.now() - 1000 * 60 * 60 * 2, wasSkipped: false },
   { id: crypto.randomUUID(), reminderId: mealId, category: 'meal', completedAt: Date.now() - 1000 * 60 * 60 * 5, wasSkipped: false },
   { id: crypto.randomUUID(), reminderId: waterId, category: 'water', completedAt: Date.now() - 1000 * 60 * 60 * 24, wasSkipped: false },
   { id: crypto.randomUUID(), reminderId: waterId, category: 'water', completedAt: Date.now() - 1000 * 60 * 60 * 48, wasSkipped: false },
-  { id: crypto.randomUUID(), reminderId: mealId, category: 'meal', completedAt: Date.now() - 1000 * 60 * 60 * 50, wasSkipped: false },
-] as any;
+];
+

@@ -105,10 +105,10 @@ export function calculateNextFireTime(schedule: Schedule, anchor?: number, overr
     if (isNaN(startH) || isNaN(startM) || isNaN(endH) || isNaN(endM)) return undefined;
 
     // Create date objects for the window relative to 'now'
-    let windowStart = new Date(now);
+    const windowStart = new Date(now);
     windowStart.setHours(startH, startM, 0, 0);
 
-    let windowEnd = new Date(now);
+    const windowEnd = new Date(now);
     windowEnd.setHours(endH, endM, 0, 0);
 
     // Handle Overnight Window (e.g., 22:00 to 06:00)

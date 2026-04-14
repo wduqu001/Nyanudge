@@ -3,9 +3,19 @@ import { LocalNotifications } from '@capacitor/local-notifications';
 import { useNavigate } from 'react-router-dom';
 import { scheduleReminder, cancelReminder, snoozeReminder } from './scheduler';
 
+type RemindersStoreWindow = typeof window & {
+  remindersStore?: {
+    getState?: () => {
+      reminders?: Reminder[];
+      completeReminder?: (id: string) => void;
+      setPendingNotifAction?: (action: { reminderId: string; label: string; category: string } | null) => void;
+    };
+  };
+};
+
 /** Helper: always reads fresh state from the Zustand store. */
 function getReminderFromStore(reminderId: string): Reminder | undefined {
-  const storeHook = (window as any).remindersStore;
+  const storeHook = (window as RemindersStoreWindow).remindersStore;
   return storeHook?.getState?.()?.reminders?.find(
     (r: Reminder) => r.id === reminderId
   );
@@ -77,7 +87,7 @@ export function useNotificationSetup() {
         const actionId = notifAction.actionId;
         if (!extra?.reminderId) return;
 
-        const storeHook = (window as any).remindersStore;
+        const storeHook = (window as RemindersStoreWindow).remindersStore;
         const reminder  = getReminderFromStore(extra.reminderId);
 
         if (actionId === 'complete') {

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Toggle } from './Toggle';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const meta: Meta<typeof Toggle> = {
   title: 'Shared/Toggle',
@@ -33,8 +33,10 @@ const meta: Meta<typeof Toggle> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+type ToggleArgs = React.ComponentProps<typeof Toggle>;
+
 // A wrapper to handle the state interactively in storybook if users don't directly manipulate 'checked' arg
-const ToggleWithState = (args: any) => {
+const ToggleWithState = (args: ToggleArgs) => {
   const [checked, setChecked] = useState(args.checked || false);
   useEffect(() => {
     setChecked(args.checked || false);
