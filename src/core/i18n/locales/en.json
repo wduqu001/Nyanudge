@@ -9,11 +9,11 @@
     "date": "MM/DD/YYYY"
   },
   "categories": {
-    "water":    { "name": "Drink Water",    "icon": "water" },
-    "meal":     { "name": "Eat Something",  "icon": "meal" },
+    "water": { "name": "Drink Water", "icon": "water" },
+    "meal": { "name": "Eat Something", "icon": "meal" },
     "exercise": { "name": "Move Your Body", "icon": "exercise" },
     "bathroom": { "name": "Bathroom Break", "icon": "bathroom" },
-    "medicine": { "name": "Medication",     "icon": "medicine" }
+    "medicine": { "name": "Medication", "icon": "medicine" }
   },
   "messages": {
     "water": [
@@ -68,7 +68,7 @@
     ]
   },
   "snooze": {
-    "5":  "Fine. 5 minutes. The cat is watching the clock.",
+    "5": "Fine. 5 minutes. The cat is watching the clock.",
     "10": "10 minutes. The cat is setting a timer. 👀",
     "15": "15 minutes. The cat notes this. It will be judged.",
     "30": "30 minutes?! The cat is disappointed. See you soon."
@@ -226,12 +226,23 @@
     "label_placeholder": "Label (optional)",
     "custom_message_label": "Custom message",
     "custom_message_placeholder": "Leave blank to use default",
+    "title_new": "New Reminder",
+    "title_edit": "Edit Reminder",
+    "category": "Category",
+    "enabled": "Enabled",
+    "schedule_type": "Schedule Type",
+    "time": "Time",
+    "start": "Start",
+    "end": "End",
+    "sound_mode": "Sound Mode",
     "type_fixed": "Fixed times",
     "type_interval": "Interval",
     "interval_label": "Every",
     "minutes": "minutes",
+    "mins_label": "mins",
     "from": "from",
     "to": "to",
+    "days_label": "Repeat Days",
     "days": {
       "daily": "Daily",
       "weekdays": "Weekdays",

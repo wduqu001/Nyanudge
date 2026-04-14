@@ -214,11 +214,11 @@ const ReminderForm: React.FC<FormProps> = ({ initialReminder, isNew, onSave, onA
         )}
 
         <section className="form-section">
-          <label className="form-label">{t('edit_reminder.days')}</label>
+          <label className="form-label">{t('edit_reminder.days_label')}</label>
           <div className="days-row">
             {days.map((day, idx) => (
               <button
-                key={day}
+                key={idx}
                 type="button"
                 className={`day-btn ${mainSchedule.daysOfWeek?.includes(idx) ? 'active' : ''}`}
                 onClick={() => toggleDay(idx)}

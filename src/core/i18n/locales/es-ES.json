@@ -9,11 +9,11 @@
     "date": "DD/MM/YYYY"
   },
   "categories": {
-    "water":    { "name": "Beber Agua",        "icon": "water" },
-    "meal":     { "name": "Comer Algo",        "icon": "meal" },
-    "exercise": { "name": "Mueve tu Cuerpo",   "icon": "exercise" },
-    "bathroom": { "name": "Pausa para Baño",   "icon": "bathroom" },
-    "medicine": { "name": "Tomar Medicación",  "icon": "medicine" }
+    "water": { "name": "Beber Agua", "icon": "water" },
+    "meal": { "name": "Comer Algo", "icon": "meal" },
+    "exercise": { "name": "Mueve tu Cuerpo", "icon": "exercise" },
+    "bathroom": { "name": "Pausa para Baño", "icon": "bathroom" },
+    "medicine": { "name": "Tomar Medicación", "icon": "medicine" }
   },
   "messages": {
     "water": [
@@ -68,7 +68,7 @@
     ]
   },
   "snooze": {
-    "5":  "Vale. 5 minutos. El gato vigila el reloj.",
+    "5": "Vale. 5 minutos. El gato vigila el reloj.",
     "10": "10 minutos. El gato está poniendo un temporizador. 👀",
     "15": "15 minutos. El gato toma nota de esto. Serás juzgado.",
     "30": "¡¿30 minutos?! El gato está decepcionado. Nos vemos pronto."
@@ -224,12 +224,23 @@
     "label_placeholder": "Nombre (opcional)",
     "custom_message_label": "Mensaje personalizado",
     "custom_message_placeholder": "Dejar en blanco para usar el predeterminado",
+    "title_new": "Nuevo Recordatorio",
+    "title_edit": "Editar Recordatorio",
+    "category": "Categoría",
+    "enabled": "Activado",
+    "schedule_type": "Tipo de Horario",
+    "time": "Hora",
+    "start": "Inicio",
+    "end": "Fin",
+    "sound_mode": "Modo de Sonido",
     "type_fixed": "Horas fijas",
     "type_interval": "Intervalo",
     "interval_label": "Cada",
     "minutes": "minutos",
+    "mins_label": "min",
     "from": "desde",
     "to": "hasta",
+    "days_label": "Días de repetición",
     "days": {
       "daily": "Diario",
       "weekdays": "Entre semana",

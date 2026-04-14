@@ -9,11 +9,11 @@
     "date": "DD/MM/YYYY"
   },
   "categories": {
-    "water":    { "name": "Beber Água",        "icon": "water" },
-    "meal":     { "name": "Comer Algo",        "icon": "meal" },
-    "exercise": { "name": "Mova-se",           "icon": "exercise" },
-    "bathroom": { "name": "Pausa pro Banheiro","icon": "bathroom" },
-    "medicine": { "name": "Tomar Remédio",     "icon": "medicine" }
+    "water": { "name": "Beber Água", "icon": "water" },
+    "meal": { "name": "Comer Algo", "icon": "meal" },
+    "exercise": { "name": "Mova-se", "icon": "exercise" },
+    "bathroom": { "name": "Pausa pro Banheiro", "icon": "bathroom" },
+    "medicine": { "name": "Tomar Remédio", "icon": "medicine" }
   },
   "messages": {
     "water": [
@@ -68,7 +68,7 @@
     ]
   },
   "snooze": {
-    "5":  "Tudo bem. 5 minutos. O gato tá vigiando o relógio.",
+    "5": "Tudo bem. 5 minutos. O gato tá vigiando o relógio.",
     "10": "10 minutos. O gato tá colocando um timer. 👀",
     "15": "15 minutos. O gato anotou. Será julgado.",
     "30": "30 minutos?! O gato tá decepcionado. Até já."
@@ -143,12 +143,23 @@
     "label_placeholder": "Nome (opcional)",
     "custom_message_label": "Mensagem personalizada",
     "custom_message_placeholder": "Em branco para mensagem padrão",
+    "title_new": "Novo Lembrete",
+    "title_edit": "Editar Lembrete",
+    "category": "Categoria",
+    "enabled": "Ativo",
+    "schedule_type": "Tipo de Agendamento",
+    "time": "Hora",
+    "start": "Início",
+    "end": "Fim",
+    "sound_mode": "Modo de Som",
     "type_fixed": "Horários fixos",
     "type_interval": "Intervalo",
     "interval_label": "A cada",
     "minutes": "minutos",
+    "mins_label": "min",
     "from": "das",
     "to": "até",
+    "days_label": "Dias de Repetição",
     "days": {
       "daily": "Diário",
       "weekdays": "Semana",

@@ -9,11 +9,11 @@
     "date": "YYYY/MM/DD"
   },
   "categories": {
-    "water":    { "name": "水を飲む",         "icon": "water" },
-    "meal":     { "name": "食事をとる",       "icon": "meal" },
-    "exercise": { "name": "体を動かす",       "icon": "exercise" },
-    "bathroom": { "name": "トイレ休憩",       "icon": "bathroom" },
-    "medicine": { "name": "薬を飲む",         "icon": "medicine" }
+    "water": { "name": "水を飲む", "icon": "water" },
+    "meal": { "name": "食事をとる", "icon": "meal" },
+    "exercise": { "name": "体を動かす", "icon": "exercise" },
+    "bathroom": { "name": "トイレ休憩", "icon": "bathroom" },
+    "medicine": { "name": "薬を飲む", "icon": "medicine" }
   },
   "messages": {
     "water": [
@@ -68,7 +68,7 @@
     ]
   },
   "snooze": {
-    "5":  "わかりました。5分。猫は時計を見てますよ。",
+    "5": "わかりました。5分。猫は時計を見てますよ。",
     "10": "10分。猫がタイマーをセットしています。👀",
     "15": "15分。猫はメモを取りました。評価されますよ。",
     "30": "30分？！猫はがっかりしています。またすぐに。"
@@ -224,12 +224,23 @@
     "label_placeholder": "ラベル（任意）",
     "custom_message_label": "カスタムメッセージ",
     "custom_message_placeholder": "空白にするとデフォルトを使用します",
+    "title_new": "新規リマインダー",
+    "title_edit": "リマインダーを編集",
+    "category": "カテゴリー",
+    "enabled": "有効",
+    "schedule_type": "スケジュールタイプ",
+    "time": "時間",
+    "start": "開始",
+    "end": "終了",
+    "sound_mode": "サウンドモード",
     "type_fixed": "固定時間",
     "type_interval": "間隔",
     "interval_label": "毎",
     "minutes": "分",
+    "mins_label": "分",
     "from": "から",
     "to": "まで",
+    "days_label": "繰り返しの曜日",
     "days": {
       "daily": "毎日",
       "weekdays": "平日",
