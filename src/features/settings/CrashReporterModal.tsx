@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
+import type { CrashLog } from '../../core/crash/useCrashReporter';
 import {
-  CrashLog,
   getCrashLogs,
   clearCrashLogs,
   exportCrashLogs,
@@ -45,7 +45,9 @@ export const CrashReporterModal: React.FC<Props> = ({ onClose }) => {
           <div className={styles.handle} />
           <div className={styles.headerRow}>
             <span className={styles.headerBadge}>🐾 Debug Panel</span>
-            <button className={styles.closeBtn} onClick={onClose} aria-label="Close">✕</button>
+            <button className={styles.closeBtn} onClick={onClose} aria-label="Close">
+              ✕
+            </button>
           </div>
         </div>
 
@@ -73,7 +75,11 @@ export const CrashReporterModal: React.FC<Props> = ({ onClose }) => {
           {logs.length === 0 ? (
             <div className={styles.empty}>
               <span className={styles.emptyIcon}>🐱</span>
-              <p>{enabled ? 'No crash logs recorded.' : 'Enable crash reporter to start capturing errors.'}</p>
+              <p>
+                {enabled
+                  ? 'No crash logs recorded.'
+                  : 'Enable crash reporter to start capturing errors.'}
+              </p>
             </div>
           ) : (
             logs.map((log, i) => (
@@ -84,10 +90,14 @@ export const CrashReporterModal: React.FC<Props> = ({ onClose }) => {
                   role="button"
                   aria-expanded={expandedIndex === i}
                   tabIndex={0}
-                  onKeyDown={(e) => e.key === 'Enter' && setExpandedIndex(expandedIndex === i ? null : i)}
+                  onKeyDown={(e) =>
+                    e.key === 'Enter' && setExpandedIndex(expandedIndex === i ? null : i)
+                  }
                 >
                   <div>
-                    <p className={styles.logTimestamp}>{new Date(log.timestamp).toLocaleString()}</p>
+                    <p className={styles.logTimestamp}>
+                      {new Date(log.timestamp).toLocaleString()}
+                    </p>
                     <p className={styles.logError}>{log.error}</p>
                   </div>
                   <span className={styles.chevron}>{expandedIndex === i ? '▲' : '▼'}</span>
@@ -98,9 +108,7 @@ export const CrashReporterModal: React.FC<Props> = ({ onClose }) => {
                     {log.componentStack && (
                       <pre className={styles.stackTrace}>{log.componentStack.trim()}</pre>
                     )}
-                    {log.stack && (
-                      <pre className={styles.stackTrace}>{log.stack.trim()}</pre>
-                    )}
+                    {log.stack && <pre className={styles.stackTrace}>{log.stack.trim()}</pre>}
                     <button className={styles.copyBtn} onClick={() => handleCopyLog(log)}>
                       {copied ? '✓ Copied' : 'Copy JSON'}
                     </button>
@@ -117,7 +125,10 @@ export const CrashReporterModal: React.FC<Props> = ({ onClose }) => {
             <button className={styles.footerBtn} onClick={exportCrashLogs}>
               ↓ Export JSON
             </button>
-            <button className={`${styles.footerBtn} ${styles.footerBtnDestructive}`} onClick={handleClear}>
+            <button
+              className={`${styles.footerBtn} ${styles.footerBtnDestructive}`}
+              onClick={handleClear}
+            >
               Clear Logs
             </button>
           </div>

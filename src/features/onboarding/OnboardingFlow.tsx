@@ -19,7 +19,7 @@ export const OnboardingFlow: React.FC = () => {
     { value: 'en', label: 'English' },
     { value: 'pt-BR', label: 'Português' },
     { value: 'ja', label: '日本語' },
-    { value: 'es-ES', label: 'Español' }
+    { value: 'es-ES', label: 'Español' },
   ];
 
   const handleLanguageChange = (newLang: string) => {
@@ -27,11 +27,7 @@ export const OnboardingFlow: React.FC = () => {
     i18n.changeLanguage(newLang);
   };
 
-  const steps = [
-    <Step1MeetCrew />,
-    <Step2YourReminders />,
-    <Step3HowYouLikeIt />,
-  ];
+  const steps = [<Step1MeetCrew />, <Step2YourReminders />, <Step3HowYouLikeIt />];
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
@@ -56,23 +52,21 @@ export const OnboardingFlow: React.FC = () => {
     <div className={styles.container}>
       <header className={styles.onboardingHeader}>
         <div className={styles.progressBar}>
-          <div 
-            className={styles.progressFill} 
-            style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }} 
+          <div
+            className={styles.progressFill}
+            style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
           />
         </div>
         <div className={styles.languageDropdownContainer}>
-          <NyaSelect 
+          <NyaSelect
             value={preferences.language}
-            onChange={handleLanguageChange}
+            onChange={(val) => handleLanguageChange(String(val))}
             options={languages}
             className={styles.languageSelect}
           />
         </div>
       </header>
-      <div className={styles.stepContent}>
-        {steps[currentStep]}
-      </div>
+      <div className={styles.stepContent}>{steps[currentStep]}</div>
 
       <footer className={styles.footer}>
         {currentStep > 0 && (
@@ -81,8 +75,8 @@ export const OnboardingFlow: React.FC = () => {
           </NyaButton>
         )}
         <NyaButton variant="primary" onClick={handleNext} fullWidth>
-          {currentStep === steps.length - 1 
-            ? t('onboarding.actions.finish') 
+          {currentStep === steps.length - 1
+            ? t('onboarding.actions.finish')
             : t('onboarding.actions.next')}
         </NyaButton>
       </footer>

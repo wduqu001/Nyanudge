@@ -11,7 +11,10 @@ import { CharacterSelect } from '../../shared/components/CharacterSelect/Charact
 import { getLocalizedWeekdays } from '../../shared/utils/dateUtils';
 import './ReminderEdit.css';
 
-const categoryColorMapping: Record<string, 'water' | 'food' | 'exercise' | 'bathroom' | 'medicine'> = {
+const categoryColorMapping: Record<
+  string,
+  'water' | 'food' | 'exercise' | 'bathroom' | 'medicine'
+> = {
   water: 'water',
   meal: 'food',
   exercise: 'exercise',
@@ -30,7 +33,9 @@ const ReminderForm: React.FC<FormProps> = ({ initialReminder, isNew, onSave, onA
   const { t, i18n } = useTranslation();
   const [label, setLabel] = useState(initialReminder?.label || '');
   const [enabled, setEnabled] = useState(initialReminder?.enabled ?? true);
-  const [soundMode, setSoundMode] = useState<SoundMode>(initialReminder?.soundMode || 'sound_vibration');
+  const [soundMode, setSoundMode] = useState<SoundMode>(
+    initialReminder?.soundMode || 'sound_vibration',
+  );
   const [snoozeMins, setSnoozeMins] = useState(initialReminder?.snoozeMins || 10);
   const [character, setCharacter] = useState<Character>(initialReminder?.character || 'mochi');
   const [customMessage, setCustomMessage] = useState(initialReminder?.customMessage || '');
@@ -106,7 +111,11 @@ const ReminderForm: React.FC<FormProps> = ({ initialReminder, isNew, onSave, onA
                 key={cat}
                 type="button"
                 className={`category-btn ${category === cat ? 'active' : ''}`}
-                style={{ '--cat-color': `var(--color-${categoryColorMapping[cat] || 'accent-400'})` } as React.CSSProperties}
+                style={
+                  {
+                    '--cat-color': `var(--color-${categoryColorMapping[cat] || 'accent-400'})`,
+                  } as React.CSSProperties
+                }
                 onClick={() => setCategory(cat)}
               >
                 {t(`categories.${cat}.name`)}
@@ -170,7 +179,7 @@ const ReminderForm: React.FC<FormProps> = ({ initialReminder, isNew, onSave, onA
           <section className="form-section animate-in">
             <label className="form-label">{t('edit_reminder.minutes')}</label>
             <NyaSelect
-              value={mainSchedule.timeValue}
+              value={mainSchedule.timeValue || ''}
               onChange={(val) => updateMainSchedule({ timeValue: String(val) })}
               options={[
                 { label: `30 ${t('edit_reminder.mins_label')}`, value: '30' },
@@ -249,7 +258,7 @@ const ReminderForm: React.FC<FormProps> = ({ initialReminder, isNew, onSave, onA
 
         <section className="form-section">
           <label className="form-label">{t('edit_reminder.character')}</label>
-          <CharacterSelect selected={character} onSelect={setCharacter} />
+          <CharacterSelect value={character} onChange={setCharacter} />
         </section>
 
         <section className="form-section">

@@ -1,4 +1,5 @@
-import { Component, ErrorInfo, ReactNode } from 'react';
+import type { ErrorInfo, ReactNode } from 'react';
+import { Component } from 'react';
 import { ErrorPage } from './ErrorPage';
 import { appendCrashLog } from '../../core/crash/useCrashReporter';
 
@@ -13,7 +14,7 @@ interface State {
 
 export class ErrorBoundary extends Component<Props, State> {
   public state: State = {
-    hasError: false
+    hasError: false,
   };
 
   public static getDerivedStateFromError(error: Error): State {
@@ -39,12 +40,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
   public render() {
     if (this.state.hasError) {
-      return (
-        <ErrorPage 
-          error={this.state.error} 
-          resetErrorBoundary={this.resetErrorBoundary} 
-        />
-      );
+      return <ErrorPage error={this.state.error} resetErrorBoundary={this.resetErrorBoundary} />;
     }
 
     return this.props.children;

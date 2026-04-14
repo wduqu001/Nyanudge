@@ -1,4 +1,5 @@
-import { SQLiteConnection, SQLiteDBConnection, CapacitorSQLite } from '@capacitor-community/sqlite';
+import type { SQLiteDBConnection } from '@capacitor-community/sqlite';
+import { SQLiteConnection, CapacitorSQLite } from '@capacitor-community/sqlite';
 import { MigrationRunner } from './MigrationRunner';
 import { Capacitor } from '@capacitor/core';
 import { defineCustomElements as jeepSqlite } from 'jeep-sqlite/loader';
@@ -12,7 +13,7 @@ class DatabaseManager {
     if (this.isInitialized && this.db) return this.db;
 
     const platform = Capacitor.getPlatform();
-    
+
     try {
       if (platform === 'web') {
         const jeepEl = document.querySelector('jeep-sqlite');
@@ -22,7 +23,7 @@ class DatabaseManager {
           await this.sqlite.initWebStore();
         }
       }
-      
+
       const isNative = platform === 'ios' || platform === 'android';
       const isEncrypted = isNative;
       const encryptionMode = isNative ? 'encryption' : 'no-encryption';
@@ -35,18 +36,18 @@ class DatabaseManager {
       }
 
       this.db = await this.sqlite.createConnection(
-        'nyanudge_v1', 
-        isEncrypted, 
-        encryptionMode, 
-        1, 
-        false
+        'nyanudge_v1',
+        isEncrypted,
+        encryptionMode,
+        1,
+        false,
       );
-      
+
       await this.db.open();
-      
+
       // Run migrations
       await MigrationRunner.runMigrations(this.db);
-      
+
       this.isInitialized = true;
       console.log('[DatabaseManager] SQLite initialized and migrations applied.');
       return this.db;

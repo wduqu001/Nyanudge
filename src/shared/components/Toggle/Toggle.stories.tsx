@@ -41,11 +41,17 @@ const ToggleWithState = (args: ToggleArgs) => {
   useEffect(() => {
     setChecked(args.checked || false);
   }, [args.checked]);
-  
-  return <Toggle {...args} checked={checked} onChange={(val) => {
-    setChecked(val);
-    args.onChange?.(val);
-  }} />;
+
+  return (
+    <Toggle
+      {...args}
+      checked={checked}
+      onChange={(val) => {
+        setChecked(val);
+        args.onChange?.(val);
+      }}
+    />
+  );
 };
 
 export const Default: Story = {
@@ -83,7 +89,13 @@ export const AllCategories: Story = {
   render: (args) => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
       {['water', 'food', 'exercise', 'bathroom', 'medicine'].map((color) => (
-        <ToggleWithState key={color} {...args} checked={true} categoryColor={color} label={`${color} category`} />
+        <ToggleWithState
+          key={color}
+          {...args}
+          checked={true}
+          categoryColor={color as any}
+          label={`${color} category`}
+        />
       ))}
     </div>
   ),

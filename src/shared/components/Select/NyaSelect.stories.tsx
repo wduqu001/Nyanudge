@@ -31,7 +31,7 @@ const options = [
 export const Default: Story = {
   render: (args) => {
     const [value, setValue] = useState(options[0]!.value);
-    return <NyaSelect {...args} value={value} onChange={setValue} />;
+    return <NyaSelect {...args} value={value} onChange={(v) => setValue(String(v))} />;
   },
   args: {
     options,
@@ -42,7 +42,7 @@ export const Default: Story = {
 export const SoundModes: Story = {
   render: (args) => {
     const [value, setValue] = useState('sound_vibration');
-    return <NyaSelect {...args} value={value} onChange={setValue} />;
+    return <NyaSelect {...args} value={value} onChange={(v) => setValue(String(v))} />;
   },
   args: {
     options: [

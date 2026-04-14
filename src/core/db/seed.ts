@@ -1,11 +1,8 @@
-
-
 const waterId = crypto.randomUUID();
 const mealId = crypto.randomUUID();
 const exerciseId = crypto.randomUUID();
 const bathroomId = crypto.randomUUID();
 const medicineId = crypto.randomUUID();
-
 
 export const defaultReminders: Partial<Reminder>[] = [
   {
@@ -22,25 +19,25 @@ export const defaultReminders: Partial<Reminder>[] = [
         reminderId: waterId,
         type: 'fixed',
         timeValue: '09:00',
-        daysOfWeek: [0, 1, 2, 3, 4, 5, 6]
+        daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
       },
       {
         id: crypto.randomUUID(),
         reminderId: waterId,
         type: 'fixed',
         timeValue: '12:00',
-        daysOfWeek: [0, 1, 2, 3, 4, 5, 6]
+        daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
       },
       {
         id: crypto.randomUUID(),
         reminderId: waterId,
         type: 'fixed',
         timeValue: '15:00',
-        daysOfWeek: [0, 1, 2, 3, 4, 5, 6]
-      }
+        daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
+      },
     ],
     createdAt: Date.now(),
-    updatedAt: Date.now()
+    updatedAt: Date.now(),
   },
   {
     id: mealId,
@@ -56,11 +53,11 @@ export const defaultReminders: Partial<Reminder>[] = [
         reminderId: mealId,
         type: 'fixed',
         timeValue: '12:30',
-        daysOfWeek: [0, 1, 2, 3, 4, 5, 6]
-      }
+        daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
+      },
     ],
     createdAt: Date.now(),
-    updatedAt: Date.now()
+    updatedAt: Date.now(),
   },
   {
     id: exerciseId,
@@ -76,11 +73,11 @@ export const defaultReminders: Partial<Reminder>[] = [
         reminderId: exerciseId,
         type: 'fixed',
         timeValue: '10:00',
-        daysOfWeek: [0, 1, 2, 3, 4, 5, 6]
-      }
+        daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
+      },
     ],
     createdAt: Date.now(),
-    updatedAt: Date.now()
+    updatedAt: Date.now(),
   },
   {
     id: bathroomId,
@@ -98,11 +95,11 @@ export const defaultReminders: Partial<Reminder>[] = [
         timeValue: '180',
         daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
         startTime: '08:00',
-        endTime: '22:00'
-      }
+        endTime: '22:00',
+      },
     ],
     createdAt: Date.now(),
-    updatedAt: Date.now()
+    updatedAt: Date.now(),
   },
   {
     id: medicineId,
@@ -118,11 +115,11 @@ export const defaultReminders: Partial<Reminder>[] = [
         reminderId: medicineId,
         type: 'fixed',
         timeValue: '08:00',
-        daysOfWeek: [0, 1, 2, 3, 4, 5, 6]
-      }
+        daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
+      },
     ],
     createdAt: Date.now(),
-    updatedAt: Date.now()
+    updatedAt: Date.now(),
   },
 ];
 
@@ -139,21 +136,53 @@ export const mockStats = {
     currentStreak: 3,
     longestStreak: 7,
     lastCompletedDate: new Date().toISOString().slice(0, 10),
-    completionRateLast7Days: 0.70,
+    completionRateLast7Days: 0.7,
   },
   exercise: {
     category: 'exercise',
     currentStreak: 0,
     longestStreak: 4,
     lastCompletedDate: null,
-    completionRateLast7Days: 0.20,
+    completionRateLast7Days: 0.2,
   },
-} satisfies Record<string, { category: string; currentStreak: number; longestStreak: number; lastCompletedDate: string | null; completionRateLast7Days: number }>;
+} satisfies Record<
+  string,
+  {
+    category: Category;
+    currentStreak: number;
+    longestStreak: number;
+    lastCompletedDate: string | null;
+    completionRateLast7Days: number;
+  }
+>;
 
 export const mockRecentCompletions = [
-  { id: crypto.randomUUID(), reminderId: waterId, category: 'water', completedAt: Date.now() - 1000 * 60 * 60 * 2, wasSkipped: false },
-  { id: crypto.randomUUID(), reminderId: mealId, category: 'meal', completedAt: Date.now() - 1000 * 60 * 60 * 5, wasSkipped: false },
-  { id: crypto.randomUUID(), reminderId: waterId, category: 'water', completedAt: Date.now() - 1000 * 60 * 60 * 24, wasSkipped: false },
-  { id: crypto.randomUUID(), reminderId: waterId, category: 'water', completedAt: Date.now() - 1000 * 60 * 60 * 48, wasSkipped: false },
+  {
+    id: crypto.randomUUID(),
+    reminderId: waterId,
+    category: 'water',
+    completedAt: Date.now() - 1000 * 60 * 60 * 2,
+    wasSkipped: false,
+  },
+  {
+    id: crypto.randomUUID(),
+    reminderId: mealId,
+    category: 'meal',
+    completedAt: Date.now() - 1000 * 60 * 60 * 5,
+    wasSkipped: false,
+  },
+  {
+    id: crypto.randomUUID(),
+    reminderId: waterId,
+    category: 'water',
+    completedAt: Date.now() - 1000 * 60 * 60 * 24,
+    wasSkipped: false,
+  },
+  {
+    id: crypto.randomUUID(),
+    reminderId: waterId,
+    category: 'water',
+    completedAt: Date.now() - 1000 * 60 * 60 * 48,
+    wasSkipped: false,
+  },
 ];
-
