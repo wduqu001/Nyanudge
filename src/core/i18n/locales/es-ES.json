@@ -101,6 +101,7 @@
   },
   "home": {
     "next_up": "Siguiente en {{time}}",
+    "no_reminders": "Sin recordatorios activos",
     "hero_sub": "{{name}} te está vigilando 👀",
     "streak_message": "{{count}} completados — ¡sigue así!",
     "reminders_title": "Tus recordatorios",

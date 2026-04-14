@@ -101,6 +101,7 @@
   },
   "home": {
     "next_up": "次の予定まで {{time}}",
+    "no_reminders": "有効なリマインダーはありません",
     "hero_sub": "{{name}} が見守っています 👀",
     "streak_message": "{{count}}回達成 — その調子です！",
     "reminders_title": "リマインダー",

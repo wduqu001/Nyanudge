@@ -97,6 +97,7 @@
   },
   "home": {
     "next_up": "Next up in {{time}}",
+    "no_reminders": "No active reminders",
     "hero_sub": "{{name}} is keeping an eye on things 👀",
     "streak_message": "{{count}} done — keep going!",
     "reminders_title": "Your reminders",

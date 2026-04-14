@@ -101,6 +101,7 @@
   },
   "home": {
     "next_up": "Próximo em {{time}}",
+    "no_reminders": "Nenhum lembrete ativo",
     "hero_sub": "{{name}} está de olho em tudo 👀",
     "streak_message": "{{count}} feitos — continue assim!",
     "reminders_title": "Seus lembretes",
