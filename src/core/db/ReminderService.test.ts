@@ -72,6 +72,25 @@ describe('ReminderService', () => {
   });
 
   describe('updateReminder', () => {
+    it('updates all possible fields correctly', async () => {
+      const changes = {
+        label: 'Full Update',
+        enabled: true,
+        archived: true,
+        soundMode: 'vibrate',
+        snoozeMins: 15,
+        character: 'sora',
+        customMessage: 'Be awesome',
+        schedules: []
+      };
+      await ReminderService.updateReminder('rem-full', changes as any);
+
+      expect(dbManager.connection.run).toHaveBeenCalledWith(
+        expect.stringContaining('UPDATE reminders SET label = ?, enabled = ?, archived = ?, sound_mode = ?, snooze_mins = ?, character = ?, custom_message = ?, updated_at = ? WHERE id = ?'),
+        expect.arrayContaining(['Full Update', 1, 1, 'vibrate', 15, 'sora', 'Be awesome'])
+      );
+    });
+
     it('updates fields conditionally and recreates schedules', async () => {
       const changes = {
         label: 'New Meds',

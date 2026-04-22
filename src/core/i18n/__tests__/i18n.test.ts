@@ -48,10 +48,15 @@ describe('i18n utilities', () => {
       expect(typeof result).toBe('boolean');
     });
 
-    it('returns false for the "en" locale (24h format)', async () => {
+    it('returns true for the "en" locale (en.json has formats.time = "12h")', async () => {
       await i18n.changeLanguage('en');
-      // The en.json sets formats.time to '24h' — verify the function reflects that
+      expect(is12Hour()).toBe(true);
+    });
+
+    it('returns false for the "pt-BR" locale (pt-BR.json has formats.time = "24h")', async () => {
+      await i18n.changeLanguage('pt-BR');
       expect(is12Hour()).toBe(false);
+      await i18n.changeLanguage('en');
     });
   });
 
