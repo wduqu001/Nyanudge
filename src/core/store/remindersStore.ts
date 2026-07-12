@@ -73,8 +73,10 @@ export const useRemindersStore = create<RemindersState>((set, get) => ({
       }),
     }));
 
-    // cancel old notifications to prevent ghosts
-    if (oldR) cancelReminder(oldR);
+    // Cancel old notifications to prevent ghosts. Must be awaited: notification
+    // IDs are deterministic, so an un-awaited getPending scan can resolve after
+    // scheduleReminder() below and cancel the freshly scheduled notifications.
+    if (oldR) await cancelReminder(oldR);
 
     try {
       await ReminderService.updateReminder(id, changes);

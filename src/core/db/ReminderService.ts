@@ -67,7 +67,7 @@ export class ReminderService {
         r.soundMode,
         r.snoozeMins,
         r.character,
-        r.customMessage,
+        r.customMessage ?? null,
         r.createdAt,
         r.updatedAt,
       ],
@@ -81,11 +81,11 @@ export class ReminderService {
           s.id,
           r.id,
           s.type,
-          s.timeValue,
+          s.timeValue ?? null,
           s.daysOfWeek ? JSON.stringify(s.daysOfWeek) : null,
-          s.startTime,
-          s.endTime,
-          s.notifId,
+          s.startTime ?? null,
+          s.endTime ?? null,
+          s.notifId ?? null,
         ],
       );
     }
@@ -99,6 +99,10 @@ export class ReminderService {
     if (changes.label !== undefined) {
       fields.push('label = ?');
       values.push(changes.label);
+    }
+    if (changes.category !== undefined) {
+      fields.push('category = ?');
+      values.push(changes.category);
     }
     if (changes.enabled !== undefined) {
       fields.push('enabled = ?');
@@ -125,9 +129,15 @@ export class ReminderService {
       values.push(changes.customMessage);
     }
 
-    if (fields.length > 0) {
+    // Bump updated_at whenever the reminder changes at all — a scalar field, an
+    // explicit anchor (completeReminder passes only { updatedAt }), or a
+    // schedules-only edit. The interval anchor lives in this column, so it must
+    // be written even when no other scalar field changed.
+    const touchesReminderRow =
+      fields.length > 0 || changes.updatedAt !== undefined || changes.schedules !== undefined;
+    if (touchesReminderRow) {
       fields.push('updated_at = ?');
-      values.push(Date.now(), id);
+      values.push(changes.updatedAt ?? Date.now(), id);
       await db.run(`UPDATE reminders SET ${fields.join(', ')} WHERE id = ?`, values);
     }
 
@@ -141,10 +151,10 @@ export class ReminderService {
             s.id,
             id,
             s.type,
-            s.timeValue,
+            s.timeValue ?? null,
             s.daysOfWeek ? JSON.stringify(s.daysOfWeek) : null,
-            s.startTime,
-            s.endTime,
+            s.startTime ?? null,
+            s.endTime ?? null,
             s.notifId ?? Math.floor(Math.random() * 2_000_000),
           ],
         );
@@ -194,9 +204,10 @@ export class ReminderService {
   static async clearHistory(): Promise<void> {
     const db = dbManager.connection;
     await db.run('DELETE FROM completion_log');
-    // Reset streak columns so they are consistent with the empty log
+    // Reset streak counters so they are consistent with the empty log.
+    // Streak state lives in the `streaks` table, not `reminders`.
     await db.run(
-      'UPDATE reminders SET current_streak = 0, longest_streak = 0, last_completed_date = NULL',
+      'UPDATE streaks SET current_streak = 0, longest_streak = 0, last_completed_date = NULL',
     );
   }
 }

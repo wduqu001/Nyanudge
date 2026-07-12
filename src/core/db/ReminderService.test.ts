@@ -141,7 +141,7 @@ describe('ReminderService', () => {
     it('clearHistory purges completion log and resets streaks', async () => {
       await ReminderService.clearHistory();
       expect(dbManager.connection.run).toHaveBeenCalledWith('DELETE FROM completion_log');
-      expect(dbManager.connection.run).toHaveBeenCalledWith(expect.stringContaining('UPDATE reminders SET current_streak = 0'));
+      expect(dbManager.connection.run).toHaveBeenCalledWith(expect.stringContaining('UPDATE streaks SET current_streak = 0'));
     });
   });
 });
