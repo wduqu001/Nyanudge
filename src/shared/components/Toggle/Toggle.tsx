@@ -37,7 +37,7 @@ export const Toggle: React.FC<ToggleProps> = ({
         role="switch"
         aria-checked={checked}
         disabled={disabled}
-        aria-label={label || ariaLabel}
+        aria-label={label || ariaLabel || "Toggle"}
         aria-labelledby={ariaLabelledBy}
       >
         <span className={styles.thumb} />

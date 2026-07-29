@@ -40,6 +40,14 @@ cd android && ./gradlew assembleDebug
 ```
 *The resulting APK is usually at: `android/app/build/outputs/apk/debug/app-debug.apk`*
 
+## 📱 Device Setup (USB Debugging)
+
+To deploy to a physical Android device, you must enable Developer Options and USB Debugging:
+1. Go to **Settings > About phone** and tap **Build number** 7 times.
+2. Go to **Settings > System > Developer options** (or bottom of Settings).
+3. Enable **USB debugging**.
+4. Connect the device via USB and accept the **"Allow USB debugging?"** prompt on the screen.
+
 ## 🚀 Deployment Workflow
 
 ### 1. Verify Device Connection

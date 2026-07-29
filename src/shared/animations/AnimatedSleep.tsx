@@ -10,7 +10,7 @@ import React from 'react';
  *   - eyes show classic sleep arcs
  * 
  * Color palette from cat_mochi.svg:
- *   body:      #F0EEE8 (warm cream)
+ *   body:      #F8F1DF (warm cream)
  *   details:   #D4D2CC (grey)
  *   ear-inner: #FFD4D4
  *   nose:      #FFB3B3
@@ -74,18 +74,18 @@ export const AnimatedSleep: React.FC<React.SVGProps<SVGSVGElement>> = (props) =>
     <g className="anim sleep-body">
 
       {/* Body (curled, lying down) */}
-      <ellipse cx="44" cy="64" rx="22" ry="13" fill="#F0EEE8" stroke="#111827" strokeWidth="2" />
+      <ellipse cx="44" cy="64" rx="22" ry="13" fill="#F8F1DF" stroke="#111827" strokeWidth="2" />
 
       {/* Head resting on body */}
-      <circle cx="60" cy="52" r="13" fill="#F0EEE8" stroke="#111827" strokeWidth="2" />
+      <circle cx="60" cy="52" r="13" fill="#F8F1DF" stroke="#111827" strokeWidth="2" />
 
       {/* Left ear (outer) */}
-      <polygon points="53,44 50,34 58,40" fill="#F0EEE8" stroke="#111827" strokeWidth="1.5" strokeLinejoin="round" />
+      <polygon points="53,44 50,34 58,40" fill="#F8F1DF" stroke="#111827" strokeWidth="1.5" strokeLinejoin="round" />
       {/* Left ear (inner) */}
       <polygon points="53.5,43 51.5,36.5 57,40.5" fill="#FFD4D4" />
 
       {/* Right ear (outer) */}
-      <polygon points="66,43 70,34 73,41" fill="#F0EEE8" stroke="#111827" strokeWidth="1.5" strokeLinejoin="round" />
+      <polygon points="66,43 70,34 73,41" fill="#F8F1DF" stroke="#111827" strokeWidth="1.5" strokeLinejoin="round" />
       {/* Right ear (inner) */}
       <polygon points="66.5,42 69.5,35.5 71.5,41" fill="#FFD4D4" />
 

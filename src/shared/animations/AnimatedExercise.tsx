@@ -4,7 +4,7 @@ import React from 'react';
  * AnimatedExercise — Mochi-style cat running animation.
  * 
  * Color palette from cat_mochi.svg:
- *   body:      #F0EEE8 (warm cream)
+ *   body:      #F8F1DF (warm cream)
  *   details:   #D4D2CC (grey tail/whiskers)
  *   ear-inner: #FFD4D4 (pink)
  *   nose:      #FFB3B3
@@ -115,7 +115,7 @@ export const AnimatedExercise: React.FC<React.SVGProps<SVGSVGElement>> = (props)
       </g>
 
       {/* Body ellipse */}
-      <ellipse cx="42" cy="56" rx="16" ry="11" fill="#F0EEE8" stroke="#111827" strokeWidth="2" />
+      <ellipse cx="42" cy="56" rx="16" ry="11" fill="#F8F1DF" stroke="#111827" strokeWidth="2" />
 
       {/* Front leg */}
       <g className="anim leg-front">
@@ -124,16 +124,16 @@ export const AnimatedExercise: React.FC<React.SVGProps<SVGSVGElement>> = (props)
       </g>
 
       {/* Head */}
-      <circle cx="55" cy="40" r="12" fill="#F0EEE8" stroke="#111827" strokeWidth="2" />
+      <circle cx="55" cy="40" r="12" fill="#F8F1DF" stroke="#111827" strokeWidth="2" />
 
       {/* Left ear (outer) */}
-      <polygon points="47,32 44,23 52,28" fill="#F0EEE8" stroke="#111827" strokeWidth="1.5" strokeLinejoin="round" />
+      <polygon points="47,32 44,23 52,28" fill="#F8F1DF" stroke="#111827" strokeWidth="1.5" strokeLinejoin="round" />
       {/* Left ear (inner) */}
       <polygon points="47.5,31 45.5,25 51,28.5" fill="#FFD4D4" />
 
       {/* Right ear (outer) — twitches */}
       <g className="anim run-ear">
-        <polygon points="61,32 64,22 69,29" fill="#F0EEE8" stroke="#111827" strokeWidth="1.5" strokeLinejoin="round" />
+        <polygon points="61,32 64,22 69,29" fill="#F8F1DF" stroke="#111827" strokeWidth="1.5" strokeLinejoin="round" />
         <polygon points="61.5,31 64,24.5 67.5,29" fill="#FFD4D4" />
       </g>
 
