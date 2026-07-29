@@ -180,11 +180,19 @@ export async function cancelReminder(reminder: Reminder): Promise<void> {
   // We reconstruct the IDs we *know* we scheduled in scheduleReminder().
   const deterministicIds: { id: number }[] = [];
 
-  reminder.schedules.forEach((_, index) => {
-    // We cancel the range of IDs used for batching (fixed days / intervals)
-    for (let i = 0; i < 10; i++) {
-      const seed = `${reminder.id}-sched-${index}-item-${i}`;
-      deterministicIds.push({ id: hashId(seed) });
+  reminder.schedules.forEach((sched, index) => {
+    if (sched.type === 'fixed') {
+      if (!sched.daysOfWeek || sched.daysOfWeek.length === 0 || sched.daysOfWeek.length === 7) {
+        deterministicIds.push({ id: hashId(`${reminder.id}-sched-${index}-daily`) });
+      } else {
+        for (let i = 0; i < 10; i++) {
+          deterministicIds.push({ id: hashId(`${reminder.id}-sched-${index}-day-${i}`) });
+        }
+      }
+    } else if (sched.type === 'interval') {
+      for (let i = 0; i < 64; i++) {
+        deterministicIds.push({ id: hashId(`${reminder.id}-sched-${index}-int-${i}`) });
+      }
     }
   });
 
@@ -231,7 +239,7 @@ export async function scheduleReminder(reminder: Reminder): Promise<void> {
   const common = {
     title,
     body: reminder.customMessage ?? pickMessage(reminder.category),
-    sound: reminder.soundMode !== 'silent' ? CATEGORY_SOUND[cat] : undefined,
+    sound: reminder.soundMode === 'sound_vibration' ? CATEGORY_SOUND[cat] : undefined,
     smallIcon: CATEGORY_ICONS[cat],
     channelId: CATEGORY_CHANNEL[cat],
     actionTypeId: 'NYANUDGE_REMINDER',
@@ -259,8 +267,8 @@ export async function scheduleReminder(reminder: Reminder): Promise<void> {
       // Handle "One-off" or "Daily" (no daysOfWeek specified)
       // -------------------------------------------------------
 
-      if (!sched.daysOfWeek || sched.daysOfWeek.length === 0) {
-        // Sub-case 1A: Simple Daily Repeat
+      if (!sched.daysOfWeek || sched.daysOfWeek.length === 0 || sched.daysOfWeek.length === 7) {
+        // Sub-case 1A: Simple Daily Repeat (all days or no filter)
         const fireTime = calculateNextFireTime(sched);
         if (!fireTime) continue;
 
@@ -351,7 +359,7 @@ export async function snoozeReminder(
       title,
       body: i18n.t(`snooze.${reminder.snoozeMins}`),
       schedule: { at: fireTime, repeats: false, allowWhileIdle: true },
-      sound: reminder.soundMode !== 'silent' ? CATEGORY_SOUND[cat] : undefined,
+      sound: reminder.soundMode === 'sound_vibration' ? CATEGORY_SOUND[cat] : undefined,
       smallIcon: CATEGORY_ICONS[cat],
       channelId: CATEGORY_CHANNEL[cat],
       actionTypeId: 'NYANUDGE_REMINDER',

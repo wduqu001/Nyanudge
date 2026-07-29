@@ -170,9 +170,9 @@ describe('scheduler', () => {
       };
       await cancelReminder(reminder);
       expect(LocalNotifications.cancel).toHaveBeenCalled();
-      // Should construct 10 IDs per schedule (one schedule → 10 calls)
+      // Fixed schedule without daysOfWeek → 1 daily-repeat ID
       const cancelArg = vi.mocked(LocalNotifications.cancel).mock.calls[0]?.[0];
-      expect(cancelArg?.notifications).toHaveLength(10);
+      expect(cancelArg?.notifications).toHaveLength(1);
     });
 
     it('also queries getPending to cancel snoozed notifications', async () => {

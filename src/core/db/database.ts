@@ -32,18 +32,44 @@ class DatabaseManager {
         // For production, retrieve this secret securely from native key storage.
         // For this portfolio piece, a static passphrase enables the SQLCipher implementation.
         console.log('[DatabaseManager] Applying SQLCipher encryption at rest.');
-        await this.sqlite.setEncryptionSecret('NyanudgeSecurePassphrase2026!');
+        try {
+          await this.sqlite.setEncryptionSecret('NyanudgeSecurePassphrase2026!');
+        } catch (e: any) {
+          if (!e.message?.includes('already been set')) {
+            throw e;
+          }
+        }
       }
 
-      this.db = await this.sqlite.createConnection(
-        'nyanudge_v1',
-        isEncrypted,
-        encryptionMode,
-        1,
-        false,
-      );
+      try {
+        this.db = await this.sqlite.createConnection(
+          'nyanudge_v1',
+          isEncrypted,
+          encryptionMode,
+          1,
+          false,
+        );
+      } catch (e: any) {
+        if (e.message?.includes('already exists')) {
+          this.db = await this.sqlite.retrieveConnection('nyanudge_v1', false);
+        } else {
+          throw e;
+        }
+      }
 
-      await this.db.open();
+      try {
+        await this.db.open();
+      } catch (e: any) {
+        if (!e.message?.includes('already open')) {
+          throw e;
+        }
+      }
+
+      try {
+        await this.db.run('PRAGMA foreign_keys = ON');
+      } catch (e: any) {
+        console.warn('[DatabaseManager] Could not set PRAGMA foreign_keys:', e);
+      }
 
       // Run migrations
       await MigrationRunner.runMigrations(this.db);

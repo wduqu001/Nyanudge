@@ -321,6 +321,19 @@ export const ReminderEdit: React.FC = () => {
 
   const handleSave = (data: Partial<Reminder>) => {
     if (isNew) {
+      const isInterval = data.category === 'water' || data.category === 'bathroom';
+      const schedules = data.schedules?.length
+        ? data.schedules
+        : [{
+            id: crypto.randomUUID(),
+            reminderId: '',
+            type: isInterval ? 'interval' : 'fixed',
+            timeValue: isInterval ? '120' : '08:00',
+            daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
+            startTime: isInterval ? '07:00' : undefined,
+            endTime: isInterval ? '21:00' : undefined,
+          }];
+
       addReminder({
         id: crypto.randomUUID(),
         label: data.label || '',
@@ -329,7 +342,7 @@ export const ReminderEdit: React.FC = () => {
         snoozeMins: data.snoozeMins || 10,
         character: data.character || 'mochi',
         customMessage: data.customMessage,
-        schedules: data.schedules || [],
+        schedules,
         category: data.category || 'water',
         createdAt: Date.now(),
         updatedAt: Date.now(),
