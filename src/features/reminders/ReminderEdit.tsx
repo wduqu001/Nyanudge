@@ -322,7 +322,7 @@ export const ReminderEdit: React.FC = () => {
   const handleSave = (data: Partial<Reminder>) => {
     if (isNew) {
       const isInterval = data.category === 'water' || data.category === 'bathroom';
-      const schedules = data.schedules?.length
+      const schedules: Schedule[] = data.schedules?.length
         ? data.schedules
         : [{
             id: crypto.randomUUID(),
