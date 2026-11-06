@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { usePrefersReducedMotion } from "../../hooks/usePrefersReducedMotion";
 import styles from "./AnimatedCatKuro.module.css";
 
 /**
@@ -14,6 +15,7 @@ import styles from "./AnimatedCatKuro.module.css";
  *  - Occasional smug squint (eyes narrow to slits briefly)
  */
 export const AnimatedCatKuro: React.FC = () => {
+  const reduceMotion = usePrefersReducedMotion();
   const [blink, setBlink]         = useState(false);
   const [squint, setSquint]       = useState(false);
   const [leftEarTwitch, setLeftEarTwitch]   = useState(false);
@@ -26,6 +28,7 @@ export const AnimatedCatKuro: React.FC = () => {
 
   /* ── Blink loop ─────────────────────────────────────────────────── */
   useEffect(() => {
+    if (reduceMotion) return;
     let mounted = true;
     let id: ReturnType<typeof setTimeout>;
 
@@ -43,10 +46,11 @@ export const AnimatedCatKuro: React.FC = () => {
 
     loop();
     return () => { mounted = false; clearTimeout(id); };
-  }, []);
+  }, [reduceMotion]);
 
   /* ── Smug squint (Kuro's signature look) ───────────────────────── */
   useEffect(() => {
+    if (reduceMotion) return;
     let mounted = true;
     let id: ReturnType<typeof setTimeout>;
 
@@ -64,10 +68,11 @@ export const AnimatedCatKuro: React.FC = () => {
 
     loop();
     return () => { mounted = false; clearTimeout(id); };
-  }, []);
+  }, [reduceMotion]);
 
   /* ── Asymmetric ear twitches ────────────────────────────────────── */
   useEffect(() => {
+    if (reduceMotion) return;
     let mounted = true;
     let id: ReturnType<typeof setTimeout>;
 
@@ -91,10 +96,11 @@ export const AnimatedCatKuro: React.FC = () => {
 
     loop();
     return () => { mounted = false; clearTimeout(id); };
-  }, []);
+  }, [reduceMotion]);
 
   /* ── Tail flick (sudden fast swipe) ────────────────────────────── */
   useEffect(() => {
+    if (reduceMotion) return;
     let mounted = true;
     let id: ReturnType<typeof setTimeout>;
 
@@ -112,10 +118,11 @@ export const AnimatedCatKuro: React.FC = () => {
 
     loop();
     return () => { mounted = false; clearTimeout(id); };
-  }, []);
+  }, [reduceMotion]);
 
   /* ── Eye tracking ───────────────────────────────────────────────── */
   useEffect(() => {
+    if (reduceMotion) return;
     let raf: number;
     const animate = () => {
       eyePosRef.current.x += (targetPosRef.current.x - eyePosRef.current.x) * 0.12;
@@ -128,7 +135,7 @@ export const AnimatedCatKuro: React.FC = () => {
     };
     animate();
     return () => cancelAnimationFrame(raf);
-  }, []);
+  }, [reduceMotion]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();

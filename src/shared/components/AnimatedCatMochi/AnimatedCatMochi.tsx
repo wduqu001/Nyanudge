@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { usePrefersReducedMotion } from "../../hooks/usePrefersReducedMotion";
 import styles from "./AnimatedCatMochi.module.css";
 
 /**
@@ -7,6 +8,7 @@ import styles from "./AnimatedCatMochi.module.css";
  * and mouse-tracking eye movement.
  */
 export const AnimatedCatMochi: React.FC = () => {
+  const reduceMotion = usePrefersReducedMotion();
   const [blink, setBlink] = useState(false);
   const [earTwitch, setEarTwitch] = useState(false);
 
@@ -18,6 +20,7 @@ export const AnimatedCatMochi: React.FC = () => {
      Blink loop (randomly fires)
   ----------------------------*/
   useEffect(() => {
+    if (reduceMotion) return;
     let mounted = true;
     let timeoutId: ReturnType<typeof setTimeout>;
 
@@ -40,12 +43,13 @@ export const AnimatedCatMochi: React.FC = () => {
       mounted = false;
       clearTimeout(timeoutId);
     };
-  }, []);
+  }, [reduceMotion]);
 
   /* ---------------------------
      Ear twitch (rare event)
   ----------------------------*/
   useEffect(() => {
+    if (reduceMotion) return;
     let mounted = true;
     let timeoutId: ReturnType<typeof setTimeout>;
 
@@ -68,12 +72,13 @@ export const AnimatedCatMochi: React.FC = () => {
       mounted = false;
       clearTimeout(timeoutId);
     };
-  }, []);
+  }, [reduceMotion]);
 
   /* ---------------------------
      Eye tracking (smoothed via Raf loop)
   ----------------------------*/
   useEffect(() => {
+    if (reduceMotion) return;
     let raf: number;
     const animate = () => {
       // Linear interpolation (cheap smoothing)
@@ -89,7 +94,7 @@ export const AnimatedCatMochi: React.FC = () => {
 
     animate();
     return () => cancelAnimationFrame(raf);
-  }, []);
+  }, [reduceMotion]);
 
   /**
    * Updates target eye position based on mouse coordinate within the container
