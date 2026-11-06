@@ -76,4 +76,11 @@ describe('PreferencesStore', () => {
     expect(prefs.isOnboardingComplete).toBe(true);
     expect(prefs.theme).toBe('system');
   });
+
+  it('setLoaded flips the loaded flag', () => {
+    usePreferencesStore.getState().setLoaded(false);
+    expect(usePreferencesStore.getState().isLoaded).toBe(false);
+    usePreferencesStore.getState().setLoaded(true);
+    expect(usePreferencesStore.getState().isLoaded).toBe(true);
+  });
 });

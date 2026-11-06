@@ -143,6 +143,33 @@ describe('ReminderEdit', () => {
     expect(navigateMock).toHaveBeenCalledWith(-1);
   });
 
+  it('saves weekday changes: removing Monday and adding Sunday', async () => {
+    const updateReminder = vi.fn().mockResolvedValue(undefined);
+    useRemindersStore.setState({ reminders: [makeReminder()], isLoaded: true, updateReminder } as any);
+    const { container } = render(<RouterWrapper id="existing-1" />);
+    const dayButtons = container.querySelectorAll('.day-btn');
+    fireEvent.click(dayButtons[1]!); // Monday off
+    fireEvent.click(dayButtons[0]!); // Sunday on
+    await act(async () => {
+      fireEvent.click(screen.getByText(/save/i));
+    });
+    const saved = updateReminder.mock.calls[0]![1] as Partial<Reminder>;
+    expect(saved.schedules![0]!.daysOfWeek).toEqual([0, 2, 3, 4, 5]);
+  });
+
+  it('switching to an interval schedule saves an interval with a window', async () => {
+    const updateReminder = vi.fn().mockResolvedValue(undefined);
+    useRemindersStore.setState({ reminders: [makeReminder()], isLoaded: true, updateReminder } as any);
+    render(<RouterWrapper id="existing-1" />);
+    fireEvent.click(screen.getByRole('button', { name: 'Interval' }));
+    expect(screen.getByText('Start')).toBeInTheDocument();
+    await act(async () => {
+      fireEvent.click(screen.getByText(/save/i));
+    });
+    const saved = updateReminder.mock.calls[0]![1] as Partial<Reminder>;
+    expect(saved.schedules![0]).toEqual(expect.objectContaining({ type: 'interval', timeValue: '120' }));
+  });
+
   it('shows the Archive button only for existing reminders', () => {
     useRemindersStore.setState({ reminders: [makeReminder()], isLoaded: true });
     render(<RouterWrapper id="existing-1" />);

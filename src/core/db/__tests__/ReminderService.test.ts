@@ -63,6 +63,22 @@ const makeReminder = (overrides: Partial<Reminder> = {}): Reminder => ({
 describe('ReminderService', () => {
   // ── getAllReminders ──────────────────────────────────────────────────────
 
+  describe('getCompletionDays', () => {
+    it('returns distinct local days per category, skipping skipped entries', async () => {
+      mockDb.query.mockResolvedValueOnce({ values: [{ category: 'water', day: '2026-11-06' }] });
+      await expect(ReminderService.getCompletionDays()).resolves.toEqual([{ category: 'water', day: '2026-11-06' }]);
+      const sql = mockDb.query.mock.calls.at(-1)![0] as string;
+      expect(sql).toMatch(/DISTINCT category/);
+      expect(sql).toMatch(/'localtime'/);
+      expect(sql).toMatch(/was_skipped = 0/);
+    });
+
+    it('returns an empty list when the query has no values', async () => {
+      mockDb.query.mockResolvedValueOnce({});
+      await expect(ReminderService.getCompletionDays()).resolves.toEqual([]);
+    });
+  });
+
   describe('getAllReminders', () => {
     it('returns an empty array when no reminders exist', async () => {
       mockDb.query.mockResolvedValue({ values: [] });

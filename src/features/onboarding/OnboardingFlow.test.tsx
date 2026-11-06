@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { OnboardingFlow } from './OnboardingFlow';
 import { MemoryRouter } from 'react-router-dom';
@@ -6,6 +6,7 @@ import { usePreferencesStore } from '../../core/store/preferencesStore';
 import { useRemindersStore } from '../../core/store/remindersStore';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '../../core/i18n';
+import { runBackHandler } from '../../shared/hooks/useBackHandler';
 
 // Mock child components to isolate the OnboardingFlow logic
 vi.mock('./steps/Step1MeetCrew', () => ({
@@ -124,6 +125,14 @@ describe('OnboardingFlow', () => {
     fireEvent.click(screen.getByText('onboarding.actions.back'));
     expect(screen.getByTestId('step-1')).toBeInTheDocument();
     expect(screen.queryByText('onboarding.actions.back')).not.toBeInTheDocument();
+  });
+
+  it('Android back returns to the previous step instead of leaving onboarding', () => {
+    renderComponent();
+    fireEvent.click(screen.getByText('onboarding.actions.next'));
+    act(() => { expect(runBackHandler()).toBe(true); });
+    expect(screen.queryByText('onboarding.actions.back')).not.toBeInTheDocument();
+    expect(runBackHandler()).toBe(false);
   });
 
   it('should show Finish button on the last step and complete onboarding', () => {

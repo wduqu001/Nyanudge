@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import {
   calculateNextFireTime, upcomingFireTimes, rescheduleAll, snoozeReminder, channelFor, setQuietHours, isInQuietHours,
-  setCompactNotifications,
+  setCompactNotifications, ensureNotificationChannels,
 } from './scheduler';
 
 vi.mock('@capacitor/local-notifications', () => ({
@@ -13,6 +13,7 @@ vi.mock('@capacitor/local-notifications', () => ({
     checkPermissions: vi.fn().mockResolvedValue({ display: 'granted' }),
     requestPermissions: vi.fn().mockResolvedValue({ display: 'granted' }),
     checkExactNotificationSetting: vi.fn().mockResolvedValue({ exact_alarm: 'granted' }),
+    createChannel: vi.fn().mockResolvedValue(undefined),
   }
 }));
 
@@ -218,6 +219,17 @@ describe('scheduler', () => {
       expect(upcomingFireTimes(makeReminder({ category: 'medicine', schedules: late }), new Date(2026, 4, 10, 8, 0), 5)).toHaveLength(5);
     });
 
+    it('treats missing or zero-length quiet hours as none', () => {
+      expect(isInQuietHours(new Date(2026, 4, 10, 23, 0), null)).toBe(false);
+      expect(isInQuietHours(new Date(2026, 4, 10, 23, 0), { start: '22:00', end: '22:00' })).toBe(false);
+    });
+
+    it('handles a same-day quiet window', () => {
+      const hours = { start: '13:00', end: '15:00' };
+      expect(isInQuietHours(new Date(2026, 4, 10, 14, 0), hours)).toBe(true);
+      expect(isInQuietHours(new Date(2026, 4, 10, 15, 0), hours)).toBe(false);
+    });
+
     it('treats quiet hours that cross midnight as one window', () => {
       const hours = { start: '22:00', end: '07:00' };
       expect(isInQuietHours(new Date(2026, 4, 10, 23, 0), hours)).toBe(true);
@@ -281,6 +293,26 @@ describe('scheduler', () => {
       expect(scheduled()[0]?.title).toBe('categories.water.name');
     });
 
+    it('falls back to inexact alarms when the exact-alarm check fails', async () => {
+      vi.mocked(LocalNotifications.checkExactNotificationSetting).mockRejectedValueOnce(new Error('not implemented'));
+      await rescheduleAll([makeReminder()]);
+      expect(scheduled().length).toBeGreaterThan(0);
+      scheduled().forEach((n) => expect(n.isExactNotification).toBe(false));
+    });
+
+    it('still schedules when the pending list cannot be read', async () => {
+      vi.mocked(LocalNotifications.getPending).mockRejectedValueOnce(new Error('bridge error'));
+      await rescheduleAll([makeReminder()]);
+      expect(LocalNotifications.schedule).toHaveBeenCalledOnce();
+    });
+
+    it('only cancels when every reminder is off', async () => {
+      vi.mocked(LocalNotifications.getPending).mockResolvedValueOnce({ notifications: [{ id: 7, title: '', body: '', extra: { reminderId: 'r1' } }] });
+      await rescheduleAll([makeReminder({ enabled: false })]);
+      expect(LocalNotifications.cancel).toHaveBeenCalledWith({ notifications: [{ id: 7 }] });
+      expect(LocalNotifications.schedule).not.toHaveBeenCalled();
+    });
+
     it('routes vibration-only reminders to the vibrate channel with the silent sound', async () => {
       await rescheduleAll([makeReminder({ soundMode: 'vibration_only' })]);
       expect(scheduled()[0]?.channelId).toBe('nyanudge_vibrate');
@@ -297,6 +329,18 @@ describe('scheduler', () => {
       expect(first?.extra.isSnoozed).toBe(true);
       expect(first?.schedule?.at!.getTime()).toBe(new Date(2026, 4, 10, 8, 10).getTime());
       expect(first?.id).not.toBe(second?.id);
+    });
+  });
+
+  describe('ensureNotificationChannels', () => {
+    it('creates every channel a reminder can be routed to', async () => {
+      await ensureNotificationChannels();
+      const ids = vi.mocked(LocalNotifications.createChannel).mock.calls.map(([c]) => c.id);
+      for (const mode of ['sound_vibration', 'vibration_only', 'silent'] as const) {
+        for (const category of ['water', 'meal', 'exercise', 'bathroom', 'medicine'] as const) {
+          expect(ids).toContain(channelFor(category, mode));
+        }
+      }
     });
   });
 
