@@ -1,63 +1,60 @@
-# Design System: Nyanudge
+# Design system: NyaNudge
 
-## 1. Visual Theme & Atmosphere
-A restrained, playfully-balanced daily habit tracking interface with fluid spring-physics motion. The atmosphere is warm and encouraging—like a well-lit architecture studio—avoiding clinical rigidity while maintaining crisp organization through soft, generously rounded geometry and a bright, tangerine-driven primary accent. (Density: 5, Variance: 4, Motion: 6)
+Tokens live in `src/shared/styles/theme.css`; use them instead of literal colours. Accessibility rules are checked by the Storybook stories (`npx vitest run --project=storybook`, axe).
 
-## 2. Color Palette & Roles
-- **Canvas White** (#FAFAF9) — Primary background surface
-- **Pure Surface** (#FFFFFF) — Card and container fill
-- **Charcoal Ink** (#141412) — Primary text, Zinc-950 depth
-- **Muted Steel** (#A09E98) — Secondary text, descriptions, metadata
-- **Whisper Border** (#E8E6E1) — Subtle dividers, structural lines, card borders
-- **Tangerine Accent** (#E97B22) — Single accent for CTAs, active states, focus rings
-*(Max 1 accent. Saturation < 80%. No purple/neon.)*
+## 1. Atmosphere
+Calm and playful: a warm neutral base, one tangerine accent, generously rounded shapes, and the cats as the personality. Never clinical, never loud.
 
-*(Note: Semantic app states use muted backdrops for categories: Water #3B8BD4, Food #5DAA62, Exercise #E97B22, Medicine #D65B5B)*
+## 2. Colour
+| Role | Token | Light | Dark |
+|---|---|---|---|
+| Background | `--surface-bg` | #FAFAF9 | #141412 |
+| Card | `--surface-card` | #FFFFFF | #242320 |
+| Primary text | `--text-primary` | #141412 | #FAFAF9 |
+| Secondary text | `--text-secondary` | #74726C | #A09E98 |
+| Muted text, disabled items, switch track | `--text-muted` | #74726C | #A09E98 |
+| Borders, dividers | `--border-subtle` | #E8E6E1 | #3A3935 |
+| Accent fill (buttons, active states, focus rings) | `--accent` | #E97B22 | #F5A155 |
+| Accent text on light surfaces | `--accent-text` | #A9530C | #F5A155 |
+| Selected background | `--surface-selected` | #FDEBD8 | accent at 20% |
 
-## 3. Typography Rules
-- **Display:** `Nunito Variable` — Friendly, rounded terminals, track-tight, controlled scale, weight-driven hierarchy. Not screaming.
-- **Body:** `Nunito Variable` — Relaxed leading, 65ch max-width, neutral secondary color.
-- **Mono:** `JetBrains Mono` or `Geist Mono` — For code, metadata, timestamps, high-density numbers.
-- **Banned:** `Inter`, generic system fonts for premium contexts. Serif fonts (`Times New Roman`, `Georgia`, `Garamond`, `Palatino`) are strictly BANNED in dashboards or software UIs.
+**Category colours** (`--color-water`, `--color-food`, `--color-exercise`, `--color-bathroom`, `--color-medicine`) mark cards, icons and history bars:
+- water #3B8BD4
+- food #5DAA62
+- exercise #E97B22
+- bathroom #8A72C8
+- medicine #D65B5B
 
-## 4. Component Stylings
-* **Buttons:** Flat, no outer glow. Tactile -1px translate on active state (push feedback). Accent fill for primary, ghost/outline for secondary. No custom mouse cursors.
-* **Cards:** Generously rounded corners (1.5rem to pill shapes). Diffused whisper shadow (`rgba(0,0,0,0.05)`). Used only when elevation serves hierarchy. High-density: replace with border-top dividers.
-* **Inputs:** Label above, error below. Focus ring in Tangerine accent color. No floating labels. Standard gap spacing.
-* **Loaders:** Skeletal shimmer matching exact layout dimensions. No generic circular spinners.
-* **Empty States:** Composed, illustrated compositions (e.g., mochi cat resting) indicating how to populate data — not just "No data" text.
+Contrast rules:
+- **Text:** at least 4.5:1 (WCAG AA).
+- **Controls and their boundaries:** at least 3:1.
+- **Text on accent or category fills** uses `--color-neutral-900`. White fails on these colours.
+- **No pure black;** the darkest colour is #141412.
 
-## 5. Layout Principles
-- Mobile-first, Capacitor-ready architecture. Max-width containment (e.g., 800px centered).
-- No overlapping elements — every element occupies its own clear spatial zone. No absolute-positioned content stacking.
-- Centered Hero sections are BANNED when variance exceeds 4 — force Split Screen, Left-Aligned, or Asymmetric Whitespace.
-- The generic "3 equal cards horizontally" feature row is BANNED — use 2-column Zig-Zag, asymmetric grid, or horizontal scroll.
-- CSS Grid over Flexbox math — never use `calc()` percentage hacks.
-- Full-height sections must use `min-h-[100dvh]` — never `h-screen`.
+Theming: the in-app Light/Dark choice sets `data-theme` on `<html>`. Every token overridden under `prefers-color-scheme: dark` must also be overridden under both `[data-theme='dark']` and `[data-theme='light']`.
 
-## 6. Motion & Interaction
-- **Spring Physics default:** `stiffness: 100, damping: 20` — premium, weighty feel. No linear easing.
-- **Perpetual Micro-Interactions:** Every active component should have an infinite loop state (Pulse, Typewriter, Float, Shimmer).
-- **Staggered Orchestration:** Never mount lists instantly — use cascade delays for waterfall reveals.
-- **Performance:** Animate exclusively via `transform` and `opacity`. Never animate `top`, `left`, `width`, `height`.
+## 3. Typography
+- **Font:** Nunito Variable, bundled through `@fontsource-variable/nunito`, so there are no network font requests. The crash-log viewer alone uses a monospace font.
+- **Sizes:** `--font-size-xs` to `--font-size-2xl` (12–28px).
+- **Weights:** `--font-weight-regular` to `--font-weight-bold` (400–700). Express hierarchy with weight rather than size jumps.
 
-## 7. Anti-Patterns (Banned)
-- No emojis anywhere
-- No `Inter` font
-- No generic serif fonts (`Times New Roman`, `Georgia`, `Garamond`) — distinctive modern serifs only if needed (not in dashboards)
-- No pure black (`#000000`) — use Charcoal Ink (`#141412`)
-- No neon/outer glow shadows
-- No oversaturated accents
-- No excessive gradient text on large headers
-- No custom mouse cursors
-- No overlapping elements — clean spatial separation always
-- No 3-column equal card layouts
-- No generic names ("John Doe", "Acme", "Nexus")
-- No fake round numbers (`99.99%`, `50%`)
-- No fabricated data or statistics — never generate metrics, performance numbers, uptime percentages, response times.
-- No fake system/metric sections ("SYSTEM PERFORMANCE METRICS", "KEY STATISTICS", "BY THE NUMBERS")
-- No `LABEL // YEAR` formatting ("SYSTEM // 2024")
-- No AI copywriting clichés ("Elevate", "Seamless", "Unleash", "Next-Gen")
-- No filler UI text: "Scroll to explore", "Swipe down", scroll arrows, bouncing chevrons
-- No broken Unsplash links — use `picsum.photos` or SVG avatars
-- No centered Hero sections (for high-variance projects)
+## 4. Components
+- **Buttons:** flat accent fill for primary actions, outline or ghost for secondary ones. No glow.
+- **Cards:** `--radius-md` to `--radius-xl`, with a soft shadow (`--shadow-sm`/`--shadow-md`). A card is a container; put its actions in real buttons beside each other, never a switch inside a clickable card.
+- **Touch targets:** at least 44×44px. A smaller visual, like the 34×20 switch, gets an invisible hit area.
+- **Inputs:** label above, focus ring in `--accent`.
+- **Dialogs and sheets:** `role="dialog"` with an accessible name, and the Android back button closes them (`useBackHandler`).
+- **Empty states:** a cat illustration plus a line saying how to get started, not bare "No data".
+
+## 5. Layout
+Mobile-first, centred content with a maximum width (800px; long-form text 65ch). Use `100dvh` for full-height screens and respect `env(safe-area-inset-*)` at the screen edges.
+
+## 6. Motion
+- **Animate only `transform` and `opacity`.**
+- **Reduced motion:** the system "remove animations" setting is honoured twice over. CSS animations collapse through the global rule in `src/index.css`, and JavaScript-driven loops check `usePrefersReducedMotion()`.
+
+## 7. Copy and content
+- **Every user-facing string goes through i18next,** in all four locales.
+- **Voice:** reminder copy is witty and cat-themed. UI labels are plain and short.
+- **Emojis:** they appear in reminder messages and a few UI accents, including the ✓ and ⏱ on the notification sheet buttons. Don't add new ones to buttons or labels.
+- **No marketing clichés** ("Elevate", "Seamless", "Unleash"), and no invented statistics.
