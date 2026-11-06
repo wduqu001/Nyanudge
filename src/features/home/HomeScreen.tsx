@@ -321,7 +321,7 @@ export const HomeScreen: React.FC = () => {
               }}
             />
             {/* Sheet */}
-            <div style={{
+            <div role="dialog" aria-modal="true" aria-labelledby="notif-sheet-title" style={{
               position: 'fixed', bottom: 0, left: 0, right: 0,
               background: 'var(--surface-bg)',
               borderRadius: '20px 20px 0 0',
@@ -343,7 +343,7 @@ export const HomeScreen: React.FC = () => {
                 }}>
                   {rem && <CategoryIcon category={rem.category} enabled />}
                 </div>
-                <p style={{ margin: 0, fontWeight: 700, fontSize: 18, color: 'var(--text-primary)' }}>
+                <p id="notif-sheet-title" style={{ margin: 0, fontWeight: 700, fontSize: 18, color: 'var(--text-primary)' }}>
                   {pendingNotifAction.label}
                 </p>
                 <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-secondary)' }}>

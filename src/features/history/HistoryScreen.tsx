@@ -23,7 +23,7 @@ export const HistoryScreen: React.FC = () => {
     <div className={styles.container}>
       {/* Header */}
       <header className={styles.header}>
-        <button onClick={() => navigate(-1)} className={styles.backButton}>
+        <button onClick={() => navigate(-1)} className={styles.backButton} aria-label={t('aria.go_back')}>
           <ChevronLeft size={24} />
         </button>
         <div className={styles.headerText}>
