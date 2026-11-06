@@ -14,6 +14,7 @@ import { HistoryScreen } from './features/history/HistoryScreen';
 import { usePreferencesStore } from './core/store/preferencesStore';
 import { useTranslation } from 'react-i18next';
 import { useNotificationSetup } from './core/notifications/useNotificationSetup';
+import { setQuietHours } from './core/notifications/scheduler';
 import { ReminderService } from './core/db/ReminderService';
 import { PreferenceService } from './core/db/PreferenceService';
 import { dbManager } from './core/db/database';
@@ -52,6 +53,11 @@ function App() {
       console.log('StatusBar not available', e);
     }
   }, [preferences.theme]);
+
+  useEffect(() => {
+    setQuietHours({ start: preferences.dndStart, end: preferences.dndEnd });
+    useRemindersStore.getState().syncNotifications();
+  }, [preferences.dndStart, preferences.dndEnd]);
 
   useEffect(() => {
     if (i18n.language !== preferences.language) {

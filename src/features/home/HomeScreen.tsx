@@ -367,7 +367,7 @@ export const HomeScreen: React.FC = () => {
 
                 <button
                   onClick={() => {
-                    if (rem) snoozeReminder(0, rem);
+                    if (rem) snoozeReminder(rem).catch(() => {});
                     setPendingNotifAction(null);
                   }}
                   style={{

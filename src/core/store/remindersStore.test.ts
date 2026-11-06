@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { useRemindersStore } from './remindersStore';
 import { useStatsStore } from './statsStore';
-import { scheduleReminder, cancelReminder } from '../notifications/scheduler';
+import { rescheduleAll } from '../notifications/scheduler';
 import { ReminderService } from '../db/ReminderService';
 
 vi.mock('../notifications/scheduler', () => ({
-  scheduleReminder: vi.fn().mockResolvedValue(undefined),
-  cancelReminder: vi.fn().mockResolvedValue(undefined)
+  rescheduleAll: vi.fn().mockResolvedValue(undefined),
+  msSinceLastReschedule: vi.fn().mockReturnValue(Infinity),
 }));
 
 vi.mock('../db/ReminderService', () => ({
@@ -47,7 +47,7 @@ const disabledReminder: Reminder = {
 describe('RemindersStore', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    useRemindersStore.setState({ reminders: [], isLoaded: false, pendingNotifAction: null });
+    useRemindersStore.setState({ reminders: [], isLoaded: true, pendingNotifAction: null });
     useStatsStore.setState({ stats: {}, recentCompletions: [], isLoaded: false });
   });
 
@@ -58,32 +58,50 @@ describe('RemindersStore', () => {
 
     expect(useRemindersStore.getState().reminders.length).toBe(1);
     expect(useRemindersStore.getState().isLoaded).toBe(true);
-    expect(cancelReminder).toHaveBeenCalledWith(expect.objectContaining({ id: 'r1' }));
 
     await Promise.resolve(); // flush finally() microtask
 
-    expect(scheduleReminder).toHaveBeenCalledWith(expect.objectContaining({ id: 'r1' }));
+    expect(rescheduleAll).toHaveBeenCalledWith(expect.arrayContaining([expect.objectContaining({ id: 'r1' })]));
   });
 
-  it('setReminders does NOT schedule archived reminders', async () => {
+  it('setReminders hands archived reminders to the scheduler', async () => {
     useRemindersStore.getState().setReminders([archivedReminder]);
 
     await Promise.resolve();
 
-    expect(cancelReminder).toHaveBeenCalled();
-    expect(scheduleReminder).not.toHaveBeenCalled();
+    expect(rescheduleAll).toHaveBeenCalled();
+    expect(rescheduleAll).toHaveBeenCalled(); // the scheduler skips disabled/archived (scheduler.test)
   });
 
-  it('setReminders does NOT schedule disabled reminders', async () => {
+  it('setReminders hands disabled reminders to the scheduler', async () => {
     useRemindersStore.getState().setReminders([disabledReminder]);
 
     await Promise.resolve();
 
-    expect(cancelReminder).toHaveBeenCalled();
-    expect(scheduleReminder).not.toHaveBeenCalled();
+    expect(rescheduleAll).toHaveBeenCalled();
+    expect(rescheduleAll).toHaveBeenCalled(); // the scheduler skips disabled/archived (scheduler.test)
   });
 
 
+
+  // ── syncNotifications ──────────────────────────────────────────────────────
+
+  it('syncNotifications waits until reminders are loaded', async () => {
+    useRemindersStore.setState({ isLoaded: false });
+    await useRemindersStore.getState().syncNotifications();
+    expect(rescheduleAll).not.toHaveBeenCalled();
+  });
+
+  it('syncNotifications skips a throttled top-up when the last plan is recent', async () => {
+    const { msSinceLastReschedule } = await import('../notifications/scheduler');
+    vi.mocked(msSinceLastReschedule).mockReturnValueOnce(1000);
+    await useRemindersStore.getState().syncNotifications({ ifOlderThanMs: 60_000 });
+    expect(rescheduleAll).not.toHaveBeenCalled();
+
+    vi.mocked(msSinceLastReschedule).mockReturnValueOnce(120_000);
+    await useRemindersStore.getState().syncNotifications({ ifOlderThanMs: 60_000 });
+    expect(rescheduleAll).toHaveBeenCalledOnce();
+  });
 
   // ── addReminder ────────────────────────────────────────────────────────────
 
@@ -92,25 +110,25 @@ describe('RemindersStore', () => {
 
     expect(useRemindersStore.getState().reminders.length).toBe(1);
     expect(ReminderService.addReminder).toHaveBeenCalledWith(expect.objectContaining({ id: 'r1' }));
-    expect(scheduleReminder).toHaveBeenCalledWith(expect.objectContaining({ id: 'r1' }));
+    expect(rescheduleAll).toHaveBeenCalledWith(expect.arrayContaining([expect.objectContaining({ id: 'r1' })]));
   });
 
-  it('addReminder does not schedule a disabled reminder', async () => {
+  it('addReminder re-plans notifications for a disabled reminder', async () => {
     await useRemindersStore.getState().addReminder(disabledReminder);
 
-    expect(scheduleReminder).not.toHaveBeenCalled();
+    expect(rescheduleAll).toHaveBeenCalled(); // the scheduler skips disabled/archived (scheduler.test)
     expect(ReminderService.addReminder).toHaveBeenCalled();
   });
 
-  it('addReminder does not schedule an archived reminder', async () => {
+  it('addReminder re-plans notifications for an archived reminder', async () => {
     await useRemindersStore.getState().addReminder(archivedReminder);
 
-    expect(scheduleReminder).not.toHaveBeenCalled();
+    expect(rescheduleAll).toHaveBeenCalled(); // the scheduler skips disabled/archived (scheduler.test)
   });
 
   // ── updateReminder ─────────────────────────────────────────────────────────
 
-  it('updateReminder updates state, DB, cancels old and schedules new', async () => {
+  it('updateReminder updates state and DB and re-plans notifications', async () => {
     useRemindersStore.setState({ reminders: [mockReminder] });
 
     await useRemindersStore.getState().updateReminder('r1', { label: 'Drink More Water', enabled: false });
@@ -119,9 +137,9 @@ describe('RemindersStore', () => {
     expect(updated!.label).toBe('Drink More Water');
     expect(updated!.enabled).toBe(false);
 
-    expect(cancelReminder).toHaveBeenCalled();
+    expect(rescheduleAll).toHaveBeenCalled();
     expect(ReminderService.updateReminder).toHaveBeenCalledWith('r1', expect.objectContaining({ label: 'Drink More Water' }));
-    expect(scheduleReminder).not.toHaveBeenCalled(); // disabled => no schedule
+    expect(rescheduleAll).toHaveBeenCalled(); // the scheduler skips disabled/archived (scheduler.test)
   });
 
   it('updateReminder schedules when reminder is still enabled', async () => {
@@ -129,7 +147,7 @@ describe('RemindersStore', () => {
 
     await useRemindersStore.getState().updateReminder('r1', { label: 'Updated' });
 
-    expect(scheduleReminder).toHaveBeenCalledWith(expect.objectContaining({ id: 'r1' }));
+    expect(rescheduleAll).toHaveBeenCalledWith(expect.arrayContaining([expect.objectContaining({ id: 'r1' })]));
   });
 
   it('updateReminder for a non-existent id does not throw and does not modify state', async () => {
@@ -160,7 +178,7 @@ describe('RemindersStore', () => {
     await useRemindersStore.getState().deleteReminder('r1');
 
     expect(useRemindersStore.getState().reminders.length).toBe(0);
-    expect(cancelReminder).toHaveBeenCalled();
+    expect(rescheduleAll).toHaveBeenCalled();
     expect(ReminderService.deleteReminder).toHaveBeenCalledWith('r1');
   });
 
@@ -180,7 +198,7 @@ describe('RemindersStore', () => {
     // Toggle OFF
     await useRemindersStore.getState().toggleReminder('r1');
     expect(useRemindersStore.getState().reminders[0]!.enabled).toBe(false);
-    expect(cancelReminder).toHaveBeenCalled();
+    expect(rescheduleAll).toHaveBeenCalled();
     expect(ReminderService.updateReminder).toHaveBeenCalledWith('r1', { enabled: false });
 
     vi.clearAllMocks();
@@ -189,16 +207,16 @@ describe('RemindersStore', () => {
     await useRemindersStore.getState().toggleReminder('r1');
     expect(useRemindersStore.getState().reminders[0]!.enabled).toBe(true);
     expect(ReminderService.updateReminder).toHaveBeenCalledWith('r1', { enabled: true });
-    expect(scheduleReminder).toHaveBeenCalled();
+    expect(rescheduleAll).toHaveBeenCalled();
   });
 
-  it('toggleReminder on an archived reminder does not schedule even when enabled', async () => {
+  it('toggleReminder on an archived reminder re-plans notifications', async () => {
     useRemindersStore.setState({ reminders: [{ ...archivedReminder, enabled: false }] });
 
     // Toggle "on" for an archived reminder
     await useRemindersStore.getState().toggleReminder('r2');
     expect(useRemindersStore.getState().reminders[0]!.enabled).toBe(true);
-    expect(scheduleReminder).not.toHaveBeenCalled(); // archived guard must hold
+    expect(rescheduleAll).toHaveBeenCalled(); // the scheduler skips disabled/archived (scheduler.test)
   });
 
   // ── completeReminder ───────────────────────────────────────────────────────

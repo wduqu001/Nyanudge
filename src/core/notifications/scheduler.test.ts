@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { LocalNotifications } from '@capacitor/local-notifications';
-import { calculateNextFireTime, scheduleReminder, snoozeReminder, channelFor } from './scheduler';
+import {
+  calculateNextFireTime, upcomingFireTimes, rescheduleAll, snoozeReminder, channelFor, setQuietHours, isInQuietHours,
+} from './scheduler';
 
 vi.mock('@capacitor/local-notifications', () => ({
   LocalNotifications: {
@@ -9,6 +11,7 @@ vi.mock('@capacitor/local-notifications', () => ({
     getPending: vi.fn().mockResolvedValue({ notifications: [] }),
     checkPermissions: vi.fn().mockResolvedValue({ display: 'granted' }),
     requestPermissions: vi.fn().mockResolvedValue({ display: 'granted' }),
+    checkExactNotificationSetting: vi.fn().mockResolvedValue({ exact_alarm: 'granted' }),
   }
 }));
 
@@ -23,6 +26,7 @@ describe('scheduler', () => {
   beforeEach(() => {
     vi.useFakeTimers();
     vi.clearAllMocks();
+    setQuietHours(null);
   });
 
   describe('calculateNextFireTime', () => {
@@ -159,157 +163,129 @@ describe('scheduler', () => {
     });
   });
 
-  describe('cancelReminder', () => {
-    it('calls LocalNotifications.cancel with reconstructed deterministic IDs', async () => {
-      const { cancelReminder } = await import('./scheduler');
-      const reminder: Reminder = {
-        id: 'r-cancel', category: 'water', label: 'Water', enabled: true,
-        soundMode: 'sound_vibration', snoozeMins: 5, character: 'mochi',
-        createdAt: Date.now(), updatedAt: Date.now(),
-        schedules: [{ id: 's1', reminderId: 'r-cancel', type: 'fixed', timeValue: '08:00' }],
-      };
-      await cancelReminder(reminder);
-      expect(LocalNotifications.cancel).toHaveBeenCalled();
-      // Fixed schedule without daysOfWeek → 1 daily-repeat ID
-      const cancelArg = vi.mocked(LocalNotifications.cancel).mock.calls[0]?.[0];
-      expect(cancelArg?.notifications).toHaveLength(1);
+  const makeReminder = (overrides: Partial<Reminder> = {}): Reminder => ({
+    id: 'r1', category: 'water', label: 'W', enabled: true, soundMode: 'sound_vibration',
+    snoozeMins: 10, character: 'mochi', createdAt: 0, updatedAt: 0,
+    schedules: [{ id: 's1', reminderId: 'r1', type: 'fixed', timeValue: '10:00' }],
+    ...overrides,
+  });
+
+  const scheduled = () => vi.mocked(LocalNotifications.schedule).mock.calls.flatMap((c) => c[0].notifications);
+
+  describe('upcomingFireTimes', () => {
+    it('spreads specific-day reminders over distinct, increasing allowed days', () => {
+      const reminder = makeReminder({ schedules: [{ id: 's1', reminderId: 'r1', type: 'fixed', timeValue: '10:00', daysOfWeek: [1, 3, 5] }] });
+      const times = upcomingFireTimes(reminder, new Date(2026, 4, 10, 8, 0), 10); // Sunday
+      expect(times).toHaveLength(10);
+      times.slice(1).forEach((t, i) => expect(t.getTime()).toBeGreaterThan(times[i]!.getTime()));
+      times.forEach((t) => expect([1, 3, 5]).toContain(t.getDay()));
     });
 
-    it('also queries getPending to cancel snoozed notifications', async () => {
-      const { cancelReminder } = await import('./scheduler');
-      vi.mocked(LocalNotifications.getPending).mockResolvedValueOnce({
-        notifications: [{ id: 99, extra: { reminderId: 'r-snooze' } } as any],
+    it('interleaves several daily times across days in order', () => {
+      const reminder = makeReminder({ schedules: ['09:00', '12:00', '15:00'].map((timeValue, i) => ({ id: `s${i}`, reminderId: 'r1', type: 'fixed' as const, timeValue })) });
+      const times = upcomingFireTimes(reminder, new Date(2026, 4, 10, 10, 0), 6);
+      expect(times.map((t) => `${t.getDate()} ${t.getHours()}`)).toEqual(['10 12', '10 15', '11 9', '11 12', '11 15', '12 9']);
+    });
+
+    it('keeps interval slots inside the daily window', () => {
+      const reminder = makeReminder({ schedules: [{ id: 's1', reminderId: 'r1', type: 'interval', timeValue: '180', startTime: '08:00', endTime: '22:00' }] });
+      const times = upcomingFireTimes(reminder, new Date(2026, 4, 10, 7, 0), 12);
+      times.forEach((t) => {
+        const mins = t.getHours() * 60 + t.getMinutes();
+        expect(mins).toBeGreaterThanOrEqual(8 * 60);
+        expect(mins).toBeLessThanOrEqual(22 * 60);
       });
-      const reminder: Reminder = {
-        id: 'r-snooze', category: 'meal', label: 'Meal', enabled: true,
-        soundMode: 'sound_vibration', snoozeMins: 5, character: 'mochi',
-        createdAt: Date.now(), updatedAt: Date.now(),
-        schedules: [],
-      };
-      await cancelReminder(reminder);
-      expect(LocalNotifications.getPending).toHaveBeenCalled();
-      // Should cancel the snoozed notification id=99
-      const lastCancelCall = vi.mocked(LocalNotifications.cancel).mock.calls.at(-1)?.[0];
-      expect(lastCancelCall?.notifications).toContainEqual({ id: 99 });
+      expect(new Set(times.map((t) => t.getDate())).size).toBeGreaterThan(1);
     });
 
-    it('swallows getPending errors silently', async () => {
-      const { cancelReminder } = await import('./scheduler');
-      vi.mocked(LocalNotifications.getPending).mockRejectedValueOnce(new Error('os error'));
-      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-      const reminder: Reminder = {
-        id: 'r-err', category: 'water', label: 'W', enabled: true,
-        soundMode: 'sound_vibration', snoozeMins: 5, character: 'mochi',
-        createdAt: Date.now(), updatedAt: Date.now(), schedules: [],
-      };
-      await expect(cancelReminder(reminder)).resolves.toBeUndefined();
-      consoleSpy.mockRestore();
+    it('keeps the local wall-clock time across a DST change', () => {
+      const previousTz = process.env.TZ;
+      process.env.TZ = 'America/New_York'; // DST ends 2026-11-01
+      try {
+        const times = upcomingFireTimes(makeReminder({ schedules: [{ id: 's1', reminderId: 'r1', type: 'fixed', timeValue: '08:00' }] }), new Date(2026, 9, 30, 9, 0), 4);
+        expect(times.map((t) => t.getHours())).toEqual([8, 8, 8, 8]);
+      } finally {
+        process.env.TZ = previousTz;
+      }
+    });
+
+    it('skips quiet hours except for medicine', () => {
+      setQuietHours({ start: '22:00', end: '07:00' });
+      const late = [{ id: 's1', reminderId: 'r1', type: 'fixed' as const, timeValue: '23:00' }];
+      expect(upcomingFireTimes(makeReminder({ schedules: late }), new Date(2026, 4, 10, 8, 0), 5)).toHaveLength(0);
+      expect(upcomingFireTimes(makeReminder({ category: 'medicine', schedules: late }), new Date(2026, 4, 10, 8, 0), 5)).toHaveLength(5);
+    });
+
+    it('treats quiet hours that cross midnight as one window', () => {
+      const hours = { start: '22:00', end: '07:00' };
+      expect(isInQuietHours(new Date(2026, 4, 10, 23, 0), hours)).toBe(true);
+      expect(isInQuietHours(new Date(2026, 4, 10, 6, 59), hours)).toBe(true);
+      expect(isInQuietHours(new Date(2026, 4, 10, 7, 0), hours)).toBe(false);
     });
   });
 
-  describe('scheduleReminder', () => {
-    it('calls LocalNotifications.schedule with correct parameters', async () => {
-      const reminder: Reminder = {
-        id: 'r1', category: 'water', label: 'Water', enabled: true, soundMode: 'sound_vibration',
-        snoozeMins: 5, character: 'mochi', createdAt: Date.now(), updatedAt: Date.now(),
-        schedules: [{ id: 's1', reminderId: 'r1', type: 'fixed', timeValue: '14:00', notifId: 999 }]
-      };
-      vi.setSystemTime(new Date(2026, 4, 10, 12, 0));
-      await scheduleReminder(reminder);
-      const calls = vi.mocked(LocalNotifications.schedule).mock.calls;
-      const notif = calls[0]?.[0]?.notifications?.[0];
-      expect(notif?.id).toBeDefined();
-      expect(typeof notif?.id).toBe('number');
-      expect(notif?.title).toBe('categories.water.name');
-    });
-
-    it('does not schedule if disabled', async () => {
-      const reminder: Reminder = {
-        id: 'r1', category: 'water', label: 'Water', enabled: false, soundMode: 'sound_vibration',
-        snoozeMins: 5, character: 'mochi', createdAt: Date.now(), updatedAt: Date.now(), schedules: []
-      };
-      await scheduleReminder(reminder);
-      expect(LocalNotifications.schedule).not.toHaveBeenCalled();
-    });
-
-    it('schedules 10 instances for fixed reminders with specific daysOfWeek', async () => {
-      const reminder: Reminder = {
-        id: 'r_days', category: 'water', label: 'W', enabled: true, soundMode: 'silent',
-        snoozeMins: 5, character: 'mochi', createdAt: 0, updatedAt: 0,
-        schedules: [{ id: 's1', reminderId: 'r_days', type: 'fixed', timeValue: '10:00', daysOfWeek: [1, 3, 5] }]
-      };
-      vi.setSystemTime(new Date(2026, 4, 10, 8, 0)); // Sunday
-      await scheduleReminder(reminder);
-      
-      const calls = vi.mocked(LocalNotifications.schedule).mock.calls;
-      const notifs = calls[0]?.[0]?.notifications;
-      // Should schedule exactly 10 instances as per the loop in scheduler.ts
-      expect(notifs?.length).toBe(10);
-      expect(notifs?.[0]?.id).toBeDefined();
-    });
-
-    it('spreads specific-day instances over distinct, increasing allowed days', async () => {
-      const reminder: Reminder = {
-        id: 'r_days2', category: 'water', label: 'W', enabled: true, soundMode: 'silent',
-        snoozeMins: 5, character: 'mochi', createdAt: 0, updatedAt: 0,
-        schedules: [{ id: 's1', reminderId: 'r_days2', type: 'fixed', timeValue: '10:00', daysOfWeek: [1, 3, 5] }]
-      };
-      vi.setSystemTime(new Date(2026, 4, 10, 8, 0)); // Sunday
-      await scheduleReminder(reminder);
-
-      const notifs = vi.mocked(LocalNotifications.schedule).mock.calls[0]?.[0]?.notifications ?? [];
-      const times = notifs.map(n => (n.schedule?.at as Date).getTime());
-      expect(new Set(times).size).toBe(times.length);
-      times.slice(1).forEach((t, i) => expect(t).toBeGreaterThan(times[i] ?? Infinity));
-      notifs.forEach(n => expect([1, 3, 5]).toContain((n.schedule?.at as Date).getDay()));
-    });
-
-    it('schedules 64 instances for interval reminders', async () => {
-      const reminder: Reminder = {
-        id: 'r_int', category: 'exercise', label: 'E', enabled: true, soundMode: 'sound_vibration',
-        snoozeMins: 5, character: 'mochi', createdAt: Date.now(), updatedAt: Date.now(),
-        schedules: [{ id: 's1', reminderId: 'r_int', type: 'interval', timeValue: '30', startTime: '08:00', endTime: '20:00' }]
-      };
+  describe('rescheduleAll', () => {
+    it('schedules every active reminder in one call with one-shot alarms only', async () => {
       vi.setSystemTime(new Date(2026, 4, 10, 8, 0));
-      await scheduleReminder(reminder);
-      
-      const calls = vi.mocked(LocalNotifications.schedule).mock.calls;
-      const notifs = calls[0]?.[0]?.notifications;
-      // Should schedule up to 64 instances (or until MAX_NOTIFICATIONS, but here r1 has only 64)
-      expect(notifs?.length).toBeGreaterThanOrEqual(10); // Loop limit is actually 64
-      expect(notifs?.[0]?.id).toBeDefined();
+      await rescheduleAll([makeReminder(), makeReminder({ id: 'r2', enabled: false }), makeReminder({ id: 'r3', archived: true })]);
+      expect(LocalNotifications.schedule).toHaveBeenCalledOnce();
+      const notifs = scheduled();
+      expect(notifs.length).toBeGreaterThan(0);
+      notifs.forEach((n) => {
+        expect(n.extra.reminderId).toBe('r1');
+        expect(n.schedule?.repeats).toBeUndefined();
+        expect(n.schedule?.at!.getTime()).toBeGreaterThan(Date.now());
+      });
     });
 
-    it('catches and logs error if LocalNotifications.schedule throws (e.g. permission denied or limit reached)', async () => {
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-      vi.mocked(LocalNotifications.schedule).mockRejectedValueOnce(new Error('Permission Denied'));
-      
-      const reminder: Reminder = {
-        id: 'r_err', category: 'water', label: 'W', enabled: true, soundMode: 'silent', snoozeMins: 5, character: 'mochi', createdAt: 0, updatedAt: 0, schedules: [{ id: 's1', reminderId: 'r_err', type: 'fixed', timeValue: '10:00', notifId: 22 }]
-      };
-      
-      // Should not throw an unhandled promise rejection
-      await expect(scheduleReminder(reminder)).resolves.toBeUndefined();
-      expect(consoleSpy).toHaveBeenCalledWith(`Failed to schedule reminder r_err`, expect.any(Error));
-      
-      consoleSpy.mockRestore();
+    it('cancels old slots but keeps pending snoozes of active reminders', async () => {
+      vi.mocked(LocalNotifications.getPending).mockResolvedValueOnce({ notifications: [
+        { id: 1, title: '', body: '', extra: { reminderId: 'r1' } },
+        { id: 2, title: '', body: '', extra: { reminderId: 'r1', isSnoozed: true } },
+        { id: 3, title: '', body: '', extra: { reminderId: 'gone', isSnoozed: true } },
+      ] });
+      await rescheduleAll([makeReminder()]);
+      expect(LocalNotifications.cancel).toHaveBeenCalledWith({ notifications: [{ id: 1 }, { id: 3 }] });
+    });
+
+    it('requests inexact alarms when exact alarms are not allowed', async () => {
+      vi.mocked(LocalNotifications.checkExactNotificationSetting).mockResolvedValueOnce({ exact_alarm: 'denied' });
+      await rescheduleAll([makeReminder()]);
+      scheduled().forEach((n) => expect(n.isExactNotification).toBe(false));
+    });
+
+    it('does nothing until notifications are allowed', async () => {
+      vi.mocked(LocalNotifications.checkPermissions).mockResolvedValueOnce({ display: 'prompt' });
+      await rescheduleAll([makeReminder()]);
+      expect(LocalNotifications.schedule).not.toHaveBeenCalled();
+      expect(LocalNotifications.cancel).not.toHaveBeenCalled();
+    });
+
+    it('stays under the shared alarm budget with many reminders', async () => {
+      const many = Array.from({ length: 10 }, (_, i) => makeReminder({
+        id: `r${i}`,
+        schedules: [{ id: 's', reminderId: `r${i}`, type: 'interval', timeValue: '30', startTime: '00:00', endTime: '23:59' }],
+      }));
+      await rescheduleAll(many);
+      expect(scheduled().length).toBeLessThanOrEqual(400);
+    });
+
+    it('routes vibration-only reminders to the vibrate channel with the silent sound', async () => {
+      await rescheduleAll([makeReminder({ soundMode: 'vibration_only' })]);
+      expect(scheduled()[0]?.channelId).toBe('nyanudge_vibrate');
+      expect(scheduled()[0]?.sound).toBe('silence');
     });
   });
 
   describe('snoozeReminder', () => {
-    it('schedules a one-shot notification in the future', async () => {
-      const reminder: Reminder = {
-        id: 'r1', category: 'medicine', label: 'Meds', enabled: true, soundMode: 'sound_vibration',
-        snoozeMins: 15, character: 'mochi', createdAt: Date.now(), updatedAt: Date.now(), schedules: []
-      };
-      const now = new Date(2026, 4, 10, 10, 0);
-      vi.setSystemTime(now);
-      await snoozeReminder(123, reminder);
-      const calls = vi.mocked(LocalNotifications.schedule).mock.calls;
-      const notif = calls[0]?.[0]?.notifications?.[0];
-      expect(notif?.id).toBe(123);
-      expect(notif?.extra?.isSnoozed).toBe(true);
-      expect(notif?.schedule?.at?.getTime()).toBe(now.getTime() + 15 * 60_000);
+    it('schedules a marked one-shot under a per-reminder snooze id', async () => {
+      vi.setSystemTime(new Date(2026, 4, 10, 8, 0));
+      await snoozeReminder(makeReminder());
+      await snoozeReminder(makeReminder({ id: 'r2' }));
+      const [first, second] = scheduled();
+      expect(first?.extra.isSnoozed).toBe(true);
+      expect(first?.schedule?.at!.getTime()).toBe(new Date(2026, 4, 10, 8, 10).getTime());
+      expect(first?.id).not.toBe(second?.id);
     });
   });
 
@@ -320,19 +296,6 @@ describe('scheduler', () => {
       expect(channelFor('medicine', 'sound_vibration')).toBe('nyanudge_medication');
       expect(channelFor('medicine', 'vibration_only')).toBe('nyanudge_vibrate');
       expect(channelFor('water', 'silent')).toBe('nyanudge_silent');
-    });
-
-    it('schedules vibration-only reminders on the vibrate channel with the silent sound', async () => {
-      const reminder: Reminder = {
-        id: 'r_vib', category: 'water', label: 'W', enabled: true, soundMode: 'vibration_only',
-        snoozeMins: 5, character: 'mochi', createdAt: 0, updatedAt: 0,
-        schedules: [{ id: 's1', reminderId: 'r_vib', type: 'fixed', timeValue: '10:00' }]
-      };
-      vi.setSystemTime(new Date(2026, 4, 10, 8, 0));
-      await scheduleReminder(reminder);
-      const notif = vi.mocked(LocalNotifications.schedule).mock.calls[0]?.[0]?.notifications[0];
-      expect(notif?.channelId).toBe('nyanudge_vibrate');
-      expect(notif?.sound).toBe('silence');
     });
   });
 });

@@ -8,8 +8,8 @@ import { useRemindersStore } from '../../core/store/remindersStore';
 // ── Mocks ──────────────────────────────────────────────────────────────────
 
 vi.mock('../../core/notifications/scheduler', () => ({
-  scheduleReminder: vi.fn().mockResolvedValue(undefined),
-  cancelReminder: vi.fn().mockResolvedValue(undefined)
+  rescheduleAll: vi.fn().mockResolvedValue(undefined),
+  msSinceLastReschedule: vi.fn(() => Infinity),
 }));
 
 vi.mock('../../core/db/ReminderService', () => ({

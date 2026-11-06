@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { useStatsStore } from './statsStore';
-import { scheduleReminder, cancelReminder } from '../notifications/scheduler';
+import { rescheduleAll, msSinceLastReschedule } from '../notifications/scheduler';
 import { ReminderService } from '../db/ReminderService';
 
 export interface NotifTapAction {
@@ -25,6 +25,8 @@ interface RemindersState {
   setLoaded: (loaded: boolean) => void;
   getReminderByCategory: (category: Category) => Reminder | undefined;
   rehydrateFromDb: () => Promise<void>;
+  /** Re-plans every notification; with `ifOlderThanMs`, only when the last plan is older. */
+  syncNotifications: (options?: { ifOlderThanMs?: number }) => Promise<void>;
 }
 
 export const useRemindersStore = create<RemindersState>((set, get) => ({
@@ -34,13 +36,7 @@ export const useRemindersStore = create<RemindersState>((set, get) => ({
 
   setReminders: (reminders) => {
     set({ reminders, isLoaded: true });
-    reminders.forEach(r => {
-      // local reference to avoid race conditions if 'r' changes
-      const current = r;
-      cancelReminder(current).finally(() => {
-        if (current.enabled && !current.archived) scheduleReminder(current);
-      });
-    });
+    get().syncNotifications();
   },
 
   addReminder: async (reminder) => {
@@ -53,16 +49,10 @@ export const useRemindersStore = create<RemindersState>((set, get) => ({
     }
 
     set((state) => ({ reminders: [...state.reminders, reminder] }));
-
-    // schedule
-    if (reminder.enabled && !reminder.archived) {
-      scheduleReminder(reminder);
-    }
+    get().syncNotifications();
   },
 
   updateReminder: async (id, changes) => {
-    const oldR = get().reminders.find((r) => r.id === id);
-
     // optimistic UI update
     set((state) => ({
       reminders: state.reminders.map((r) => {
@@ -73,11 +63,6 @@ export const useRemindersStore = create<RemindersState>((set, get) => ({
       }),
     }));
 
-    // Cancel old notifications to prevent ghosts. Must be awaited: notification
-    // IDs are deterministic, so an un-awaited getPending scan can resolve after
-    // scheduleReminder() below and cancel the freshly scheduled notifications.
-    if (oldR) await cancelReminder(oldR);
-
     try {
       await ReminderService.updateReminder(id, changes);
     } catch (err) {
@@ -85,20 +70,13 @@ export const useRemindersStore = create<RemindersState>((set, get) => ({
       // Optional: Consider a rollback state if DB write fails
     }
 
-    // Reschedule if needed
-    const newR = get().reminders.find((r) => r.id === id);
-    if (newR && newR.enabled && !newR.archived) {
-      scheduleReminder(newR);
-    }
+    get().syncNotifications();
   },
 
   deleteReminder: async (id) => {
-    const oldR = get().reminders.find((r) => r.id === id);
-
     // optimistic UI removal
     set((state) => ({ reminders: state.reminders.filter((r) => r.id !== id) }));
-
-    if (oldR) cancelReminder(oldR);
+    get().syncNotifications();
 
     try {
       await ReminderService.deleteReminder(id);
@@ -113,9 +91,6 @@ export const useRemindersStore = create<RemindersState>((set, get) => ({
 
     const newEnabledState = !oldR.enabled;
 
-    // cancel existing
-    cancelReminder(oldR);
-
     set((state) => ({
       reminders: state.reminders.map((r) =>
         r.id === id ? { ...r, enabled: newEnabledState, updatedAt: Date.now() } : r
@@ -128,11 +103,7 @@ export const useRemindersStore = create<RemindersState>((set, get) => ({
       console.error('[Store] Error toggling reminder:', err);
     }
 
-    // Reschedule if enabling
-    if (newEnabledState) {
-      const newR = get().reminders.find((r) => r.id === id);
-      if (newR && newR.enabled && !newR.archived) scheduleReminder(newR);
-    }
+    get().syncNotifications();
   },
 
   completeReminder: async (id: string) => {
@@ -163,16 +134,8 @@ export const useRemindersStore = create<RemindersState>((set, get) => ({
     ReminderService.addCompletion(entry).catch(err => console.error('[Store] Error saving completion:', err));
     ReminderService.updateReminder(id, { updatedAt: now }).catch(() => { }); // Anchor it in DB too
 
-    // Reschedule
-    // only reschedule if the reminder has interval types. Fixed reminders don't need reescheduling
-    const hasInterval = r.schedules.some(s => s.type === 'interval');
-
-    if (hasInterval && r.enabled && !r.archived) {
-      const updatedR = get().reminders.find(rem => rem.id === id);
-      if (updatedR) {
-        scheduleReminder(updatedR);
-      }
-    }
+    // Interval slots are anchored to the last completion, so they move.
+    if (r.schedules.some(s => s.type === 'interval')) get().syncNotifications();
   },
 
   setPendingNotifAction: (action) => set({ pendingNotifAction: action }),
@@ -182,13 +145,22 @@ export const useRemindersStore = create<RemindersState>((set, get) => ({
   getReminderByCategory: (category) =>
     get().reminders.find((r) => r.category === category),
 
+  syncNotifications: async (options) => {
+    if (!get().isLoaded) return;
+    if (options?.ifOlderThanMs !== undefined && msSinceLastReschedule() < options.ifOlderThanMs) return;
+    await rescheduleAll(get().reminders);
+  },
+
   rehydrateFromDb: async () => {
     try {
       const dbReminders = await ReminderService.getAllReminders();
       const current = get().reminders;
       // Reconcile and only reschedule if changed (simplified hydration)
       if (JSON.stringify(dbReminders) !== JSON.stringify(current)) {
-         get().setReminders(dbReminders);
+        get().setReminders(dbReminders);
+      } else {
+        // Top up the rolling window of one-shot alarms when the app comes back.
+        await get().syncNotifications({ ifOlderThanMs: 6 * 60 * 60 * 1000 });
       }
     } catch (e) {
       console.error('[Store] Hydration failed', e);

@@ -20,10 +20,10 @@ vi.mock('@capacitor/local-notifications', () => ({
 }));
 
 vi.mock('../../../core/notifications/scheduler', () => ({
+  rescheduleAll: vi.fn().mockResolvedValue(undefined),
+  msSinceLastReschedule: vi.fn(() => Infinity),
   calculateNextFireTime: vi.fn().mockReturnValue(null),
   snoozeReminder: vi.fn().mockResolvedValue(undefined),
-  cancelReminder: vi.fn().mockResolvedValue(undefined),
-  scheduleReminder: vi.fn().mockResolvedValue(undefined),
 }));
 
 vi.mock('../../shared/components/AnimatedCatMochi/AnimatedCatMochi', () => ({

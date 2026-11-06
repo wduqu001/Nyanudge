@@ -10,10 +10,10 @@ import { calculateNextFireTime } from '../../core/notifications/scheduler';
 // ── Mocks ──────────────────────────────────────────────────────────────────
 
 vi.mock('../../core/notifications/scheduler', () => ({
+  rescheduleAll: vi.fn().mockResolvedValue(undefined),
+  msSinceLastReschedule: vi.fn(() => Infinity),
   calculateNextFireTime: vi.fn(),
   snoozeReminder: vi.fn().mockResolvedValue(undefined),
-  cancelReminder: vi.fn().mockResolvedValue(undefined),
-  scheduleReminder: vi.fn().mockResolvedValue(undefined),
 }));
 
 vi.mock('@capacitor/local-notifications', () => ({

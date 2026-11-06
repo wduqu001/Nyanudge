@@ -8,7 +8,7 @@ import { useRemindersStore } from '../../store/remindersStore';
 const navigateMock = vi.fn();
 vi.mock('react-router-dom', () => ({ useNavigate: () => navigateMock }));
 vi.mock('../scheduler', () => ({
-  scheduleReminder: vi.fn(), cancelReminder: vi.fn(), snoozeReminder: vi.fn(), ensureNotificationChannels: vi.fn(),
+  snoozeReminder: vi.fn(), ensureNotificationChannels: vi.fn(),
 }));
 vi.mock('@capacitor/local-notifications', () => ({
   LocalNotifications: {
@@ -51,5 +51,16 @@ describe('useNotificationSetup — notification body tap', () => {
     tapNotification();
     expect(completeReminder).toHaveBeenCalledWith('r1');
     expect(setPendingNotifAction).not.toHaveBeenCalled();
+  });
+});
+
+describe('useNotificationSetup — first-run permission', () => {
+  it('plans reminders as soon as the user allows notifications', async () => {
+    const syncNotifications = vi.fn().mockResolvedValue(undefined);
+    (window as unknown as { remindersStore: unknown }).remindersStore = { getState: () => ({ syncNotifications }) };
+    vi.mocked(LocalNotifications.checkPermissions).mockResolvedValueOnce({ display: 'prompt' });
+    (LocalNotifications as unknown as { requestPermissions: ReturnType<typeof vi.fn> }).requestPermissions.mockResolvedValueOnce({ display: 'granted' });
+    renderHook(() => useNotificationSetup());
+    await vi.waitFor(() => expect(syncNotifications).toHaveBeenCalledOnce());
   });
 });

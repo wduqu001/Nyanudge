@@ -193,202 +193,155 @@ export function calculateNextFireTime(schedule: Schedule, anchor?: number, overr
   return undefined;
 }
 
-/** 
- * Cancels notifications by reconstructing their deterministic IDs.
- * This is faster and more reliable than filtering pending lists.
- */
-export async function cancelReminder(reminder: Reminder): Promise<void> {
-  // 1. Cancel deterministic future notifications (The "Happy Path")
-  // We reconstruct the IDs we *know* we scheduled in scheduleReminder().
-  const deterministicIds: { id: number }[] = [];
+// Android caps an app at 500 concurrent alarms; the budget is shared by every reminder.
+const MAX_TOTAL_SLOTS = 400;
+const MAX_SLOTS_PER_REMINDER = 64;
+const HORIZON_DAYS = 30;
 
-  reminder.schedules.forEach((sched, index) => {
-    if (sched.type === 'fixed') {
-      if (!sched.daysOfWeek || sched.daysOfWeek.length === 0 || sched.daysOfWeek.length === 7) {
-        deterministicIds.push({ id: hashId(`${reminder.id}-sched-${index}-daily`) });
-      } else {
-        for (let i = 0; i < 10; i++) {
-          deterministicIds.push({ id: hashId(`${reminder.id}-sched-${index}-day-${i}`) });
-        }
-      }
-    } else if (sched.type === 'interval') {
-      for (let i = 0; i < 64; i++) {
-        deterministicIds.push({ id: hashId(`${reminder.id}-sched-${index}-int-${i}`) });
-      }
-    }
-  });
-
-  if (deterministicIds.length > 0) {
-    await LocalNotifications.cancel({ notifications: deterministicIds }).catch(() => { });
-  }
-
-  // 2. Cancel dynamic snoozed notifications (The "Edge Case")
-  // Snoozed notifications reuse the original fired ID, which we can't predict.
-  // We must query the OS for these.
-  try {
-    const pending = await LocalNotifications.getPending();
-    const snoozedToCancel = pending.notifications
-      .filter(n => n.extra?.reminderId === reminder.id)
-      .map(n => ({ id: n.id }));
-
-    if (snoozedToCancel.length > 0) {
-      await LocalNotifications.cancel({ notifications: snoozedToCancel });
-    }
-  } catch (e) {
-    console.warn('Could not perform deep scan for snoozed notifications', e);
-  }
+export interface QuietHours {
+  start: string; // 'HH:mm'
+  end: string;
 }
 
-/**
- * Schedules active notifications for a reminder.
- * Uses deterministic IDs for reliable cancellation and handles 
- * iOS notification limits (64 max).
- */
-export async function scheduleReminder(reminder: Reminder): Promise<void> {
-  if (!reminder.enabled) return;
+let quietHours: QuietHours | null = null;
 
-  // Ensure old notifications are cleared before scheduling new ones
-  await cancelReminder(reminder);
+/** Do Not Disturb window applied to every category except medicine. */
+export function setQuietHours(hours: QuietHours | null): void {
+  quietHours = hours;
+}
 
-  const title = i18n.t(`categories.${reminder.category}.name`);
+const toMinutes = (hhmm: string) => {
+  const [h, m] = hhmm.split(':').map(Number);
+  return (h ?? 0) * 60 + (m ?? 0);
+};
+
+export function isInQuietHours(date: Date, hours: QuietHours | null): boolean {
+  if (!hours) return false;
+  const start = toMinutes(hours.start);
+  const end = toMinutes(hours.end);
+  if (start === end) return false;
+  const t = date.getHours() * 60 + date.getMinutes();
+  return start < end ? t >= start && t < end : t >= start || t < end;
+}
+
+/** Next fire times for a reminder across all its schedules, soonest first, within the horizon. */
+export function upcomingFireTimes(reminder: Reminder, now: Date, limit: number): Date[] {
+  const horizon = now.getTime() + HORIZON_DAYS * 86_400_000;
+  const anchor = Math.floor(Math.max(reminder.updatedAt || 0, reminder.createdAt || 0) / 60_000) * 60_000;
+  const quiet = reminder.category === 'medicine' ? null : quietHours;
+  const times = new Map<number, Date>();
+
+  for (const sched of reminder.schedules) {
+    let pointer = now;
+    // Quiet-hour slots are skipped, so scan a bounded number of candidates.
+    for (let i = 0; i < limit * 4; i++) {
+      const next = calculateNextFireTime(sched, sched.type === 'interval' ? anchor : undefined, pointer);
+      if (!next || next.getTime() > horizon) break;
+      if (!isInQuietHours(next, quiet)) times.set(next.getTime(), next);
+      pointer = new Date(next.getTime() + 60_000);
+    }
+  }
+
+  return [...times.values()].sort((a, b) => a.getTime() - b.getTime()).slice(0, limit);
+}
+
+function baseNotification(reminder: Reminder) {
   const cat = reminder.category as Category;
-  const notifications: ScheduleOptions['notifications'] = [];
-
-  const generateId = (suffix: string | number): number => {
-    return hashId(`${reminder.id}-sched-${suffix}`);
-  };
-
-  const common = {
-    title,
-    body: reminder.customMessage ?? pickMessage(reminder.category),
+  return {
+    title: i18n.t(`categories.${reminder.category}.name`),
     sound: reminder.soundMode === 'sound_vibration' ? CATEGORY_SOUND[cat] : 'silence',
     smallIcon: CATEGORY_ICONS[cat],
     channelId: channelFor(cat, reminder.soundMode),
     actionTypeId: 'NYANUDGE_REMINDER',
+  };
+}
+
+function buildNotifications(reminder: Reminder, times: Date[], exact: boolean): ScheduleOptions['notifications'] {
+  const base = baseNotification(reminder);
+  return times.map((at, i) => ({
+    ...base,
+    id: hashId(`${reminder.id}-slot-${i}`),
+    body: reminder.customMessage || pickMessage(reminder.category),
+    // One-shot alarms only: the plugin's `repeats` with `at` repeats every (at - now), not daily.
+    schedule: { at, allowWhileIdle: true },
+    isExactNotification: exact,
     extra: {
       reminderId: reminder.id,
       category: reminder.category,
-      animationKey: CATEGORY_ANIMATION[cat],
+      animationKey: CATEGORY_ANIMATION[reminder.category as Category],
       snoozeMins: reminder.snoozeMins,
     },
-  };
+  }));
+}
 
-  // A counter to ensure we don't exceed iOS limit of 64 pending notifications
-  let totalScheduled = 0;
-  const MAX_NOTIFICATIONS = 60; // Safe buffer under 64
-
-  for (const schedIndex in reminder.schedules) {
-    if (totalScheduled >= MAX_NOTIFICATIONS) break;
-
-    const sched = reminder.schedules[schedIndex];
-    if (!sched) continue;
-
-    if (sched.type === 'fixed') {
-      // -------------------------------------------------------
-      // CASE 1: FIXED TIME
-      // Handle "One-off" or "Daily" (no daysOfWeek specified)
-      // -------------------------------------------------------
-
-      if (!sched.daysOfWeek || sched.daysOfWeek.length === 0 || sched.daysOfWeek.length === 7) {
-        // Sub-case 1A: Simple Daily Repeat (all days or no filter)
-        const fireTime = calculateNextFireTime(sched);
-        if (!fireTime) continue;
-
-        notifications.push({
-          ...common,
-          id: generateId(`${schedIndex}-daily`), // Stable ID: e.g. "123-sched-0-daily"
-          schedule: { at: fireTime, repeats: true, every: 'day', allowWhileIdle: true },
-        });
-        totalScheduled++;
-
-      } else {
-        // Sub-case 1B: Specific Days (Mon, Wed, Fri)
-        // MUST schedule individual instances because native 'daily repeat' ignores weekdays
-
-        let pointer = new Date();
-        // Schedule the next 10 occurrences to keep the user reminded
-        for (let i = 0; i < 10 && totalScheduled < MAX_NOTIFICATIONS; i++) {
-          const nextTime = calculateNextFireTime(sched, undefined, pointer);
-          if (!nextTime) break;
-
-          notifications.push({
-            ...common,
-            id: generateId(`${schedIndex}-day-${i}`), // Stable ID: e.g. "123-sched-0-day-0"
-            schedule: { at: nextTime, repeats: false, allowWhileIdle: true },
-          });
-
-          // Advance pointer to search for the next valid day
-          pointer = new Date(nextTime.getTime() + 24 * 60 * 60 * 1000);
-          totalScheduled++;
-        }
-      }
-
-    } else if (sched.type === 'interval') {
-      // -------------------------------------------------------
-      // CASE 2: INTERVAL
-      // -------------------------------------------------------
-
-      const intervalMins = parseInt(sched.timeValue ?? '60', 10);
-      if (isNaN(intervalMins) || intervalMins <= 0) continue;
-
-      // Anchor calculation for drift prevention
-      const anchorTs = Math.max(reminder.updatedAt || 0, reminder.createdAt || 0);
-      const cleanAnchor = Math.floor(anchorTs / 60000) * 60000;
-
-      let currentPointer: Date | undefined = undefined;
-
-      // Project the next 64 window-aware slots (or until limit reached)
-      for (let i = 0; i < 64 && totalScheduled < MAX_NOTIFICATIONS; i++) {
-        const nextTime = calculateNextFireTime(sched, cleanAnchor, currentPointer);
-        if (!nextTime) break;
-
-        notifications.push({
-          ...common,
-          id: generateId(`${schedIndex}-int-${i}`), // Stable ID: e.g. "123-sched-1-int-0"
-          schedule: { at: nextTime, repeats: false, allowWhileIdle: true },
-        });
-
-        // Advance pointer 1 second past this fire time to find the next slot
-        currentPointer = new Date(nextTime.getTime() + 1000);
-        totalScheduled++;
-      }
-    }
-  }
-
-  if (notifications.length > 0) {
-    try {
-      await LocalNotifications.schedule({ notifications });
-    } catch (error) {
-      console.error(`Failed to schedule reminder ${reminder.id}`, error);
-    }
+async function canScheduleExact(): Promise<boolean> {
+  try {
+    return (await LocalNotifications.checkExactNotificationSetting()).exact_alarm === 'granted';
+  } catch {
+    return false;
   }
 }
 
-/** Reschedule a notification for snooze. */
-export async function snoozeReminder(
-  notifId: number,
-  reminder: Reminder,
-): Promise<void> {
-  const fireTime = new Date(Date.now() + reminder.snoozeMins * 60_000);
-  const cat = reminder.category as Category;
-  const title = i18n.t(`categories.${reminder.category}.name`);
+async function doReschedule(reminders: Reminder[]): Promise<void> {
+  const permission = await LocalNotifications.checkPermissions().catch(() => null);
+  // The plugin rejects every schedule() while notifications are disabled.
+  if (permission?.display !== 'granted') return;
 
-  // We intentionally use the provided 'notifId' to replace the existing 
-  // tray notification instead of creating a duplicate.
+  const active = reminders.filter((r) => r.enabled && !r.archived);
+  const activeIds = new Set(active.map((r) => r.id));
+
+  const pending = await LocalNotifications.getPending().catch(() => ({ notifications: [] }));
+  const stale = pending.notifications.filter(
+    (n) => !(n.extra?.isSnoozed && activeIds.has(n.extra?.reminderId)),
+  );
+  if (stale.length > 0) {
+    await LocalNotifications.cancel({ notifications: stale.map((n) => ({ id: n.id })) });
+  }
+  if (active.length === 0) return;
+
+  // Asking for exact alarms without the permission makes the plugin open system settings.
+  const exact = await canScheduleExact();
+  const perReminder = Math.min(MAX_SLOTS_PER_REMINDER, Math.floor(MAX_TOTAL_SLOTS / active.length));
+  const now = new Date();
+  const notifications = active.flatMap((r) => buildNotifications(r, upcomingFireTimes(r, now, perReminder), exact));
+  if (notifications.length > 0) {
+    await LocalNotifications.schedule({ notifications });
+  }
+  lastRescheduleAt = Date.now();
+}
+
+let queue: Promise<void> = Promise.resolve();
+let lastRescheduleAt = 0;
+
+export function msSinceLastReschedule(): number {
+  return Date.now() - lastRescheduleAt;
+}
+
+/**
+ * Replaces every pending reminder notification with a fresh batch for `reminders`, keeping
+ * pending snoozes of active reminders. Calls run one at a time in call order.
+ */
+export function rescheduleAll(reminders: Reminder[]): Promise<void> {
+  queue = queue
+    .then(() => doReschedule(reminders))
+    .catch((error) => console.error('[Scheduler] Failed to reschedule reminders', error));
+  return queue;
+}
+
+/** Schedules a one-off snooze; replaces any earlier snooze of the same reminder. */
+export async function snoozeReminder(reminder: Reminder): Promise<void> {
+  const fireTime = new Date(Date.now() + reminder.snoozeMins * 60_000);
   await LocalNotifications.schedule({
     notifications: [{
-      id: notifId,
-      title,
+      ...baseNotification(reminder),
+      id: hashId(`${reminder.id}-snooze`),
       body: i18n.t(`snooze.${reminder.snoozeMins}`),
-      schedule: { at: fireTime, repeats: false, allowWhileIdle: true },
-      sound: reminder.soundMode === 'sound_vibration' ? CATEGORY_SOUND[cat] : 'silence',
-      smallIcon: CATEGORY_ICONS[cat],
-      channelId: channelFor(cat, reminder.soundMode),
-      actionTypeId: 'NYANUDGE_REMINDER',
+      schedule: { at: fireTime, allowWhileIdle: true },
+      isExactNotification: await canScheduleExact(),
       extra: {
         reminderId: reminder.id,
         category: reminder.category,
-        animationKey: CATEGORY_ANIMATION[cat],
+        animationKey: CATEGORY_ANIMATION[reminder.category as Category],
         snoozeMins: reminder.snoozeMins,
         isSnoozed: true,
       },
