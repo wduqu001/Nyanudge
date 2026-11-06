@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useRemindersStore } from '../../core/store/remindersStore';
+import { usePreferencesStore } from '../../core/store/preferencesStore';
 
 import { NyaButton } from '../../shared/components/Button/NyaButton';
 import { Toggle } from '../../shared/components/Toggle/Toggle';
@@ -31,13 +32,14 @@ interface FormProps {
 
 const ReminderForm: React.FC<FormProps> = ({ initialReminder, isNew, onSave, onArchive }) => {
   const { t, i18n } = useTranslation();
+  const defaults = usePreferencesStore((s) => s.preferences);
   const [label, setLabel] = useState(initialReminder?.label || '');
   const [enabled, setEnabled] = useState(initialReminder?.enabled ?? true);
   const [soundMode, setSoundMode] = useState<SoundMode>(
-    initialReminder?.soundMode || 'sound_vibration',
+    initialReminder?.soundMode || defaults.defaultSoundMode,
   );
-  const [snoozeMins, setSnoozeMins] = useState(initialReminder?.snoozeMins || 10);
-  const [character, setCharacter] = useState<Character>(initialReminder?.character || 'mochi');
+  const [snoozeMins, setSnoozeMins] = useState(initialReminder?.snoozeMins || defaults.defaultSnoozeMins);
+  const [character, setCharacter] = useState<Character>(initialReminder?.character || defaults.character);
   const [customMessage, setCustomMessage] = useState(initialReminder?.customMessage || '');
   const [schedules, setSchedules] = useState<Schedule[]>(initialReminder?.schedules || []);
   const [category, setCategory] = useState<Category>(initialReminder?.category || 'water');

@@ -6,6 +6,7 @@ import { I18nextProvider } from 'react-i18next';
 import i18n from '../../../core/i18n';
 import { ReminderEdit } from '../ReminderEdit';
 import { useRemindersStore } from '../../../core/store/remindersStore';
+import { usePreferencesStore } from '../../../core/store/preferencesStore';
 
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 
@@ -107,6 +108,19 @@ describe('ReminderEdit', () => {
       fireEvent.click(screen.getByText(/save/i));
     });
     expect(addReminder).toHaveBeenCalledWith(expect.objectContaining({ label: 'Drink Water' }));
+  });
+
+  it('uses the default sound mode, snooze and character from settings for new reminders', async () => {
+    const addReminder = vi.fn().mockResolvedValue(undefined);
+    useRemindersStore.setState({ reminders: [], isLoaded: true, addReminder } as any);
+    const prefs = usePreferencesStore.getState().preferences;
+    usePreferencesStore.setState({ preferences: { ...prefs, defaultSoundMode: 'silent', defaultSnoozeMins: 30, character: 'kuro' } });
+    render(<RouterWrapper id="new" />);
+    await act(async () => {
+      fireEvent.click(screen.getByText(/save/i));
+    });
+    usePreferencesStore.setState({ preferences: prefs });
+    expect(addReminder).toHaveBeenCalledWith(expect.objectContaining({ soundMode: 'silent', snoozeMins: 30, character: 'kuro' }));
   });
 
   // ── Existing reminder ─────────────────────────────────────────────────────
