@@ -1,5 +1,7 @@
 # NyaNudge — Product Requirements Document
-**Version:** 1.0.0 | **Status:** Draft | **Author:** Senior Product Engineer
+**Version:** 1.1.0 | **Status:** Living product spec | **Updated:** 2026-11-06
+
+> Features and copy are the product intent. Where implementation is described, the code is the source of truth; this document points to it rather than copying it.
 
 ---
 
@@ -44,13 +46,13 @@ A round icon featuring a minimalist cat face with two eyes, with one eye replace
 `com.quoryn.nyanudge.app`
 
 ### Target Platform
-Android (primary), iOS (secondary — same codebase)
+Android, distributed on Samsung Galaxy Store first. iOS is not set up (no `ios/` project).
 
 ---
 
 ## 2. Concept & Value Proposition
 
-NyaNudge is a wellness reminder app that sends scheduled notifications for five daily health habits: **hydration, meals, exercise, bathroom breaks, and medication**. Every alert is accompanied by a looping cat animation (GIF/Lottie) and a witty, category-specific message — transforming potentially ignored notifications into genuinely enjoyable micro-moments.
+NyaNudge is a wellness reminder app that sends scheduled notifications for five daily health habits: **hydration, meals, exercise, bathroom breaks, and medication**. Every alert carries a witty, category-specific message, and the app itself is full of animated cats — transforming potentially ignored notifications into genuinely enjoyable micro-moments.
 
 ### Core differentiators
 - **Cat-driven delight**: Animated cat characters react differently per reminder category — a shivering cat for hydration, a stretching cat for exercise.
@@ -62,132 +64,45 @@ NyaNudge is a wellness reminder app that sends scheduled notifications for five 
 
 ## 3. Tech Stack
 
-### Philosophy
-The codebase uses the closest available technologies to standard web development, maximizing code reuse and lowering the barrier for web developers joining the project.
+| Layer | Technology |
+|---|---|
+| Runtime | Capacitor 8 (Android) |
+| UI | React 19 + TypeScript, Vite 8 |
+| Styling | CSS Modules and global CSS with custom properties (`src/shared/styles/theme.css`) |
+| State | Zustand stores in `src/core/store/` |
+| Database | SQLite via `@capacitor-community/sqlite` (SQLCipher on device, sql.js in the browser) |
+| Schema and migrations | Drizzle table definitions for types; hand-written SQL migrations applied by `MigrationRunner` |
+| Notifications | `@capacitor/local-notifications` |
+| Animations | lottie-web for idle/celebrate, hand-built SVG components for everything else |
+| i18n | i18next + react-i18next |
+| Testing | Vitest, Testing Library, Storybook with axe accessibility checks |
 
-| Layer | Technology | Rationale |
-|---|---|---|
-| **Runtime** | [Capacitor.js](https://capacitorjs.com/) v6 | Native shell around a standard web app; literally runs React in a WebView |
-| **UI Framework** | React 18 + TypeScript | Industry-standard; identical to web projects |
-| **Build Tool** | Vite 5 | Fast HMR, familiar to web devs |
-| **Styling** | CSS Modules + CSS custom properties | Zero runtime overhead; native dark mode via `prefers-color-scheme` |
-| **State Management** | Zustand | Minimal boilerplate; serializable state for DB sync |
-| **Local Database** | SQLite via `@capacitor-community/sqlite` | True relational storage on-device |
-| **ORM / Migrations** | Drizzle ORM + `drizzle-kit` | Schema-as-TypeScript; built-in migration versioning |
-| **Notifications** | `@capacitor/local-notifications` | Scheduled local push; no backend required |
-| **Animations** | Lottie via `lottie-web` | Vector animations; replaces GIF assets for performance |
-| **i18n** | `i18next` + `react-i18next` | De-facto standard; JSON-based translation files |
-| **Testing** | Vitest + React Testing Library | Vite-native; web-compatible test runner |
-
-### Why Capacitor over React Native?
-Capacitor compiles a standard Vite/React web app into a native Android/iOS project. CSS, HTML, and browser APIs work exactly as on the web — the developer experience is 1:1 with frontend web development. There is no bridging layer between JavaScript and UI rendering.
+**Why Capacitor over React Native?** Capacitor runs a standard Vite/React web app inside a native shell, so CSS, HTML and browser APIs work exactly as on the web.
 
 ---
 
 ## 4. Architecture Overview
 
-```
-src/
-├── core/
-│   ├── db/              # Drizzle ORM schema, migrations, seed
-│   ├── notifications/   # Scheduling logic, sound/vibration handlers
-│   ├── i18n/            # i18next setup, locale JSON files
-│   └── store/           # Zustand stores (reminders, preferences, stats)
-├── features/
-│   ├── home/            # Home screen — active reminders overview
-│   ├── reminders/       # Add/edit reminder flow
-│   ├── settings/        # User preferences
-│   ├── history/         # Log of completed reminders
-│   └── onboarding/      # First-run walkthrough (3 screens)
-├── shared/
-│   ├── components/      # Button, Card, Toggle, Modal, etc.
-│   ├── animations/      # Lottie player wrapper + asset registry
-│   ├── hooks/           # useReminders, usePreferences, useDarkMode
-│   └── utils/           # Time formatting, repeat logic, etc.
-├── assets/
-│   ├── lottie/          # Cat animation JSON files (6 animations)
-│   └── sounds/          # Notification audio files (3 tracks)
-└── capacitor.config.ts
-```
+`src/core/` holds the database, notifications, i18n and stores; `src/features/` holds one folder per screen; `src/shared/` holds components, animations, hooks and utilities.
 
 ---
 
 ## 5. Color System & Design Tokens
 
-### Design Philosophy
-Minimal, warm-neutral base with a single accent color per theme. The palette intentionally avoids saturated blues/purples (common in health apps) to feel more approachable and cat-like.
+Tokens and their light/dark values are documented in [DESIGN.md](../DESIGN.md) and defined in `src/shared/styles/theme.css`.
 
-### Tokens (`src/shared/styles/tokens.css`)
-
-```css
-:root {
-  /* --- Neutral ramp --- */
-  --color-neutral-50:  #FAFAF9;
-  --color-neutral-100: #F4F3F1;
-  --color-neutral-200: #E8E6E1;
-  --color-neutral-300: #CCCAC4;
-  --color-neutral-400: #A09E98;
-  --color-neutral-500: #74726C;
-  --color-neutral-600: #55544F;
-  --color-neutral-700: #3A3935;
-  --color-neutral-800: #242320;
-  --color-neutral-900: #141412;
-
-  /* --- Accent: Tangerine (warm, playful) --- */
-  --color-accent-100: #FDEBD8;
-  --color-accent-200: #FAC896;
-  --color-accent-300: #F5A155;
-  --color-accent-400: #E97B22;  /* Primary accent */
-  --color-accent-500: #C45E0E;
-
-  /* --- Semantic --- */
-  --color-water:    #3B8BD4;  /* Hydration */
-  --color-food:     #5DAA62;  /* Meal */
-  --color-exercise: #E97B22;  /* Exercise */
-  --color-bathroom: #8A72C8;  /* Bathroom */
-  --color-medicine: #D65B5B;  /* Medication */
-
-  /* --- Surface (Light Mode) --- */
-  --surface-bg:        var(--color-neutral-50);
-  --surface-card:      #FFFFFF;
-  --surface-overlay:   rgba(0,0,0,0.04);
-  --text-primary:      var(--color-neutral-900);
-  --text-secondary:    var(--color-neutral-500);
-  --text-muted:        var(--color-neutral-300);
-  --border-subtle:     var(--color-neutral-200);
-  --accent:            var(--color-accent-400);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --surface-bg:      var(--color-neutral-900);
-    --surface-card:    var(--color-neutral-800);
-    --surface-overlay: rgba(255,255,255,0.05);
-    --text-primary:    var(--color-neutral-50);
-    --text-secondary:  var(--color-neutral-400);
-    --text-muted:      var(--color-neutral-600);
-    --border-subtle:   var(--color-neutral-700);
-    --accent:          var(--color-accent-300);
-  }
-}
-```
-
-### Category Color Usage
-Each reminder type has a reserved semantic color used consistently for: card left-border accent, icon fill, and notification dot.
+**Category colours** are used for card accents, icons and history bars:
+- water #3B8BD4
+- meal #5DAA62
+- exercise #E97B22
+- bathroom #8A72C8
+- medicine #D65B5B
 
 ---
 
 ## 6. Typography
 
-| Role | Font | Size | Weight |
-|---|---|---|---|
-| Display / Hero | [Nunito](https://fonts.google.com/specimen/Nunito) | 28–36px | 700 |
-| Heading | Nunito | 20–22px | 600 |
-| Body | Nunito | 16px | 400 |
-| Label / Caption | Nunito | 13px | 500 |
-| Mono (debug) | JetBrains Mono | 13px | 400 |
-
-**Rationale:** Nunito's rounded letterforms complement the cat theme without being childish. It is available as a variable font (single file), reducing load time. No system font fallbacks visible in final builds.
+Nunito Variable for everything (bundled, no network font loading). Sizes and weights are tokens; see [DESIGN.md](../DESIGN.md).
 
 ---
 
@@ -208,7 +123,7 @@ Each reminder type has a reserved semantic color used consistently for: card lef
 - **Time(s)**: single time or interval
 - **Repeat pattern**: daily, weekdays, weekends, custom days
 - **Sound mode**: Sound + Vibration | Vibration only | Silent
-- **Snooze duration**: 5 min, 10 min, 15 min, 30 min, off
+- **Snooze duration**: 5, 10, 15 or 30 min
 - **Custom message** override (optional)
 - **Assigned cat character** per reminder (3 cat characters available)
 
@@ -331,9 +246,9 @@ NOTIFICATIONS
   
   Notification style
     ◉ Standard
-    ○ Compact (no animation preview)
+    ○ Compact (title only, no cat message)
   
-  Do Not Disturb
+  Do Not Disturb (medication is exempt)
     Start time    [10:00 PM ▾]
     End time      [07:00 AM ▾]
 
@@ -361,13 +276,14 @@ REMINDERS
     When on, opening a notification marks
     the reminder as complete automatically.
   
-  Reset all to defaults  [Button]
+  Reset all to defaults  [Button — asks to confirm; keeps language and onboarding]
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 DATA
-  Export history as CSV  [Button]
+  Privacy policy         [Button]
   Clear all history      [Button — destructive]
+  (Export history as CSV: planned, hidden in v1)
   App version            1.0.0 (build 1)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -380,215 +296,59 @@ All settings are persisted in the `preferences` table (see DB schema). They are 
 
 ## 10. Notification System
 
-### 10.1 Notification Scheduling Flow
-```
-User enables reminder
-    ↓
-calculateNextFireTime(rule: ReminderRule) → Date[]
-    ↓
-@capacitor/local-notifications.schedule({
-  notifications: [{
-    id: notification_id,
-    title: categoryTitle(locale),
-    body: pickMessage(category, seed),
-    schedule: { at: fireTime, repeats: true },
-    sound: soundFile | undefined,
-    channelId: 'nyanudge_default',
-    extra: { reminderId, category, animationKey }
-  }]
-})
-    ↓
-Notification fires → user taps → app opens
-    ↓
-NotificationActionHandler.handle(action)
-  → 'open':  navigate to reminder card + play animation
-  → 'snooze': reschedule +N minutes
-  → 'done':  log completion + update streak
-```
+### 10.1 Scheduling
+- **One-shot alarms only.** Every enabled reminder is planned as one-shot `allowWhileIdle` alarms for up to 30 days, built from local wall-clock times so DST changes don't shift them.
+- **Shared budget.** All reminders share 400 alarms, below Android's 500-per-app cap.
+- **Re-planning** happens on every change, at launch, after notification permission is granted, and when the app resumes and the plan is over 6 hours old.
+- **Exact alarms** are used when allowed. Otherwise alarms are inexact, and the app never opens system settings by itself.
+- **Do Not Disturb hours** skip every category except medicine.
+- **Snoozes** have their own per-reminder ID and survive re-planning.
+- **Reboots:** the plugin restores alarms after a reboot.
 
-### 10.2 Sound Files
-| File | Usage | Duration |
-|---|---|---|
-| `chime_soft.mp3` | Water, Bathroom | 1.2 s |
-| `bell_gentle.mp3` | Meal, Exercise | 1.5 s |
-| `chime_persistent.mp3` | Medication | 2.0 s (loops ×2) |
+Code: `src/core/notifications/scheduler.ts`.
 
-All audio files are mono, 44.1 kHz, < 60 KB. Encoded as MP3 for broadest Android compatibility.
+### 10.2 Sounds
+| File | Usage |
+|---|---|
+| `chime_soft.mp3` | Water, Bathroom |
+| `bell_gentle.mp3` | Meal, Exercise |
+| `chime_persistent.mp3` | Medication |
+| `silence.wav` | Vibration-only channel |
 
-### 10.3 Android Notification Channels
-```typescript
-// capacitor.config.ts
-{
-  plugins: {
-    LocalNotifications: {
-      channels: [
-        {
-          id: 'nyanudge_default',
-          name: 'NyaNudge Reminders',
-          importance: 4,       // HIGH
-          visibility: 1,       // PUBLIC
-          sound: 'chime_soft', // default
-          vibration: true,
-          lights: true,
-          lightColor: '#E97B22'
-        },
-        {
-          id: 'nyanudge_medication',
-          name: 'Medication Reminders',
-          importance: 5,       // MAX (heads-up)
-          visibility: 1,
-          sound: 'chime_persistent',
-          vibration: true,
-          lights: true,
-          lightColor: '#D65B5B'
-        },
-        {
-          id: 'nyanudge_silent',
-          name: 'NyaNudge Silent',
-          importance: 2,       // LOW — no sound, no pop
-          vibration: false
-        }
-      ]
-    }
-  }
-}
-```
+### 10.3 Android notification channels
+On Android 8+, sound and vibration come from the channel, so each mode has one. The channels are created at runtime by `ensureNotificationChannels()`:
+- `nyanudge_chime_soft` and `nyanudge_bell_gentle`: high importance.
+- `nyanudge_medication`: max importance, uses `chime_persistent`.
+- `nyanudge_vibrate`: high importance, silent sound, vibration on.
+- `nyanudge_silent`: low importance, no sound, no vibration.
 
 ---
 
 ## 11. Local Database Schema & Migrations
 
-### 11.1 Technology Choice
-- **Engine:** SQLite (via `@capacitor-community/sqlite`)
-- **ORM:** Drizzle ORM (schema-as-TypeScript, zero query builders at runtime)
-- **Migration runner:** `drizzle-kit generate:sqlite` + custom `MigrationRunner` service that tracks applied migrations in `__drizzle_migrations` table.
-
-### 11.2 Schema (`src/core/db/schema.ts`)
-
-```typescript
-import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core';
-
-// User preferences
-export const preferences = sqliteTable('preferences', {
-  key:       text('key').primaryKey(),
-  value:     text('value').notNull(),
-  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
-});
-
-// Reminder definitions
-export const reminders = sqliteTable('reminders', {
-  id:          text('id').primaryKey(),          // UUID
-  category:    text('category').notNull(),        // water|meal|exercise|bathroom|medicine
-  label:       text('label').notNull(),
-  enabled:     integer('enabled', { mode: 'boolean' }).default(true),
-  soundMode:   text('sound_mode').default('sound_vibration'),
-  snoozeMins:  integer('snooze_mins').default(10),
-  character:   text('character').default('mochi'),
-  createdAt:   integer('created_at', { mode: 'timestamp' }).notNull(),
-  updatedAt:   integer('updated_at', { mode: 'timestamp' }).notNull(),
-});
-
-// Scheduled times (one row per scheduled fire per reminder)
-export const schedules = sqliteTable('schedules', {
-  id:         text('id').primaryKey(),
-  reminderId: text('reminder_id').notNull().references(() => reminders.id, { onDelete: 'cascade' }),
-  type:       text('type').notNull(),  // 'fixed' | 'interval'
-  timeValue:  text('time_value'),      // "08:00" for fixed; "120" (mins) for interval
-  daysOfWeek: text('days_of_week'),    // JSON: [0,1,2,3,4,5,6]
-  startTime:  text('start_time'),      // "07:00" — interval window start
-  endTime:    text('end_time'),        // "21:00" — interval window end
-  notifId:    integer('notif_id'),     // Capacitor notification ID
-});
-
-// Completion log
-export const completionLog = sqliteTable('completion_log', {
-  id:         text('id').primaryKey(),
-  reminderId: text('reminder_id').notNull().references(() => reminders.id),
-  category:   text('category').notNull(),
-  completedAt: integer('completed_at', { mode: 'timestamp' }).notNull(),
-  wasSkipped:  integer('was_skipped', { mode: 'boolean' }).default(false),
-});
-
-// Streak tracking
-export const streaks = sqliteTable('streaks', {
-  category:       text('category').primaryKey(),
-  currentStreak:  integer('current_streak').default(0),
-  longestStreak:  integer('longest_streak').default(0),
-  lastCompletedDate: text('last_completed_date'), // ISO date 'YYYY-MM-DD'
-});
-```
-
-### 11.3 Migration Versioning Pattern
-
-```typescript
-// src/core/db/migrations/index.ts
-export const migrations: Migration[] = [
-  {
-    version: 1,
-    description: 'Initial schema',
-    up: `
-      CREATE TABLE IF NOT EXISTS preferences ( ... );
-      CREATE TABLE IF NOT EXISTS reminders ( ... );
-      CREATE TABLE IF NOT EXISTS schedules ( ... );
-      CREATE TABLE IF NOT EXISTS completion_log ( ... );
-      CREATE TABLE IF NOT EXISTS streaks ( ... );
-    `,
-    down: `DROP TABLE IF EXISTS ...`
-  },
-  {
-    version: 2,
-    description: 'Add custom_message to reminders',
-    up: `ALTER TABLE reminders ADD COLUMN custom_message TEXT;`,
-    down: `-- SQLite does not support DROP COLUMN; handled by table recreation`
-  }
-  // Future migrations appended here
-];
-
-// MigrationRunner applies unapplied migrations in order
-// and stores the current version in preferences table under key '__db_version'
-```
-
-### 11.4 Seed Data (first install)
-
-```typescript
-// src/core/db/seed.ts
-// Inserted on first launch when DB version = 0
-export const defaultReminders = [
-  { id: uuid(), category: 'water',    label: 'Drink Water',   enabled: true,  ... },
-  { id: uuid(), category: 'meal',     label: 'Eat Something', enabled: true,  ... },
-  { id: uuid(), category: 'exercise', label: 'Move Your Body',enabled: false, ... },
-  { id: uuid(), category: 'bathroom', label: 'Bathroom Break',enabled: false, ... },
-  { id: uuid(), category: 'medicine', label: 'Medication',    enabled: false, ... },
-];
-```
+- **Engine:** SQLite via `@capacitor-community/sqlite`.
+- **Tables:** `preferences`, `reminders`, `schedules`, `completion_log` and `streaks`.
+- **Schema:** `src/core/db/schema.ts`, with the SQL in `src/core/db/migrations/index.ts`.
+- **Migrations:** `MigrationRunner` applies pending migrations in order and stores the version under the `__db_version` key in `preferences`.
+- **Streaks:** computed from the distinct local days in `completion_log`; the `streaks` table is not read.
+- **First launch:** `seed.ts` inserts the default reminders.
 
 ---
 
 ## 12. Internationalization (i18n)
 
-### 12.1 Setup (`src/core/i18n/index.ts`)
-```typescript
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
-import en from './locales/en.json';
-import ptBR from './locales/pt-BR.json';
-import ja from './locales/ja.json';
-
-i18n.use(initReactI18next).init({
-  resources: { en: { translation: en }, 'pt-BR': { translation: ptBR }, ja: { translation: ja } },
-  fallbackLng: 'en',
-  interpolation: { escapeValue: false },
-});
-```
+### 12.1 Setup
+`src/core/i18n/index.ts` registers the four locales below, starts in the device language (`detectDeviceLanguage`) and falls back to English.
 
 ### 12.2 Supported Locales (v1.0)
 | Code | Language | Status |
 |---|---|---|
-| `en` | English | Complete |
+| `en` | English | Complete (default and fallback) |
 | `pt-BR` | Brazilian Portuguese | Complete |
-| `ja` | Japanese | Partial (cat messages only) |
-| `es` | Spanish | Planned v1.1 |
-| `de` | German | Planned v1.1 |
+| `es-ES` | Spanish | Complete |
+| `ja` | Japanese | Complete |
+
+The first launch follows the device language (pt-PT → pt-BR, any Spanish → es-ES); after that the saved setting wins.
 
 ### 12.3 Translation Key Structure (`en.json`)
 ```json
@@ -637,12 +397,11 @@ i18n.use(initReactI18next).init({
 ## 13. Animation & Asset Strategy
 
 ### 13.1 Animation Engine
-All animations are shipped as **Lottie JSON files** (`.lottie`), played via `lottie-web`. This approach:
-- Eliminates GIF file size bloat (a 3-second GIF ≈ 600 KB; equivalent Lottie ≈ 15 KB)
-- Supports color theming at runtime (swap fill colors to match dark/light mode)
-- Allows playback speed control and frame-precise pausing
+`cat_idle` and `cat_celebrate` play from Lottie JSON via `lottie-web`. The category and sleep animations are hand-built SVG React components; see `src/assets/lottie/README.md`.
 
 ### 13.2 Animation Manifest
+
+> The Trigger column is the product intent. Today no screen plays these keys (`LottiePlayer` is used only in Storybook); the home screen shows the Mochi/Kuro/Sora SVG cats.
 
 | Key | Trigger | Loop | Duration |
 |---|---|---|---|
@@ -732,174 +491,24 @@ Each card has:
 
 ## 15. Unit Test Plan
 
-### 15.1 Test Runner Configuration
-
-```typescript
-// vitest.config.ts
-import { defineConfig } from 'vitest/config';
-export default defineConfig({
-  test: {
-    environment: 'jsdom',
-    globals: true,
-    setupFiles: ['./src/test/setup.ts'],
-    coverage: { provider: 'v8', reporter: ['text', 'lcov'] }
-  }
-});
-```
-
-### 15.2 Minimum Required Test Cases
-
-#### `src/core/notifications/__tests__/scheduler.test.ts`
-```typescript
-describe('calculateNextFireTime', () => {
-  it('returns next fixed time today if not yet passed')
-  it('returns next fixed time tomorrow if already passed today')
-  it('respects interval boundaries (start/end window)')
-  it('skips days not in daysOfWeek array')
-  it('handles midnight crossing correctly')
-})
-```
-
-#### `src/core/db/__tests__/migrations.test.ts`
-```typescript
-describe('MigrationRunner', () => {
-  it('applies all migrations on a fresh database')
-  it('skips already-applied migrations')
-  it('applies migrations in ascending version order')
-  it('rolls back on error without corrupting the DB')
-  it('stores current version in preferences table')
-})
-```
-
-#### `src/core/i18n/__tests__/messages.test.ts`
-```typescript
-describe('pickMessage', () => {
-  it('returns a string for every valid category')
-  it('cycles through all messages before repeating')
-  it('never returns undefined for unknown category (falls back)')
-  it('respects locale — pt-BR returns Portuguese string')
-})
-```
-
-#### `src/features/home/__tests__/ReminderCard.test.tsx`
-```typescript
-describe('ReminderCard', () => {
-  it('renders title and next fire time')
-  it('toggle changes enabled state in store')
-  it('applies category color to left border')
-  it('shows correct time format based on locale (12h vs 24h)')
-})
-```
-
-#### `src/core/db/__tests__/streaks.test.ts`
-```typescript
-describe('StreakCalculator', () => {
-  it('increments streak on consecutive day completion')
-  it('resets streak on missed day')
-  it('does not increment for duplicate completion same day')
-  it('updates longest streak when current exceeds it')
-})
-```
-
-### 15.3 Coverage Target
-- Minimum 70% line coverage on `src/core/**`
-- Minimum 50% line coverage on `src/features/**`
-
-### 15.4 CI Integration
-Tests run via `vitest run --coverage` in GitHub Actions on every pull request. Failing tests block merge.
+Commands, coverage thresholds and CI are in [CONTRIBUTING.md](../CONTRIBUTING.md). CI fails below 80% line, branch, function or statement coverage.
 
 ---
 
 ## 16. Accessibility
 
-- All interactive elements have `aria-label` attributes
-- Touch targets minimum 44×44 dp
-- Color is never the sole carrier of information (icons + text always accompany color)
-- Notification text is limited to 80 characters for readability on lock screens
-- `prefers-reduced-motion` media query suppresses Lottie animations when set
-- Font sizes respect user's OS accessibility font scaling (`em` units throughout)
+- **Contrast:** text meets WCAG AA (4.5:1); controls meet 3:1. Checked by the Storybook axe stories.
+- **Touch targets:** at least 44×44px.
+- **Controls:** never nested; every control has an accessible name. Dialogs use `role="dialog"`, and the Android back button closes them.
+- **Colour:** never the only carrier of information; icons and text accompany it.
+- **Reduced motion:** the system "remove animations" setting stops CSS animations and the cats' JavaScript loops.
+- **Font scaling:** font sizes are px tokens, so how OS font scaling behaves in the WebView is unverified.
 
 ---
 
 ## 17. Project Structure (Full)
 
-```
-nyanudge/
-├── android/                  # Capacitor Android project (generated)
-├── ios/                      # Capacitor iOS project (generated)
-├── src/
-│   ├── core/
-│   │   ├── db/
-│   │   │   ├── schema.ts
-│   │   │   ├── migrations/
-│   │   │   │   ├── index.ts
-│   │   │   │   └── 001_initial.sql
-│   │   │   ├── MigrationRunner.ts
-│   │   │   └── seed.ts
-│   │   ├── notifications/
-│   │   │   ├── scheduler.ts
-│   │   │   ├── handler.ts
-│   │   │   └── sounds.ts
-│   │   ├── i18n/
-│   │   │   ├── index.ts
-│   │   │   └── locales/
-│   │   │       ├── en.json
-│   │   │       ├── pt-BR.json
-│   │   │       └── ja.json
-│   │   └── store/
-│   │       ├── remindersStore.ts
-│   │       ├── preferencesStore.ts
-│   │       └── statsStore.ts
-│   ├── features/
-│   │   ├── home/
-│   │   │   ├── HomeScreen.tsx
-│   │   │   ├── ReminderCard.tsx
-│   │   │   ├── HeroSection.tsx
-│   │   │   ├── StreakBanner.tsx
-│   │   │   └── __tests__/
-│   │   ├── reminders/
-│   │   │   ├── ReminderEdit.tsx
-│   │   │   └── ScheduleBuilder.tsx
-│   │   ├── settings/
-│   │   │   ├── SettingsScreen.tsx
-│   │   │   └── sections/
-│   │   ├── history/
-│   │   │   ├── HistoryScreen.tsx
-│   │   │   └── HeatmapCalendar.tsx
-│   │   └── onboarding/
-│   │       ├── OnboardingFlow.tsx
-│   │       └── steps/
-│   ├── shared/
-│   │   ├── components/
-│   │   │   ├── Button.tsx
-│   │   │   ├── Toggle.tsx
-│   │   │   ├── Card.tsx
-│   │   │   └── Modal.tsx
-│   │   ├── animations/
-│   │   │   ├── LottiePlayer.tsx
-│   │   │   └── registry.ts
-│   │   └── hooks/
-│   │       ├── useReminders.ts
-│   │       ├── usePreferences.ts
-│   │       └── useDarkMode.ts
-│   ├── assets/
-│   │   ├── lottie/
-│   │   │   ├── cat_idle.json
-│   │   │   ├── cat_water.json
-│   │   │   └── ... (6 files total)
-│   │   └── sounds/
-│   │       ├── chime_soft.mp3
-│   │       ├── bell_gentle.mp3
-│   │       └── chime_persistent.mp3
-│   ├── App.tsx
-│   └── main.tsx
-├── capacitor.config.ts
-├── vite.config.ts
-├── vitest.config.ts
-├── drizzle.config.ts
-├── package.json
-└── tsconfig.json
-```
+See section 4 and the repository tree.
 
 ---
 
@@ -921,7 +530,8 @@ nyanudge/
 | Version | Date | Notes |
 |---|---|---|
 | 1.0.0 | 2026-03-22 | Initial PRD — complete feature spec for MVP |
+| 1.1.0 | 2026-11-06 | Aligned with the shipped app: stack, scheduling, channels, settings, locales, accessibility; implementation detail replaced by pointers to code |
 
 ---
 
-*End of Document — NyaNudge PRD v1.0.0*
+*End of Document — NyaNudge PRD v1.1.0*
