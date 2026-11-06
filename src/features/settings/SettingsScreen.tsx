@@ -38,10 +38,6 @@ export const SettingsScreen: React.FC = () => {
     i18n.changeLanguage(newLang);
   };
 
-  const handleExportCSV = () => {
-    alert(t('settings.data.exporting'));
-  };
-
   const handleClearHistory = () => {
     if (window.confirm(t('settings.data.clear_confirm'))) {
       // Clear in-memory store immediately so the UI reflects the change
@@ -198,12 +194,6 @@ export const SettingsScreen: React.FC = () => {
           {/* DATA */}
           <section className={styles.section}>
             <h2 className={styles.sectionTitle}>{t('settings.data.title')}</h2>
-
-            <div className={styles.settingGroup}>
-              <NyaButton variant="secondary" fullWidth onClick={handleExportCSV}>
-                {t('settings.data.export_csv')}
-              </NyaButton>
-            </div>
 
             <div className={styles.settingGroup}>
               <NyaButton

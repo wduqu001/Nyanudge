@@ -98,9 +98,9 @@ describe('SettingsScreen', () => {
     expect(screen.getByText('settings.data.clear_history')).toBeInTheDocument();
   });
 
-  it('renders the Export CSV button', () => {
+  it('does not offer Export CSV until a real export exists', () => {
     renderSettings();
-    expect(screen.getByText('settings.data.export_csv')).toBeInTheDocument();
+    expect(screen.queryByText('settings.data.export_csv')).not.toBeInTheDocument();
   });
 
   it('renders the Reset Defaults button', () => {
@@ -116,16 +116,6 @@ describe('SettingsScreen', () => {
 
     fireEvent.click(screen.getByText('settings.reminders.reset_defaults'));
     expect(resetSpy).toHaveBeenCalledTimes(1);
-  });
-
-  // ── Export CSV ─────────────────────────────────────────────────────────
-
-  it('shows an alert when Export CSV is clicked', () => {
-    const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
-    renderSettings();
-
-    fireEvent.click(screen.getByText('settings.data.export_csv'));
-    expect(alertSpy).toHaveBeenCalledWith('settings.data.exporting');
   });
 
   // ── Clear History ──────────────────────────────────────────────────────

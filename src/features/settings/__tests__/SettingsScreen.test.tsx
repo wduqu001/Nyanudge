@@ -63,14 +63,6 @@ describe('SettingsScreen', () => {
     expect(screen.getByText(/data/i)).toBeInTheDocument();
   });
 
-  // ── Export CSV ────────────────────────────────────────────────────────────
-
-  it('calls alert when Export CSV is clicked', () => {
-    render(<Wrapper><SettingsScreen /></Wrapper>);
-    fireEvent.click(screen.getByText(/export history as csv/i));
-    expect(window.alert).toHaveBeenCalledOnce();
-  });
-
   // ── Clear History ─────────────────────────────────────────────────────────
 
   it('does NOT clear history when confirm is cancelled', () => {
