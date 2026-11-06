@@ -132,6 +132,8 @@
     "total_completions": "Total Concluído"
   },
   "edit_reminder": {
+    "not_found": "Lembrete não encontrado",
+    "not_found_desc": "Este lembrete pode ter sido arquivado ou removido.",
     "character": "Personagem gato",
     "snooze": "Duração do adiamento",
     "title": "Editar {{label}}",

@@ -219,6 +219,8 @@
     }
   },
   "edit_reminder": {
+    "not_found": "リマインダーが見つかりません",
+    "not_found_desc": "このリマインダーはアーカイブまたは削除された可能性があります。",
     "character": "ねこキャラクター",
     "snooze": "スヌーズ時間",
     "title": "{{label}} を編集",

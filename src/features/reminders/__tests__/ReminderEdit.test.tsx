@@ -77,9 +77,8 @@ describe('ReminderEdit', () => {
   it('shows not-found state for an unknown non-new id', () => {
     useRemindersStore.setState({ reminders: [], isLoaded: true });
     render(<RouterWrapper id="does-not-exist" />);
-    // i18n key is rendered verbatim: 'edit_reminder.not_found' in the heading
-    // Use getAllByText to handle multiple elements that might match
-    expect(screen.getAllByText(/edit_reminder\.not_found/i).length).toBeGreaterThan(0);
+    expect(screen.getByText('Reminder not found')).toBeInTheDocument();
+    expect(screen.getByText('This reminder may have been archived or removed.')).toBeInTheDocument();
   });
 
   // ── New reminder ──────────────────────────────────────────────────────────

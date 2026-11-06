@@ -219,6 +219,8 @@
     }
   },
   "edit_reminder": {
+    "not_found": "Recordatorio no encontrado",
+    "not_found_desc": "Es posible que este recordatorio se haya archivado o eliminado.",
     "character": "Personaje gato",
     "snooze": "Duración de posponer",
     "title": "Editar {{label}}",

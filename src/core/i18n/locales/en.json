@@ -216,6 +216,8 @@
     }
   },
   "edit_reminder": {
+    "not_found": "Reminder not found",
+    "not_found_desc": "This reminder may have been archived or removed.",
     "character": "Cat character",
     "snooze": "Snooze duration",
     "title": "Edit {{label}}",
