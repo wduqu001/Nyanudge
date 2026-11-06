@@ -3,7 +3,7 @@ import React from 'react';
 /**
  * AnimatedSleep — Mochi-style sleeping cat with slow breathing and floating z's.
  * 
- * Inspired by Cat_exercise.json's (actually "Cat_sleeping") animation:
+ * Motion:
  *   - body oscillates up/down (breathing rhythm)
  *   - tail sways gently
  *   - z's float up, grow, then fade (staggered, repeating)

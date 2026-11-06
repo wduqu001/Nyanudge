@@ -12,15 +12,8 @@ import catSleep from '../../assets/lottie/cat_sleep.json';
  * respective Lottie JSON data. This allows for central management 
  * and dynamic selection of animations.
  * 
- * NOTE: The following keys are now successfully migrated to specialized 
- * SVG components in LottiePlayer.tsx to decouple task visuals from cat characters:
- *  - cat_water     -> AnimatedWater.tsx
- *  - cat_meal      -> AnimatedMeal.tsx
- *  - cat_medicine  -> AnimatedMedicine.tsx
- * 
- * TODO: IMPROVE ASSETS - Complete the migration for the remaining categories:
- *  - cat_exercise
- *  - cat_bathroom
+ * LottiePlayer renders SVG components instead of Lottie for every category key and
+ * cat_sleep; only cat_idle and cat_celebrate play from this registry.
  */
 export const animationRegistry = {
   cat_idle: catIdle,
