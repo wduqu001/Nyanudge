@@ -4,6 +4,14 @@ import { MigrationRunner } from './MigrationRunner';
 import { Capacitor } from '@capacitor/core';
 import { defineCustomElements as jeepSqlite } from 'jeep-sqlite/loader';
 
+/**
+ * SQLCipher mode for opening the database. 'encryption' converts an existing plain file and
+ * fails when there is none, so a fresh install must use 'secret', which creates it encrypted.
+ */
+export function encryptionModeFor(exists: boolean, encrypted: boolean): 'secret' | 'encryption' {
+  return exists && !encrypted ? 'encryption' : 'secret';
+}
+
 class DatabaseManager {
   private sqlite: SQLiteConnection = new SQLiteConnection(CapacitorSQLite);
   private db: SQLiteDBConnection | null = null;
@@ -26,7 +34,6 @@ class DatabaseManager {
 
       const isNative = platform === 'ios' || platform === 'android';
       const isEncrypted = isNative;
-      const encryptionMode = isNative ? 'encryption' : 'no-encryption';
 
       if (isNative) {
         // For production, retrieve this secret securely from native key storage.
@@ -39,6 +46,13 @@ class DatabaseManager {
             throw e;
           }
         }
+      }
+
+      let encryptionMode = 'no-encryption';
+      if (isNative) {
+        const exists = (await this.sqlite.isDatabase('nyanudge_v1')).result ?? false;
+        const encrypted = exists && ((await this.sqlite.isDatabaseEncrypted('nyanudge_v1')).result ?? false);
+        encryptionMode = encryptionModeFor(exists, encrypted);
       }
 
       try {

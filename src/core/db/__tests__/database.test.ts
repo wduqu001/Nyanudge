@@ -55,3 +55,20 @@ describe('database.ts — DatabaseManager', () => {
     expect('connection' in dbManager).toBe(true);
   });
 });
+
+describe('encryptionModeFor', () => {
+  it('creates a new encrypted database on a fresh install', async () => {
+    const { encryptionModeFor } = await import('../database');
+    expect(encryptionModeFor(false, false)).toBe('secret');
+  });
+
+  it('opens an already encrypted database with the secret', async () => {
+    const { encryptionModeFor } = await import('../database');
+    expect(encryptionModeFor(true, true)).toBe('secret');
+  });
+
+  it('encrypts a legacy unencrypted database once', async () => {
+    const { encryptionModeFor } = await import('../database');
+    expect(encryptionModeFor(true, false)).toBe('encryption');
+  });
+});
