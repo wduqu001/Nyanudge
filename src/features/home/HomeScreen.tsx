@@ -144,11 +144,11 @@ export const HomeScreen: React.FC = () => {
         <button className="icon-button" aria-label={t('aria.menu')} onClick={() => navigate('/history')}>
           <MenuIcon size={16} />
         </button>
-        <h1 className="home-title" onClick={async () => {
+        <h1 className="home-title" onClick={import.meta.env.DEV ? async () => {
           const pending = await LocalNotifications.getPending();
           setPendingNotifs(pending);
           setTimeout(() => setPendingNotifs(null), 10000); // Hide after 10s
-        }}>{t('app.name', 'NyaNudge')}</h1>
+        } : undefined}>{t('app.name', 'NyaNudge')}</h1>
         <button className="icon-button" aria-label={t('aria.settings')} onClick={() => navigate('/settings')}>
           <CogIcon size={16} />
         </button>
@@ -177,7 +177,7 @@ export const HomeScreen: React.FC = () => {
         <div className="hero-sub">{t('home.hero_sub', { name: preferences.character.charAt(0).toUpperCase() + preferences.character.slice(1) })}</div>
       </section>
 
-      {pendingNotifs && (
+      {import.meta.env.DEV && pendingNotifs && (
         <DebugPanel pendingNotifs={pendingNotifs} setPendingNotifs={setPendingNotifs} />
       )}
 

@@ -222,11 +222,11 @@ export const SettingsScreen: React.FC = () => {
               role="button"
               tabIndex={0}
               onKeyDown={(e) => e.key === 'Enter' && handleVersionTap()}
-              aria-label="App version — tap 5 times for debug panel"
+              aria-label={import.meta.env.DEV ? 'App version — tap 5 times for debug panel' : undefined}
             >
               {t('settings.data.app_version')}{' '}
               {t('settings.data.version_format', { version: '1.0.0', build: '1' })}
-              {tapCount > 0 && tapCount < 5 && (
+              {import.meta.env.DEV && tapCount > 0 && tapCount < 5 && (
                 <span style={{ display: 'block', fontSize: 11, marginTop: 4, opacity: 0.6 }}>
                   {5 - tapCount} more tap{5 - tapCount !== 1 ? 's' : ''} to open debug panel
                 </span>
