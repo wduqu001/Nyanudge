@@ -110,7 +110,7 @@ export const useRemindersStore = create<RemindersState>((set, get) => ({
     const r = get().reminders.find(rem => rem.id === id);
     if (!r) return;
 
-    const { addCompletion, incrementStreak } = useStatsStore.getState();
+    const { addCompletion, recordCompletion } = useStatsStore.getState();
     const entry = {
       id: Math.random().toString(36).substring(7),
       reminderId: r.id,
@@ -120,7 +120,7 @@ export const useRemindersStore = create<RemindersState>((set, get) => ({
     };
 
     addCompletion(entry);
-    incrementStreak(r.category);
+    recordCompletion(r.category, entry.completedAt);
 
     // Update reminder anchor so the next interval starts from NOW
     const now = Date.now();

@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { computeStats, localDay, type CompletionDay } from './streaks';
 
 
 export interface CategoryStats {
@@ -22,6 +23,7 @@ type StatsMap = Record<string, CategoryStats>;
 interface StatsState {
   stats: StatsMap;
   recentCompletions: CompletionEntry[];
+  completionDays: CompletionDay[];
   isLoaded: boolean;
 
   setStats: (stats: StatsMap) => void;
@@ -29,6 +31,9 @@ interface StatsState {
   addCompletion: (entry: CompletionEntry) => void;
   setRecentCompletions: (completions: CompletionEntry[]) => void;
   incrementStreak: (category: Category) => void;
+  /** Replaces the completion history and recomputes streaks from it. */
+  loadCompletionDays: (days: CompletionDay[]) => void;
+  recordCompletion: (category: Category, completedAt: number) => void;
   resetStreak: (category: Category) => void;
   setLoaded: (loaded: boolean) => void;
 }
@@ -36,6 +41,7 @@ interface StatsState {
 export const useStatsStore = create<StatsState>((set, get) => ({
   stats: {},
   recentCompletions: [],
+  completionDays: [],
   isLoaded: false,
 
   setStats: (stats) => set({ stats, isLoaded: true }),
@@ -84,6 +90,16 @@ export const useStatsStore = create<StatsState>((set, get) => ({
         },
       },
     }));
+  },
+
+  loadCompletionDays: (days) =>
+    set({ completionDays: days, stats: computeStats(days, localDay(Date.now())), isLoaded: true }),
+
+  recordCompletion: (category, completedAt) => {
+    const day = localDay(completedAt);
+    const known = get().completionDays;
+    const days = known.some((d) => d.category === category && d.day === day) ? known : [...known, { category, day }];
+    set({ completionDays: days, stats: computeStats(days, localDay(Date.now())) });
   },
 
   resetStreak: (category) =>

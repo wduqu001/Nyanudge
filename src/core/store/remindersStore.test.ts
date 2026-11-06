@@ -48,7 +48,7 @@ describe('RemindersStore', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     useRemindersStore.setState({ reminders: [], isLoaded: true, pendingNotifAction: null });
-    useStatsStore.setState({ stats: {}, recentCompletions: [], isLoaded: false });
+    useStatsStore.setState({ stats: {}, recentCompletions: [], completionDays: [], isLoaded: false });
   });
 
   // ── setReminders ───────────────────────────────────────────────────────────
@@ -268,7 +268,7 @@ describe('RemindersStore', () => {
     expect(ReminderService.addCompletion).not.toHaveBeenCalled();
   });
 
-  it('completeReminder increments streak every time, even on the same day', async () => {
+  it('completeReminder counts a day once, even with several completions that day', async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2023-10-10T08:00:00Z'));
 
@@ -278,7 +278,7 @@ describe('RemindersStore', () => {
     vi.setSystemTime(new Date('2023-10-10T20:00:00Z'));
     await useRemindersStore.getState().completeReminder('r1');
 
-    expect(useStatsStore.getState().stats['water']!.currentStreak).toBe(2);
+    expect(useStatsStore.getState().stats['water']!.currentStreak).toBe(1);
     vi.useRealTimers();
   });
 

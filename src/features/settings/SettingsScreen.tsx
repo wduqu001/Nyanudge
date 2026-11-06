@@ -14,7 +14,7 @@ import styles from './SettingsScreen.module.css';
 export const SettingsScreen: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { preferences, updatePreference, resetPreferences } = usePreferencesStore();
-  const { setRecentCompletions, setStats } = useStatsStore();
+  const { setRecentCompletions, loadCompletionDays } = useStatsStore();
 
   // 5-tap debug panel unlock
   const [tapCount, setTapCount] = useState(0);
@@ -46,7 +46,7 @@ export const SettingsScreen: React.FC = () => {
     if (window.confirm(t('settings.data.clear_confirm'))) {
       // Clear in-memory store immediately so the UI reflects the change
       setRecentCompletions([]);
-      setStats({});
+      loadCompletionDays([]);
       // Persist the wipe to the database
       ReminderService.clearHistory().catch((err) =>
         console.error('[Settings] Failed to clear history from DB:', err),

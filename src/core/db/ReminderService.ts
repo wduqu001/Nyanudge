@@ -180,6 +180,17 @@ export class ReminderService {
   }
 
   /** Load the 200 most-recent completions from disk (called on app start). */
+  /** Distinct device-local days with a non-skipped completion, per category. */
+  static async getCompletionDays(): Promise<{ category: Category; day: string }[]> {
+    const db = dbManager.connection;
+    const res = await db.query(
+      `SELECT DISTINCT category, date(completed_at / 1000, 'unixepoch', 'localtime') AS day
+         FROM completion_log
+        WHERE was_skipped = 0`,
+    );
+    return (res.values || []).map((row) => ({ category: row.category as Category, day: row.day as string }));
+  }
+
   static async getRecentCompletions(): Promise<CompletionEntry[]> {
     const db = dbManager.connection;
     const res = await db.query(

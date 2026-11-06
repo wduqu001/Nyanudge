@@ -5,7 +5,6 @@ import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { runBackHandler } from './shared/hooks/useBackHandler';
 import { useRemindersStore } from './core/store/remindersStore';
 import { useStatsStore } from './core/store/statsStore';
-import { mockStats } from './core/db/seed';
 import { HomeScreen } from './features/home/HomeScreen';
 import { OnboardingFlow } from './features/onboarding/OnboardingFlow';
 import { ReminderEdit } from './features/reminders/ReminderEdit';
@@ -32,7 +31,7 @@ function App() {
   const isOnboardingComplete = preferences.isOnboardingComplete;
 
   const { setReminders, setLoaded: setRemindersLoaded } = useRemindersStore();
-  const { setStats, setRecentCompletions } = useStatsStore();
+  const { loadCompletionDays, setRecentCompletions } = useStatsStore();
 
   useEffect(() => {
     // Sync theme
@@ -111,12 +110,7 @@ function App() {
         const completions = await ReminderService.getRecentCompletions();
         setRecentCompletions(completions);
 
-        // Stats seeded in DEV only; production stats are calculated from completion_log
-        if (import.meta.env.DEV) {
-          setStats(mockStats);
-        } else {
-          setStats({});
-        }
+        loadCompletionDays(await ReminderService.getCompletionDays());
 
         setLoaded(true);
       } catch (err) {
