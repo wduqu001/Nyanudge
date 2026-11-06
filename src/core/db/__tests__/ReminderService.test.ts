@@ -83,6 +83,7 @@ describe('ReminderService', () => {
     it('returns an empty array when no reminders exist', async () => {
       mockDb.query.mockResolvedValue({ values: [] });
       expect(await ReminderService.getAllReminders()).toEqual([]);
+      expect(mockDb.query).toHaveBeenCalledWith('SELECT * FROM reminders WHERE archived = 0');
     });
 
     it('maps DB rows into Reminder objects including schedules', async () => {
@@ -104,6 +105,8 @@ describe('ReminderService', () => {
       const result = await ReminderService.getAllReminders();
       expect(result).toHaveLength(1);
       expect(result[0]!.id).toBe('r1');
+      expect(result[0]!.schedules).toHaveLength(1);
+      expect(result[0]!.schedules[0]!.id).toBe('s1');
       expect(result[0]!.schedules[0]!.daysOfWeek).toEqual([1, 2, 3]);
     });
   });
@@ -147,6 +150,24 @@ describe('ReminderService', () => {
       );
       expect(scheduleCalls).toHaveLength(1);
     });
+
+    it('binds reminder and schedule values in insert order', async () => {
+      await ReminderService.addReminder(makeReminder({
+        id: 'rem-2', category: 'medicine', label: 'Meds', soundMode: 'silent', customMessage: 'Take meds',
+        schedules: [{ id: 'sch-2', reminderId: 'rem-2', type: 'interval', timeValue: '60', startTime: '08:00', endTime: '20:00' }],
+      }));
+      expect(mockDb.run).toHaveBeenCalledTimes(2);
+      expect(mockDb.run).toHaveBeenNthCalledWith(
+        1,
+        expect.stringContaining('INSERT INTO reminders'),
+        expect.arrayContaining(['rem-2', 'medicine', 'Meds', 1, Number(false)]),
+      );
+      expect(mockDb.run).toHaveBeenNthCalledWith(
+        2,
+        expect.stringContaining('INSERT INTO schedules'),
+        expect.arrayContaining(['sch-2', 'rem-2', 'interval', '60']),
+      );
+    });
   });
 
   // ── updateReminder ──────────────────────────────────────────────────────
@@ -168,19 +189,39 @@ describe('ReminderService', () => {
       );
     });
 
-    it('replaces schedules when schedules is in changes', async () => {
-      await ReminderService.updateReminder('r1', {
-        schedules: [{ id: 's-new', reminderId: 'r1', type: 'interval', timeValue: '60' }],
-      });
-      // First run: DELETE old schedules
+    it('updates all possible fields correctly', async () => {
+      await ReminderService.updateReminder('rem-full', {
+        label: 'Full Update',
+        enabled: true,
+        archived: true,
+        soundMode: 'vibrate',
+        snoozeMins: 15,
+        character: 'sora',
+        customMessage: 'Be awesome',
+        schedules: [],
+      } as any);
       expect(mockDb.run).toHaveBeenCalledWith(
-        expect.stringContaining('DELETE FROM schedules'),
-        ['r1'],
+        expect.stringContaining('UPDATE reminders SET label = ?, enabled = ?, archived = ?, sound_mode = ?, snooze_mins = ?, character = ?, custom_message = ?, updated_at = ? WHERE id = ?'),
+        expect.arrayContaining(['Full Update', 1, 1, 'vibrate', 15, 'sora', 'Be awesome']),
       );
-      // Second run: INSERT new schedule
-      expect(mockDb.run).toHaveBeenCalledWith(
+    });
+
+    it('updates fields conditionally and recreates schedules', async () => {
+      await ReminderService.updateReminder('rem-3', {
+        label: 'New Meds',
+        enabled: false,
+        schedules: [{ id: 'sch-new', reminderId: 'rem-3', type: 'fixed', timeValue: '09:00', notifId: 999 }],
+      });
+      expect(mockDb.run).toHaveBeenNthCalledWith(
+        1,
+        expect.stringContaining('UPDATE reminders SET label = ?, enabled = ?, updated_at = ? WHERE id = ?'),
+        expect.arrayContaining(['New Meds', 0]),
+      );
+      expect(mockDb.run).toHaveBeenNthCalledWith(2, 'DELETE FROM schedules WHERE reminder_id = ?', ['rem-3']);
+      expect(mockDb.run).toHaveBeenNthCalledWith(
+        3,
         expect.stringContaining('INSERT INTO schedules'),
-        expect.any(Array),
+        expect.arrayContaining(['sch-new', 'rem-3', 'fixed', '09:00']),
       );
     });
 
@@ -190,6 +231,27 @@ describe('ReminderService', () => {
         typeof call[0] === 'string' && call[0].includes('UPDATE reminders'),
       );
       expect(updateCalls).toHaveLength(0);
+    });
+  });
+
+  // ── deleteReminder ──────────────────────────────────────────────────────
+
+  describe('deleteReminder', () => {
+    it('deletes from reminders by id', async () => {
+      await ReminderService.deleteReminder('r-delete');
+      expect(mockDb.run).toHaveBeenCalledWith('DELETE FROM reminders WHERE id = ?', ['r-delete']);
+    });
+  });
+
+  // ── addCompletion ───────────────────────────────────────────────────────
+
+  describe('addCompletion', () => {
+    it('inserts the completion with wasSkipped as 0/1', async () => {
+      await ReminderService.addCompletion({ id: 'c-1', reminderId: 'r-1', category: 'water', completedAt: 5000, wasSkipped: true });
+      expect(mockDb.run).toHaveBeenCalledWith(
+        expect.stringContaining('INSERT INTO completion_log'),
+        ['c-1', 'r-1', 'water', 5000, 1],
+      );
     });
   });
 
@@ -224,7 +286,7 @@ describe('ReminderService', () => {
       await ReminderService.clearHistory();
       expect(mockDb.run).toHaveBeenCalledWith('DELETE FROM completion_log');
       expect(mockDb.run).toHaveBeenCalledWith(
-        expect.stringContaining('current_streak = 0'),
+        expect.stringContaining('UPDATE streaks SET current_streak = 0'),
       );
     });
   });
