@@ -13,7 +13,7 @@
 
 .toggle {
   appearance: none;
-  background-color: var(--color-neutral-300);
+  background-color: var(--text-muted);
   margin: 0;
   padding: 0;
   width: 34px;
@@ -23,6 +23,13 @@
   cursor: pointer;
   border: none;
   transition: background-color 0.2s ease;
+}
+
+/* Invisible 44x44 touch target around the 34x20 track. */
+.toggle::before {
+  content: '';
+  position: absolute;
+  inset: -12px -5px;
 }
 
 .disabled {
