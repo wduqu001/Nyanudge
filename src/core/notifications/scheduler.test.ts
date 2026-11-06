@@ -260,7 +260,7 @@ describe('scheduler', () => {
       const notifs = vi.mocked(LocalNotifications.schedule).mock.calls[0]?.[0]?.notifications ?? [];
       const times = notifs.map(n => (n.schedule?.at as Date).getTime());
       expect(new Set(times).size).toBe(times.length);
-      times.slice(1).forEach((t, i) => expect(t).toBeGreaterThan(times[i]));
+      times.slice(1).forEach((t, i) => expect(t).toBeGreaterThan(times[i] ?? Infinity));
       notifs.forEach(n => expect([1, 3, 5]).toContain((n.schedule?.at as Date).getDay()));
     });
 
