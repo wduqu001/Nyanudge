@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { useNavigate } from 'react-router-dom';
+import { usePreferencesStore } from '../store/preferencesStore';
 import { scheduleReminder, cancelReminder, snoozeReminder, ensureNotificationChannels } from './scheduler';
 
 type RemindersStoreWindow = typeof window & {
@@ -90,6 +91,10 @@ export function useNotificationSetup() {
           // 💤 Tray "Snooze 10m" button — schedule +snoozeMins
           if (reminder) snoozeReminder(notifAction.notification.id, reminder);
           return; // snooze doesn't need requeue here; new slot is already scheduled
+
+        } else if (usePreferencesStore.getState().preferences.markAsDoneOnOpen) {
+          storeHook?.getState?.()?.completeReminder?.(extra.reminderId);
+          navigate('/');
 
         } else {
           // 👆 Default body tap — open home screen with action modal
