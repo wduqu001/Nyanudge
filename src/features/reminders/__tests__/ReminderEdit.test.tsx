@@ -96,6 +96,9 @@ describe('ReminderEdit', () => {
       fireEvent.click(screen.getByText(/save/i));
     });
     expect(addReminder).toHaveBeenCalledOnce();
+    expect(addReminder).toHaveBeenCalledWith(
+      expect.objectContaining({ category: 'water', enabled: true, soundMode: 'sound_vibration' }),
+    );
     expect(navigateMock).toHaveBeenCalledWith(-1);
   });
 
@@ -197,8 +200,10 @@ describe('ReminderEdit', () => {
   it('switches from Fixed to Interval schedule type on button click', () => {
     useRemindersStore.setState({ reminders: [makeReminder()], isLoaded: true });
     render(<RouterWrapper id="existing-1" />);
+    expect(screen.queryByText('minutes')).not.toBeInTheDocument();
     fireEvent.click(screen.getByText(/interval/i));
-    // Interval schedule shows a time-window select/input (Start/End labels)
+    // Interval schedule shows the minutes select and a time window (Start/End labels)
+    expect(screen.getByText('minutes')).toBeInTheDocument();
     expect(screen.getByText(/start/i)).toBeInTheDocument();
   });
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { I18nextProvider } from 'react-i18next';
@@ -8,7 +8,7 @@ import { HomeScreen } from '../HomeScreen';
 import { useRemindersStore } from '../../../core/store/remindersStore';
 import { usePreferencesStore } from '../../../core/store/preferencesStore';
 import { useStatsStore } from '../../../core/store/statsStore';
-import { snoozeReminder } from '../../../core/notifications/scheduler';
+import { calculateNextFireTime, snoozeReminder } from '../../../core/notifications/scheduler';
 import { runBackHandler } from '../../../shared/hooks/useBackHandler';
 
 // ── Capacitor & heavy deps mocks ─────────────────────────────────────────────
@@ -28,15 +28,19 @@ vi.mock('../../../core/notifications/scheduler', () => ({
   snoozeReminder: vi.fn().mockResolvedValue(undefined),
 }));
 
-vi.mock('../../shared/components/AnimatedCatMochi/AnimatedCatMochi', () => ({
-  AnimatedCatMochi: () => <div data-testid="cat-mochi" />,
-}));
-vi.mock('../../shared/components/KuroCat/AnimatedCatKuro', () => ({
-  AnimatedCatKuro: () => <div data-testid="cat-kuro" />,
-}));
-vi.mock('../../shared/components/SoraCat/CatSora', () => ({
-  CatSora: () => <div data-testid="cat-sora" />,
-}));
+// Wrap rather than replace the cats so they still render (and stay covered).
+vi.mock('../../../shared/components/AnimatedCatMochi/AnimatedCatMochi', async (importOriginal) => {
+  const { AnimatedCatMochi } = await importOriginal<typeof import('../../../shared/components/AnimatedCatMochi/AnimatedCatMochi')>();
+  return { AnimatedCatMochi: () => <div data-testid="cat-mochi"><AnimatedCatMochi /></div> };
+});
+vi.mock('../../../shared/components/KuroCat/AnimatedCatKuro', async (importOriginal) => {
+  const { AnimatedCatKuro } = await importOriginal<typeof import('../../../shared/components/KuroCat/AnimatedCatKuro')>();
+  return { AnimatedCatKuro: () => <div data-testid="cat-kuro"><AnimatedCatKuro /></div> };
+});
+vi.mock('../../../shared/components/SoraCat/CatSora', async (importOriginal) => {
+  const { CatSora } = await importOriginal<typeof import('../../../shared/components/SoraCat/CatSora')>();
+  return { CatSora: () => <div data-testid="cat-sora"><CatSora /></div> };
+});
 vi.mock('../DebugPanel', () => ({
   DebugPanel: () => <div data-testid="debug-panel" />,
 }));
@@ -78,6 +82,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
 beforeEach(() => {
   vi.clearAllMocks();
   navigateMock.mockReset();
+  vi.mocked(calculateNextFireTime).mockReturnValue(undefined);
   useRemindersStore.setState({
     reminders: [],
     isLoaded: true,
@@ -101,6 +106,10 @@ beforeEach(() => {
   useStatsStore.setState({ stats: {}, recentCompletions: [], isLoaded: true });
 });
 
+afterEach(() => {
+  vi.useRealTimers();
+});
+
 describe('HomeScreen', () => {
   // ── Basic render ──────────────────────────────────────────────────────────
 
@@ -109,20 +118,57 @@ describe('HomeScreen', () => {
     expect(screen.getByText(/no active reminders/i)).toBeInTheDocument();
   });
 
-  it('renders the reminder card label when reminders exist', () => {
-    useRemindersStore.setState({ reminders: [makeReminder()], isLoaded: true });
+  it('renders the character selected in preferences', () => {
+    usePreferencesStore.setState({ preferences: { ...usePreferencesStore.getState().preferences, character: 'kuro' } });
     render(<Wrapper><HomeScreen /></Wrapper>);
-    expect(screen.getByText('Drink Water')).toBeInTheDocument();
+    expect(screen.getByTestId('cat-kuro')).toBeInTheDocument();
   });
 
-  it('shows streak banner when maxStreak > 0', () => {
+  it('shows next upcoming reminder if one is enabled', () => {
+    vi.useFakeTimers();
+    const mockDate = new Date(2023, 9, 10, 10, 0, 0);
+    vi.setSystemTime(mockDate);
+    vi.mocked(calculateNextFireTime).mockReturnValue(new Date(mockDate.getTime() + 30 * 60_000));
+    useRemindersStore.setState({
+      reminders: [makeReminder({ label: 'Drink!', createdAt: 0, updatedAt: 0, schedules: [{ id: 's1', reminderId: 'r1', type: 'fixed', timeValue: '10:30' }] })],
+      isLoaded: true,
+    });
+    render(<Wrapper><HomeScreen /></Wrapper>);
+    expect(screen.getByText('Next up in 30 minutes')).toBeInTheDocument();
+    expect(screen.getAllByText('Drink!').length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('renders the list of active (non-archived) reminders', () => {
+    useRemindersStore.setState({
+      reminders: [
+        makeReminder({ id: 'r1', label: 'R1', schedules: [] }),
+        makeReminder({ id: 'r2', category: 'meal', label: 'R2', enabled: false, archived: true, schedules: [] }),
+        makeReminder({ id: 'r3', category: 'exercise', label: 'R3', schedules: [] }),
+      ],
+      isLoaded: true,
+    });
+    render(<Wrapper><HomeScreen /></Wrapper>);
+    expect(screen.getByText('R1')).toBeInTheDocument();
+    expect(screen.queryByText('R2')).not.toBeInTheDocument(); // archived
+    expect(screen.getByText('R3')).toBeInTheDocument();
+  });
+
+  it('toggles reminder when toggle button is clicked', () => {
+    const toggleReminder = vi.fn();
+    useRemindersStore.setState({ reminders: [makeReminder()], isLoaded: true, toggleReminder } as any);
+    render(<Wrapper><HomeScreen /></Wrapper>);
+    fireEvent.click(screen.getByRole('switch'));
+    expect(toggleReminder).toHaveBeenCalledWith('r1');
+  });
+
+  it('shows streak banner with the current (not longest) streak when maxStreak > 0', () => {
     useStatsStore.setState({
-      stats: { water: { category: 'water', currentStreak: 3, longestStreak: 3, lastCompletedDate: null, completionRateLast7Days: 0 } },
+      stats: { water: { category: 'water', currentStreak: 5, longestStreak: 10, lastCompletedDate: '2023-10-09', completionRateLast7Days: 1 } },
       recentCompletions: [],
       isLoaded: true,
     });
     render(<Wrapper><HomeScreen /></Wrapper>);
-    expect(screen.getByText(/done — keep going/i)).toBeInTheDocument();
+    expect(screen.getByText('5 done — keep going!')).toBeInTheDocument();
   });
 
   it('does not show streak banner when maxStreak is 0', () => {
@@ -172,12 +218,27 @@ describe('HomeScreen', () => {
 
   it('renders the notification action sheet when pendingNotifAction is set', () => {
     useRemindersStore.setState({
-      reminders: [makeReminder()],
+      reminders: [makeReminder({ label: 'R1' })],
       isLoaded: true,
       pendingNotifAction: { reminderId: 'r1', label: 'Drink Water', category: 'water' },
     });
     render(<Wrapper><HomeScreen /></Wrapper>);
+    expect(screen.getByText('Drink Water')).toBeInTheDocument();
     expect(screen.getByText(/what would you like to do/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /done/i })).toBeInTheDocument();
+  });
+
+  it('closes notification action sheet on backdrop click', () => {
+    const setPendingNotifAction = vi.fn();
+    useRemindersStore.setState({
+      reminders: [makeReminder()],
+      isLoaded: true,
+      pendingNotifAction: { reminderId: 'r1', label: 'Action', category: 'water' },
+      setPendingNotifAction,
+    } as any);
+    render(<Wrapper><HomeScreen /></Wrapper>);
+    fireEvent.click(screen.getByRole('dialog').previousElementSibling!);
+    expect(setPendingNotifAction).toHaveBeenCalledWith(null);
   });
 
   it('dismisses sheet when "Cancel" is clicked', () => {
