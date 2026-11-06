@@ -212,6 +212,8 @@
     }
   },
   "edit_reminder": {
+    "character": "Personaje gato",
+    "snooze": "Duración de posponer",
     "title": "Editar {{label}}",
     "loading": "Cargando...",
     "enable_desc": "Recibir avisos para este recordatorio",

@@ -81,6 +81,7 @@
     "30": "30 completions! You are the human the cat always believed in."
   },
   "actions": {
+    "back": "Back",
     "done": "Done",
     "snooze": "Snooze",
     "skip": "Skip for today",
@@ -214,6 +215,8 @@
     }
   },
   "edit_reminder": {
+    "character": "Cat character",
+    "snooze": "Snooze duration",
     "title": "Edit {{label}}",
     "loading": "Loading reminder...",
     "enable_desc": "Receive notifications for this reminder",

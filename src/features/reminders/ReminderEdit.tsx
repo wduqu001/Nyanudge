@@ -111,6 +111,7 @@ const ReminderForm: React.FC<FormProps> = ({ initialReminder, isNew, onSave, onA
                 key={cat}
                 type="button"
                 className={`category-btn ${category === cat ? 'active' : ''}`}
+                aria-pressed={category === cat}
                 style={
                   {
                     '--cat-color': `var(--color-${categoryColorMapping[cat] || 'accent-400'})`,
@@ -151,6 +152,7 @@ const ReminderForm: React.FC<FormProps> = ({ initialReminder, isNew, onSave, onA
             <button
               type="button"
               className={`type-btn ${mainSchedule.type === 'fixed' ? 'active' : ''}`}
+              aria-pressed={mainSchedule.type === 'fixed'}
               onClick={() => updateMainSchedule({ type: 'fixed', timeValue: '08:00' })}
             >
               {t('edit_reminder.type_fixed')}
@@ -158,6 +160,7 @@ const ReminderForm: React.FC<FormProps> = ({ initialReminder, isNew, onSave, onA
             <button
               type="button"
               className={`type-btn ${mainSchedule.type === 'interval' ? 'active' : ''}`}
+              aria-pressed={mainSchedule.type === 'interval'}
               onClick={() => updateMainSchedule({ type: 'interval', timeValue: '120' })}
             >
               {t('edit_reminder.type_interval')}
@@ -221,6 +224,8 @@ const ReminderForm: React.FC<FormProps> = ({ initialReminder, isNew, onSave, onA
                 key={idx}
                 type="button"
                 className={`day-btn ${mainSchedule.daysOfWeek?.includes(idx) ? 'active' : ''}`}
+                aria-pressed={!!mainSchedule.daysOfWeek?.includes(idx)}
+                aria-label={day}
                 onClick={() => toggleDay(idx)}
               >
                 {day.charAt(0)}
@@ -235,15 +240,15 @@ const ReminderForm: React.FC<FormProps> = ({ initialReminder, isNew, onSave, onA
             value={soundMode}
             onChange={(val) => setSoundMode(val as SoundMode)}
             options={[
-              { label: t('settings.sound_vibration'), value: 'sound_vibration' },
-              { label: t('settings.vibration_only'), value: 'vibration_only' },
-              { label: t('settings.silent'), value: 'silent' },
+              { label: t('settings.notifications.sound_vibration'), value: 'sound_vibration' },
+              { label: t('settings.notifications.vibration_only'), value: 'vibration_only' },
+              { label: t('settings.notifications.silent'), value: 'silent' },
             ]}
           />
         </section>
 
         <section className="form-section">
-          <label className="form-label">{t('settings.default_snooze')}</label>
+          <label className="form-label">{t('edit_reminder.snooze')}</label>
           <NyaSelect
             value={snoozeMins}
             onChange={(val) => setSnoozeMins(Number(val))}
