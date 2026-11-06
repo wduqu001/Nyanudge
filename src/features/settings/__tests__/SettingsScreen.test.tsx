@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent, act, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '../../../core/i18n';
@@ -40,8 +40,6 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
 describe('SettingsScreen', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.spyOn(window, 'alert').mockImplementation(() => {});
-    vi.spyOn(window, 'confirm').mockImplementation(() => false);
     // Reset stores to defaults between tests
     usePreferencesStore.setState({
       preferences: {
@@ -88,53 +86,57 @@ describe('SettingsScreen', () => {
 
   // ── Reset defaults ────────────────────────────────────────────────────────
 
-  it('resetPreferences is called when Reset Defaults is clicked and confirmed', () => {
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
+  const openDialog = (buttonText: RegExp) => {
+    fireEvent.click(screen.getByRole('button', { name: buttonText }));
+    return within(screen.getByRole('dialog', { name: buttonText }));
+  };
+
+  it('resets settings only after confirming in the dialog', () => {
     const resetSpy = vi.spyOn(usePreferencesStore.getState(), 'resetPreferences').mockImplementation(() => {});
     render(<Wrapper><SettingsScreen /></Wrapper>);
-    fireEvent.click(screen.getByText('Reset all to defaults'));
+    const dialog = openDialog(/reset all to defaults/i);
+    expect(dialog.getByText(/your reminders and history are kept/i)).toBeInTheDocument();
+    expect(resetSpy).not.toHaveBeenCalled();
+    fireEvent.click(dialog.getByRole('button', { name: /reset all to defaults/i }));
     expect(resetSpy).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
-  it('does not reset when the confirmation is cancelled', () => {
-    vi.spyOn(window, 'confirm').mockReturnValue(false);
+  it('does not reset when the dialog is cancelled', () => {
     const resetSpy = vi.spyOn(usePreferencesStore.getState(), 'resetPreferences').mockImplementation(() => {});
     render(<Wrapper><SettingsScreen /></Wrapper>);
-    fireEvent.click(screen.getByText('Reset all to defaults'));
+    fireEvent.click(openDialog(/reset all to defaults/i).getByRole('button', { name: /cancel/i }));
     expect(resetSpy).not.toHaveBeenCalled();
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
   // ── Clear History ─────────────────────────────────────────────────────────
 
-  it('shows a confirm dialog when Clear History is clicked', () => {
-    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
+  it('asks for confirmation before clearing history', () => {
     render(<Wrapper><SettingsScreen /></Wrapper>);
-    fireEvent.click(screen.getByText(/clear all history/i));
-    expect(confirmSpy).toHaveBeenCalledWith('Are you sure you want to clear all history? This action cannot be undone.');
+    const dialog = openDialog(/clear all history/i);
+    expect(dialog.getByText('Are you sure you want to clear all history? This action cannot be undone.')).toBeInTheDocument();
   });
 
-  it('does NOT clear history when confirm is cancelled', () => {
-    vi.spyOn(window, 'confirm').mockReturnValue(false);
-    const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
+  it('does NOT clear history when the dialog is cancelled', () => {
     useStatsStore.setState({ recentCompletions: [seedCompletion] });
     render(<Wrapper><SettingsScreen /></Wrapper>);
-    fireEvent.click(screen.getByText(/clear all history/i));
+    fireEvent.click(openDialog(/clear all history/i).getByRole('button', { name: /cancel/i }));
     expect(ReminderService.ReminderService.clearHistory).not.toHaveBeenCalled();
     expect(useStatsStore.getState().recentCompletions).toEqual([seedCompletion]);
-    expect(alertSpy).not.toHaveBeenCalled();
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
   });
 
   it('clears store and calls ReminderService.clearHistory when confirmed', async () => {
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
-    const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
     useStatsStore.setState({ recentCompletions: [seedCompletion] });
     render(<Wrapper><SettingsScreen /></Wrapper>);
+    const dialog = openDialog(/clear all history/i);
     await act(async () => {
-      fireEvent.click(screen.getByText(/clear all history/i));
+      fireEvent.click(dialog.getByRole('button', { name: /clear all history/i }));
     });
     expect(ReminderService.ReminderService.clearHistory).toHaveBeenCalledOnce();
     expect(useStatsStore.getState().recentCompletions).toEqual([]);
-    expect(alertSpy).toHaveBeenCalledWith('History cleared.');
+    expect(screen.getByRole('status')).toHaveTextContent('History cleared.');
   });
 
   // ── Debug panel via version taps ──────────────────────────────────────────

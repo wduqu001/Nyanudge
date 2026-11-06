@@ -10,6 +10,7 @@ import { NyaHeader } from '../../shared/components/Header/NyaHeader';
 import { CharacterSelect } from '../../shared/components/CharacterSelect/CharacterSelect';
 import { NyaSelect } from '../../shared/components/Select/NyaSelect';
 import { CrashReporterModal } from './CrashReporterModal';
+import { ConfirmDialog } from '../../shared/components/ConfirmDialog/ConfirmDialog';
 import styles from './SettingsScreen.module.css';
 
 export const SettingsScreen: React.FC = () => {
@@ -40,17 +41,23 @@ export const SettingsScreen: React.FC = () => {
     i18n.changeLanguage(newLang);
   };
 
-  const handleClearHistory = () => {
-    if (window.confirm(t('settings.data.clear_confirm'))) {
-      // Clear in-memory store immediately so the UI reflects the change
-      setRecentCompletions([]);
-      loadCompletionDays([]);
-      // Persist the wipe to the database
-      ReminderService.clearHistory().catch((err) =>
-        console.error('[Settings] Failed to clear history from DB:', err),
-      );
-      alert(t('settings.data.history_cleared'));
-    }
+  const [confirming, setConfirming] = useState<'clear' | 'reset' | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+
+  const clearHistory = () => {
+    setConfirming(null);
+    // Clear in-memory store immediately so the UI reflects the change
+    setRecentCompletions([]);
+    loadCompletionDays([]);
+    ReminderService.clearHistory().catch((err) =>
+      console.error('[Settings] Failed to clear history from DB:', err),
+    );
+    setNotice(t('settings.data.history_cleared'));
+  };
+
+  const resetSettings = () => {
+    setConfirming(null);
+    resetPreferences();
   };
 
   return (
@@ -187,7 +194,7 @@ export const SettingsScreen: React.FC = () => {
             </div>
 
             <div className={styles.settingGroup}>
-              <NyaButton variant="secondary" fullWidth onClick={() => window.confirm(t('settings.reminders.reset_confirm')) && resetPreferences()}>
+              <NyaButton variant="secondary" fullWidth onClick={() => setConfirming('reset')}>
                 {t('settings.reminders.reset_defaults')}
               </NyaButton>
             </div>
@@ -208,10 +215,11 @@ export const SettingsScreen: React.FC = () => {
                 variant="ghost"
                 className={styles.destructiveButton}
                 fullWidth
-                onClick={handleClearHistory}
+                onClick={() => setConfirming('clear')}
               >
                 {t('settings.data.clear_history')}
               </NyaButton>
+              {notice && <p className={styles.description} role="status">{notice}</p>}
             </div>
 
             <div
@@ -235,6 +243,22 @@ export const SettingsScreen: React.FC = () => {
       </div>
 
       {showDebugPanel && <CrashReporterModal onClose={() => setShowDebugPanel(false)} />}
+      <ConfirmDialog
+        isOpen={confirming === 'clear'}
+        title={t('settings.data.clear_history')}
+        message={t('settings.data.clear_confirm')}
+        confirmLabel={t('settings.data.clear_history')}
+        onConfirm={clearHistory}
+        onCancel={() => setConfirming(null)}
+      />
+      <ConfirmDialog
+        isOpen={confirming === 'reset'}
+        title={t('settings.reminders.reset_defaults')}
+        message={t('settings.reminders.reset_confirm')}
+        confirmLabel={t('settings.reminders.reset_defaults')}
+        onConfirm={resetSettings}
+        onCancel={() => setConfirming(null)}
+      />
     </>
   );
 };
