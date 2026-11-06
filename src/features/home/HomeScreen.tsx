@@ -257,8 +257,8 @@ export const HomeScreen: React.FC = () => {
                         className="complete-button"
                         style={{ 
                           flex: 1, 
-                          background: 'var(--color-primary)', 
-                          color: 'white', 
+                          background: 'var(--accent)', 
+                          color: 'var(--color-neutral-900)', 
                           border: 'none', 
                           padding: '8px 16px', 
                           borderRadius: '20px',
