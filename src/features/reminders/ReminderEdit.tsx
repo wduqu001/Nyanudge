@@ -129,7 +129,7 @@ const ReminderForm: React.FC<FormProps> = ({ initialReminder, isNew, onSave, onA
 
         <section className="form-section">
           <label className="form-label" htmlFor="label-input">
-            {t('edit_reminder.label')}
+            {t('edit_reminder.label_placeholder')}
           </label>
           <input
             id="label-input"
@@ -269,7 +269,7 @@ const ReminderForm: React.FC<FormProps> = ({ initialReminder, isNew, onSave, onA
         </section>
 
         <section className="form-section">
-          <label className="form-label">{t('edit_reminder.custom_message')}</label>
+          <label className="form-label">{t('edit_reminder.custom_message_label')}</label>
           <textarea
             className="form-textarea"
             value={customMessage}
