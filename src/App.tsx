@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { App as CapacitorApp } from '@capacitor/app';
 import { StatusBar, Style } from '@capacitor/status-bar';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { runBackHandler } from './shared/hooks/useBackHandler';
 import { useRemindersStore } from './core/store/remindersStore';
 import { useStatsStore } from './core/store/statsStore';
 import { mockStats } from './core/db/seed';
@@ -57,6 +58,20 @@ function App() {
       i18n.changeLanguage(preferences.language);
     }
   }, [preferences.language, i18n]);
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    // Android back: close the top overlay/step first, then go back a route, and minimize from Home.
+    const backSub = CapacitorApp.addListener('backButton', ({ canGoBack }) => {
+      if (runBackHandler()) return;
+      const atRoot = window.location.pathname === '/' || window.location.pathname === '/onboarding';
+      if (!atRoot && canGoBack) navigate(-1);
+      else CapacitorApp.minimizeApp().catch(() => {});
+    });
+    return () => {
+      backSub.then(sub => sub.remove()).catch(() => {});
+    };
+  }, [navigate]);
 
   useEffect(() => {
     // 🐾 Rehydrate state from SQLite whenever app wakes from background sleep

@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { useBackHandler } from '../../shared/hooks/useBackHandler';
 import type { CrashLog } from '../../core/crash/useCrashReporter';
 import {
   getCrashLogs,
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export const CrashReporterModal: React.FC<Props> = ({ onClose }) => {
+  useBackHandler(true, onClose);
   const [logs, setLogs] = useState<CrashLog[]>(() => getCrashLogs());
   const [enabled, setEnabled] = useState(isCrashReporterEnabled());
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);

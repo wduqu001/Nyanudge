@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useBackHandler } from '../../shared/hooks/useBackHandler';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { usePreferencesStore } from '../../core/store/preferencesStore';
@@ -14,6 +15,7 @@ export const OnboardingFlow: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { preferences, updatePreference } = usePreferencesStore();
   const [currentStep, setCurrentStep] = useState(0);
+  useBackHandler(currentStep > 0, () => setCurrentStep((step) => Math.max(0, step - 1)));
 
   const languages = [
     { value: 'en', label: 'English' },

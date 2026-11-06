@@ -2,6 +2,7 @@ import React, { type ReactNode, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from './Modal.module.css';
 import { X } from 'lucide-react';
+import { useBackHandler } from '../../hooks/useBackHandler';
 
 export interface ModalProps {
   isOpen: boolean;
@@ -11,6 +12,7 @@ export interface ModalProps {
 }
 
 export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
+  useBackHandler(isOpen, onClose);
   const { t } = useTranslation();
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {

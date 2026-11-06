@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useBackHandler } from '../../hooks/useBackHandler';
 import { ChevronIcon, CheckIcon } from '../Icons';
 import styles from './Select.module.css';
 
@@ -16,6 +17,7 @@ interface NyaSelectProps {
 
 export const NyaSelect: React.FC<NyaSelectProps> = ({ options, value, onChange, className = '' }) => {
   const [isOpen, setIsOpen] = useState(false);
+  useBackHandler(isOpen, () => setIsOpen(false));
   const containerRef = useRef<HTMLDivElement>(null);
 
   const selectedOption = options.find(opt => opt.value === value) || options[0];

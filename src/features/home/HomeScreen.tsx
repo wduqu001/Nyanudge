@@ -17,6 +17,7 @@ import { CatSora } from '../../shared/components/SoraCat/CatSora';
 import { CogIcon, MenuIcon, WaterIcon, MealIcon, ExerciseIcon, BathroomIcon, MedicineIcon } from '../../shared/components/Icons';
 import { formatLocalizedTime } from '../../shared/utils/dateUtils';
 import { DebugPanel } from './DebugPanel';
+import { useBackHandler } from '../../shared/hooks/useBackHandler';
 import './HomeScreen.css';
 
 const CategoryIcon = ({ category, enabled }: { category: Category, enabled: boolean }) => {
@@ -55,6 +56,8 @@ export const HomeScreen: React.FC = () => {
   const { preferences } = usePreferencesStore();
   const { stats } = useStatsStore();
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  useBackHandler(expandedId !== null, () => setExpandedId(null));
+  useBackHandler(pendingNotifAction !== null, () => setPendingNotifAction(null));
   const [pendingNotifs, setPendingNotifs] = useState<PendingResult | null>(null);
   const [currentTime, setCurrentTime] = useState(() => Date.now());
 
