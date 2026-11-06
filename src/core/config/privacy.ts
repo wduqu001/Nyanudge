@@ -2,4 +2,4 @@
 export const PRIVACY_POLICY_UPDATED = '2026-11-06';
 
 /** Shown as the contact line of the in-app privacy policy; the section is hidden while empty. */
-export const PRIVACY_CONTACT_EMAIL = '';
+export const PRIVACY_CONTACT_EMAIL = 'wduqu001+nyanudge@gmail.com';

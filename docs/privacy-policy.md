@@ -33,4 +33,4 @@ The app collects no personal information from anyone, including children.
 If this policy changes, the new version will be published at this address with a new date, and the app will show the same text.
 
 ## Contact
-Questions about this policy: *(contact email to be added before publishing)*
+Questions about this policy: wduqu001+nyanudge@gmail.com

@@ -62,9 +62,7 @@ How each fix was verified:
 ## 2. Owner tasks before submission
 
 1. **Upload key:** create a permanent one, store its secrets in `~/.gradle/gradle.properties`, and back the key up in two places. Uploading an APK keeps your key; with an AAB, Samsung manages it.
-2. **Privacy policy:**
-   - host `docs/privacy-policy.md` at a public URL;
-   - set `PRIVACY_CONTACT_EMAIL` in `src/core/config/privacy.ts` and the contact line in the hosted copy.
+2. **Privacy policy:** host `docs/privacy-policy.md` at a public URL. The contact email is set in `src/core/config/privacy.ts` and in the hosted copy.
 3. **Seller Portal:**
    - commercial seller status;
    - Android developer verification, which is needed for Brazilian users;
