@@ -20,8 +20,8 @@ Before you start coding, it's important to understand why we chose our stack:
 ## 🚀 Local Development Setup
 
 1. **Prerequisites**:
-   - Node.js (v20+)
-   - Android Studio (for native testing)
+   - Node.js 22+ (required by Capacitor 8)
+   - JDK 21 and the Android SDK, or Android Studio
    - Homebrew (macOS)
 
 2. **Installation**:
@@ -34,12 +34,7 @@ Before you start coding, it's important to understand why we chose our stack:
    npm run dev
    ```
 
-4. **Android Execution**:
-   ```bash
-   npm run build
-   npx cap sync android
-   npx cap open android # Opens in Android Studio
-   ```
+4. **Android**: follow [docs/android_deployment_guidelines.md](docs/android_deployment_guidelines.md).
 
 ---
 
@@ -47,18 +42,15 @@ Before you start coding, it's important to understand why we chose our stack:
 
 We enforce strict code quality rules to keep the project maintainable.
 
-### Linting & Formatting
-We use **ESLint** and **Prettier**. You don't need to run these manually; we have **Husky** and **lint-staged** configured. When you commit your changes, these tools will automatically:
-1. Fix common linting errors.
-2. Format your code to match our style guide.
-3. Prevent the commit if there are fatal errors.
+### Linting
+We use **ESLint**. A **Husky** pre-commit hook runs **lint-staged**, which applies `eslint --fix` to staged files and blocks the commit on errors. There is no formatter configured.
 
 ### Testing
 - **Unit/Component Tests**: We use Vitest and React Testing Library. 
-  - Aim for **80% coverage** minimum on new features.
-  - Run tests: `npm test`
-- **Native E2E**: We use **Maestro** for native flow testing on Android.
-  - See `.maestro/` for existing flows.
+  - CI fails below **80%** line, branch, function or statement coverage.
+  - Run tests: `npx vitest run --project=unit` (`npm test` starts watch mode).
+  - Storybook stories run as accessibility checks: `npx vitest run --project=storybook`.
+- **Native E2E**: the Maestro flows in `.maestro/` predate the current UI and need updating before use.
 
 ---
 

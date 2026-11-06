@@ -1,76 +1,52 @@
-![NyaNudge Hero Banner - Calm, playful, and minimal. A soft UI experience inspired by Mochi aesthetics.](./src/assets/hero.png)
+![NyaNudge hero banner](./src/assets/hero.png)
 
 # NyaNudge 🐾
 > **Your cat-powered wellness companion.**
 
-NyaNudge is a delightful mobile health companion that transforms daily habits into moments of joy. Using a crew of animated cat characters, NyaNudge sends gentle, witty reminders for hydration, meals, exercise, and more.
+NyaNudge reminds you to drink water, eat, move, take bathroom breaks and take your medication, with a crew of animated cats and a witty message on every nudge. Everything stays on the device: no account, no ads, no analytics.
 
-## ✨ Features
+## Features
 
-- **Animated Cat Characters**: Meet the crew! **Mochi** (the surprised one), **Kuro** (the mischievous one), and **Sora** (the calm one). Mochi and Kuro featuring interactive React-based SVGs with mouse-tracking and random behaviors.
-- **Robust Notification Engine**:
-  - **Native Android Tray Actions**: "Mark as Done" and "Snooze" directly from notifications.
-  - **Auto-Rescheduling**: Intelligent interval rescheduling (infinite chains) using background listeners.
-  - **Native-Bridge Persistence**: Uses Zustand stores exposed to the global `window` for reliable action handling outside the React lifecycle.
-- **SQLite Persistence**: Full CRUD operations using `@capacitor-community/sqlite`. Supports mobile (native) and web (WASM/sql.js) environments.
-- **Smart Reminders**: 5 default health categories with intelligently calculated fixed and interval schedules.
-- **Seamless Interaction**: Tapping a notification opens a beautiful habit-confirmation modal (Haptic-driven) right on the home screen.
-- **Localization Infrastructure**: Built-in support for multiple languages (English & Portuguese BR fully implemented).
-- **Streak & History Tracking**: Maintain consistency with habit streaks and a full completion log stored locally.
+- **Five reminder categories**, each with fixed times or an interval inside a daily window, on chosen weekdays.
+- **Reliable delivery**: one-shot exact alarms planned up to 30 days ahead, topped up whenever the app opens, restored after a reboot.
+- **Per-reminder sound**: sound + vibration, vibration only, or silent; quiet hours (medication is exempt).
+- **Notification actions**: Done and Snooze from the tray; tapping a notification opens a quick action sheet.
+- **Streaks and history**: daily streaks, best streak, 7-day completion rate and a calendar heatmap, computed from the local completion log.
+- **Three cats**: Mochi, Kuro and Sora. The animations respect the system "remove animations" setting.
+- **Four languages**: English, Brazilian Portuguese, Spanish and Japanese, following the device language.
+- **Light and dark themes**, an in-app privacy policy, and an Android back button that closes sheets before leaving a screen.
 
-## 🛠 Tech Stack
+## Tech stack
 
-- **Framework**: [React 19](https://react.dev/) + [Vite 8](https://vite.dev/)
-- **Native Bridge**: [Capacitor 8](https://capacitorjs.com/)
-- **State**: [Zustand](https://docs.pmnd.rs/zustand/getting-started/introduction) + persistence
-- **Database**: [SQLite](https://sqlite.org/) via `@capacitor-community/sqlite`.
-- **Animations**: [Lottie-web](https://github.com/airbnb/lottie-web) & Interactive React SVGs
-- **i18n**: [i18next](https://www.i18next.com/)
+React 19 · Vite 8 · Capacitor 8 (Android) · Zustand · SQLite via `@capacitor-community/sqlite` (sql.js in the browser) · i18next · lottie-web and hand-built SVG animations · Vitest, Testing Library and Storybook.
 
-## 🚀 Getting Started
+## Getting started
 
-### Prerequisites
-- Node.js (v20+)
-- Java JDK 17+
-- Android SDK (v34+)
+Requirements: Node.js 22 or newer (Capacitor 8), JDK 21 and the Android SDK (compileSdk 36, minSdk 24).
 
-### Installation
 ```bash
-# Install dependencies
 npm install
-
-# Run development server
-npm run dev
+npm run dev          # browser preview with sql.js
 ```
 
-### Testing & Quality
-NyaNudge enforces an 80% test coverage minimum using Vitest and React Testing Library. To ensure our SQLite persistence and hybrid background lifecycles work smoothly, run:
+## Testing
 
 ```bash
-# Run unit and component coverage
-npm run test -- --coverage
+npx vitest run --project=unit --coverage   # unit tests; CI requires 80% coverage
+npx vitest run --project=storybook         # Storybook stories with accessibility checks (Playwright)
+npm run storybook                          # component explorer
 ```
 
-**Native End-to-End Testing (Maestro)**
-We test true Android behaviors (status bar clipping, background restorations, and Native Notifications limits) using [Maestro](https://maestro.mobile.dev/).
-1. Install Maestro: `curl -Ls "https://get.maestro.mobile.dev" | bash`
-2. Run automated flows against your built emulator/device:
-   ```bash
-   maestro test .maestro/home_flow.yaml
-   ```
+CI (`.github/workflows/ci.yml`) runs lint, `tsc -b` and the unit tests with coverage on every push.
 
-### Component Documentation (Storybook)
+## Android build and release
 
-```bash
-npm run storybook
-```
+See [docs/android_deployment_guidelines.md](docs/android_deployment_guidelines.md), or run `.agents/tools/deploy-android.sh` to build and install a debug APK on a connected device.
 
-### Build (Android)
-1. **Configure Android SDK**: Edit `android/local.properties` (sdk.dir path).
-2. **Build Web App**: `npm run build`
-3. **Sync Capacitor**: `npx cap sync android`
-4. **Gradle Build**: `cd android && ./gradlew assembleDebug`
-   *Output: `android/app/build/outputs/apk/debug/app-debug.apk`*
+## More docs
 
----
-Built with ❤️ and many 🐾 by the NyaNudge team.
+- [docs/NyaNudge_PRD.md](docs/NyaNudge_PRD.md): product spec and reminder copy
+- [DESIGN.md](DESIGN.md): visual design rules and tokens
+- [docs/store-readiness-review.md](docs/store-readiness-review.md): Galaxy Store readiness status
+- [docs/privacy-policy.md](docs/privacy-policy.md): the policy to host for the store listing
+- [CONTRIBUTING.md](CONTRIBUTING.md): workflow and code standards

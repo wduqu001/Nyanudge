@@ -1,50 +1,44 @@
-# Android Deployment Guidelines
+# Android build and deployment
 
-Follow these guidelines to ensure a consistent and successful build and deployment process for the Nyanudge Android application.
+The single reference for building NyaNudge for Android. `.agents/tools/deploy-android.sh` automates the debug steps.
 
-## 📋 Prerequisites
-- **Android SDK**: Ensure `adb` and `gradle` are available in your path.
-- **Source Assets**: High-resolution `icon.png`, `splash.png`, and `splash-dark.png` must be present in the root `assets/` directory.
-- **Device Connection**: A physical device or emulator must be connected and authorized via ADB.
+## Prerequisites
+- Node.js 22+ and JDK 21 (`android/app/capacitor.build.gradle` compiles for Java 21).
+- Android SDK with platform 36; set `sdk.dir` in `android/local.properties` if it isn't detected.
+- `adb` on your `PATH` and a device or emulator authorised for USB debugging.
 
-## 🛠 Build & Deploy Procedure
-
-### 1. Update Native Assets
-Whenever source images in the `assets/` folder are modified, regenerate the native resources to ensure the app UI remains up to date.
+## Debug build on a device
 ```bash
-npx @capacitor/assets generate --android
-```
-
-### 2. Prepare Web Assets
-Compress and bundle the frontend code for production. This ensures optimal performance on mobile hardware.
-```bash
-npm run build
-```
-
-### 3. Synchronize Capacitor
-Sync the web bundle and any new plugin configurations with the native Android layer.
-```bash
-npx cap sync android
-```
-
-### 4. Assemble the APK
-Compile the native project. Use the `debug` assembly for development testing.
-```bash
+npm run build                      # type-check and bundle the web app into dist/
+npx cap sync android               # copy dist/ and plugin changes into android/
 cd android && ./gradlew assembleDebug
-```
-*The resulting APK is located at: `android/app/build/outputs/apk/debug/app-debug.apk`*
-
-### 5. Install and Launch
-Deploy the APK to your device. Use the `-r` flag to reinstall while keeping existing app data.
-```bash
-# Replace with your actual APK path if different
-adb install -r android/app/build/outputs/apk/debug/app-debug.apk
-
-# Launch the Main Activity
+adb install -r app/build/outputs/apk/debug/app-debug.apk   # -r keeps app data
 adb shell am start -n com.quoryn.nyanudge.app/.MainActivity
 ```
 
-## 🔍 Troubleshooting
-- **Path Issues**: If `adb` is not found, verify your environment variables.
-- **Gradle Errors**: Ensure you have the compatible JDK version (JDK 17 recommended) and the Android SDK path is correctly configured in `android/local.properties`.
-- **App Not Starting**: Verify the package name in `android/app/build.gradle` matches the `am start` command.
+## Release build
+Signing secrets never live in the repo. Put them in `~/.gradle/gradle.properties`, or export them as environment variables:
+
+```properties
+NYANUDGE_UPLOAD_STORE_FILE=/absolute/path/to/nyanudge-upload.jks
+NYANUDGE_UPLOAD_STORE_PASSWORD=...
+NYANUDGE_UPLOAD_KEY_ALIAS=nyanudge-upload
+NYANUDGE_UPLOAD_KEY_PASSWORD=...
+```
+
+```bash
+npm run build && npx cap sync android
+cd android && ./gradlew assembleRelease   # app/build/outputs/apk/release/app-release.apk
+```
+
+Without those properties, Gradle produces `app-release-unsigned.apk`. Keep the upload key backed up: every update must be signed with the same key.
+
+**Galaxy Store:** upload a signed APK to keep your own key. If you upload an AAB (`./gradlew bundleRelease`), Samsung manages the signing key.
+
+## Icons and splash screens
+After changing `assets/icon.png`, `assets/splash.png` or `assets/splash-dark.png`, run `npx @capacitor/assets generate --android`. Details are in `.agents/skills/capacitor-asset-management/SKILL.md`.
+
+## Troubleshooting
+- **Gradle "invalid source release 21"**: the active JDK is older than 21.
+- **`adb` not found**: add the SDK's `platform-tools` to your `PATH`.
+- **Activity not found**: the package is `com.quoryn.nyanudge.app`; check `applicationId` in `android/app/build.gradle`.

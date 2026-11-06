@@ -5,12 +5,14 @@ description: "Handles the end-to-end process of building a web-based mobile app 
 
 # Android Build & Deployment Skill
 
+Human-facing reference, including release signing: `docs/android_deployment_guidelines.md`.
+
 This skill guides you through the process of building a Capacitor-based Android application and deploying it to a physical device or emulator.
 
 ## 🛠 Prerequisites & Environment
 Ensure the following tools are in your `PATH`. On this system, they are often located in specific directories:
 - **Node/NPM/NPX**: `/usr/local/bin`
-- **Java (JDK 17+)**: `/usr/bin/java`
+- **Java (JDK 21)**: required by `android/app/capacitor.build.gradle`
 - **Android SDK**: `/opt/homebrew/share/android-commandlinetools`
 - **ADB**: `/opt/homebrew/share/android-commandlinetools/platform-tools/adb`
 
