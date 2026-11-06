@@ -269,5 +269,12 @@
     "menu": "Menu",
     "settings": "Settings",
     "add_reminder": "Add reminder"
+  },
+  "channels": {
+    "chime_soft": "Reminders (soft chime)",
+    "bell_gentle": "Reminders (gentle bell)",
+    "medication": "Medication reminders",
+    "vibrate": "Reminders (vibration only)",
+    "silent": "Reminders (silent)"
   }
 }

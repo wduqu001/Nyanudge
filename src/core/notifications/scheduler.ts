@@ -6,15 +6,6 @@ import {
 import { pickMessage } from '../i18n';
 import i18n from '../i18n';
 
-// Maps each category to the appropriate sound file and channel
-const CATEGORY_CHANNEL: Record<Category, string> = {
-  water: 'nyanudge_default',
-  meal: 'nyanudge_default',
-  exercise: 'nyanudge_default',
-  bathroom: 'nyanudge_default',
-  medicine: 'nyanudge_medication',
-};
-
 const CATEGORY_SOUND: Record<Category, string> = {
   water: 'chime_soft',
   meal: 'bell_gentle',
@@ -22,6 +13,37 @@ const CATEGORY_SOUND: Record<Category, string> = {
   bathroom: 'chime_soft',
   medicine: 'chime_persistent',
 };
+
+// Android 8+ takes sound and vibration from the channel, not the notification, so each
+// sound mode needs its own channel. Channel settings are immutable once created.
+const SOUND_CHANNELS = {
+  chime_soft: 'nyanudge_chime_soft',
+  bell_gentle: 'nyanudge_bell_gentle',
+  chime_persistent: 'nyanudge_medication',
+} as const;
+const VIBRATE_CHANNEL = 'nyanudge_vibrate';
+const SILENT_CHANNEL = 'nyanudge_silent';
+
+export function channelFor(category: Category, soundMode: SoundMode): string {
+  if (soundMode === 'silent') return SILENT_CHANNEL;
+  if (soundMode === 'vibration_only') return VIBRATE_CHANNEL;
+  return SOUND_CHANNELS[CATEGORY_SOUND[category] as keyof typeof SOUND_CHANNELS];
+}
+
+/** Creates every channel the scheduler can use (idempotent). */
+export async function ensureNotificationChannels(): Promise<void> {
+  const channels = [
+    { id: SOUND_CHANNELS.chime_soft, name: i18n.t('channels.chime_soft'), importance: 4 as const, sound: 'chime_soft', vibration: true },
+    { id: SOUND_CHANNELS.bell_gentle, name: i18n.t('channels.bell_gentle'), importance: 4 as const, sound: 'bell_gentle', vibration: true },
+    { id: SOUND_CHANNELS.chime_persistent, name: i18n.t('channels.medication'), importance: 5 as const, sound: 'chime_persistent', vibration: true },
+    // A silent file: without one Android plays its default sound on a high-importance channel.
+    { id: VIBRATE_CHANNEL, name: i18n.t('channels.vibrate'), importance: 4 as const, sound: 'silence', vibration: true },
+    { id: SILENT_CHANNEL, name: i18n.t('channels.silent'), importance: 2 as const, vibration: false },
+  ];
+  await Promise.all(channels.map((c) =>
+    LocalNotifications.createChannel({ ...c, visibility: 1 }).catch(() => {}),
+  ));
+}
 
 const CATEGORY_ANIMATION: Record<Category, string> = {
   water: 'cat_water',
@@ -239,9 +261,9 @@ export async function scheduleReminder(reminder: Reminder): Promise<void> {
   const common = {
     title,
     body: reminder.customMessage ?? pickMessage(reminder.category),
-    sound: reminder.soundMode === 'sound_vibration' ? CATEGORY_SOUND[cat] : undefined,
+    sound: reminder.soundMode === 'sound_vibration' ? CATEGORY_SOUND[cat] : 'silence',
     smallIcon: CATEGORY_ICONS[cat],
-    channelId: CATEGORY_CHANNEL[cat],
+    channelId: channelFor(cat, reminder.soundMode),
     actionTypeId: 'NYANUDGE_REMINDER',
     extra: {
       reminderId: reminder.id,
@@ -359,9 +381,9 @@ export async function snoozeReminder(
       title,
       body: i18n.t(`snooze.${reminder.snoozeMins}`),
       schedule: { at: fireTime, repeats: false, allowWhileIdle: true },
-      sound: reminder.soundMode === 'sound_vibration' ? CATEGORY_SOUND[cat] : undefined,
+      sound: reminder.soundMode === 'sound_vibration' ? CATEGORY_SOUND[cat] : 'silence',
       smallIcon: CATEGORY_ICONS[cat],
-      channelId: CATEGORY_CHANNEL[cat],
+      channelId: channelFor(cat, reminder.soundMode),
       actionTypeId: 'NYANUDGE_REMINDER',
       extra: {
         reminderId: reminder.id,

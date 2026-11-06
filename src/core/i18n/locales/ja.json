@@ -272,5 +272,12 @@
     "go_back": "戻る",
     "take_home": "ホームへ",
     "footer": "エラーページ"
+  },
+  "channels": {
+    "chime_soft": "リマインダー（やさしいチャイム）",
+    "bell_gentle": "リマインダー（やさしいベル）",
+    "medication": "服薬リマインダー",
+    "vibrate": "リマインダー（バイブのみ）",
+    "silent": "リマインダー（サイレント）"
   }
 }

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { useNavigate } from 'react-router-dom';
-import { scheduleReminder, cancelReminder, snoozeReminder } from './scheduler';
+import { scheduleReminder, cancelReminder, snoozeReminder, ensureNotificationChannels } from './scheduler';
 
 type RemindersStoreWindow = typeof window & {
   remindersStore?: {
@@ -39,15 +39,7 @@ export function useNotificationSetup() {
       .catch(() => {});
 
     // ── 2. Channels (idempotent) ────────────────────────────────────────────
-    LocalNotifications.createChannel({
-      id: 'nyanudge_default', name: 'NyaNudge Reminders',
-      importance: 4, sound: 'chime_soft', vibration: true, visibility: 1
-    }).catch(() => {});
-
-    LocalNotifications.createChannel({
-      id: 'nyanudge_medication', name: 'Medication Reminders',
-      importance: 5, sound: 'chime_persistent', vibration: true, visibility: 1
-    }).catch(() => {});
+    ensureNotificationChannels();
 
     // ── 3. Action buttons ───────────────────────────────────────────────────
     LocalNotifications.registerActionTypes({

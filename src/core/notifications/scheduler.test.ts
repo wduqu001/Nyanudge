@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { LocalNotifications } from '@capacitor/local-notifications';
-import { calculateNextFireTime, scheduleReminder, snoozeReminder } from './scheduler';
+import { calculateNextFireTime, scheduleReminder, snoozeReminder, channelFor } from './scheduler';
 
 vi.mock('@capacitor/local-notifications', () => ({
   LocalNotifications: {
@@ -310,6 +310,29 @@ describe('scheduler', () => {
       expect(notif?.id).toBe(123);
       expect(notif?.extra?.isSnoozed).toBe(true);
       expect(notif?.schedule?.at?.getTime()).toBe(now.getTime() + 15 * 60_000);
+    });
+  });
+
+  describe('sound modes', () => {
+    it('routes each sound mode to a channel that carries that behaviour', () => {
+      expect(channelFor('meal', 'sound_vibration')).toBe('nyanudge_bell_gentle');
+      expect(channelFor('water', 'sound_vibration')).toBe('nyanudge_chime_soft');
+      expect(channelFor('medicine', 'sound_vibration')).toBe('nyanudge_medication');
+      expect(channelFor('medicine', 'vibration_only')).toBe('nyanudge_vibrate');
+      expect(channelFor('water', 'silent')).toBe('nyanudge_silent');
+    });
+
+    it('schedules vibration-only reminders on the vibrate channel with the silent sound', async () => {
+      const reminder: Reminder = {
+        id: 'r_vib', category: 'water', label: 'W', enabled: true, soundMode: 'vibration_only',
+        snoozeMins: 5, character: 'mochi', createdAt: 0, updatedAt: 0,
+        schedules: [{ id: 's1', reminderId: 'r_vib', type: 'fixed', timeValue: '10:00' }]
+      };
+      vi.setSystemTime(new Date(2026, 4, 10, 8, 0));
+      await scheduleReminder(reminder);
+      const notif = vi.mocked(LocalNotifications.schedule).mock.calls[0]?.[0]?.notifications[0];
+      expect(notif?.channelId).toBe('nyanudge_vibrate');
+      expect(notif?.sound).toBe('silence');
     });
   });
 });

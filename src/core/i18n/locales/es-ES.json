@@ -272,5 +272,12 @@
     "go_back": "Volver",
     "take_home": "Ir al inicio",
     "footer": "página de error"
+  },
+  "channels": {
+    "chime_soft": "Recordatorios (tono suave)",
+    "bell_gentle": "Recordatorios (campana suave)",
+    "medication": "Recordatorios de medicación",
+    "vibrate": "Recordatorios (solo vibración)",
+    "silent": "Recordatorios (silenciosos)"
   }
 }

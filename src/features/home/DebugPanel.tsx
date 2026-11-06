@@ -41,7 +41,7 @@ export const DebugPanel: React.FC<DebugPanelProps> = ({ pendingNotifs, setPendin
                   title: 'Test Meow! 🐱',
                   body: 'Firing in 5 seconds...',
                   schedule: { at: new Date(Date.now() + 5000) },
-                  channelId: 'nyanudge_default'
+                  channelId: 'nyanudge_chime_soft'
                 }]
               });
               // Refreshing list isn't automatic, but helpful for dev

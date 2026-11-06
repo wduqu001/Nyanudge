@@ -272,5 +272,12 @@
     "go_back": "Voltar",
     "take_home": "Ir para o início",
     "footer": "página de erro"
+  },
+  "channels": {
+    "chime_soft": "Lembretes (toque suave)",
+    "bell_gentle": "Lembretes (sino suave)",
+    "medication": "Lembretes de remédio",
+    "vibrate": "Lembretes (só vibração)",
+    "silent": "Lembretes (silenciosos)"
   }
 }
