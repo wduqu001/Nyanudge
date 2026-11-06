@@ -279,5 +279,27 @@
     "medication": "Medication reminders",
     "vibrate": "Reminders (vibration only)",
     "silent": "Reminders (silent)"
+  },
+  "privacy": {
+    "title": "Privacy policy",
+    "link": "Privacy policy",
+    "updated": "Last updated: {{date}}",
+    "intro": "NyaNudge is a reminder app. It has no accounts, no ads and no analytics, and it does not send your data anywhere.",
+    "data_title": "What the app stores",
+    "data_body": "Your reminders, settings and the history of reminders you marked done are kept only on this device. We cannot see them.",
+    "permissions_title": "Permissions",
+    "permissions_body": "Notifications and alarms are used only to show your reminders at the times you choose. They are scheduled on the device; nothing is sent to a server.",
+    "crash_title": "Crash logs",
+    "crash_body": "If you turn on crash logs, error details are saved on this device. They leave the device only if you export and share them yourself.",
+    "sharing_title": "Sharing",
+    "sharing_body": "We do not sell, share or transfer your data, and the app contains no third-party tracking or advertising code.",
+    "deletion_title": "Deleting your data",
+    "deletion_body": "Use Settings › Clear all history to erase your history. Uninstalling the app removes all of its data.",
+    "health_title": "Not medical advice",
+    "health_body": "NyaNudge is not a medical device. Reminders can be late or missed, for example if notifications are turned off, so do not rely on it alone for medication.",
+    "children_title": "Children",
+    "children_body": "The app collects no personal information from anyone, including children.",
+    "contact_title": "Contact",
+    "contact_body": "Questions about this policy: {{email}}"
   }
 }

@@ -10,6 +10,7 @@ import { OnboardingFlow } from './features/onboarding/OnboardingFlow';
 import { ReminderEdit } from './features/reminders/ReminderEdit';
 import { SettingsScreen } from './features/settings/SettingsScreen';
 import { HistoryScreen } from './features/history/HistoryScreen';
+import { PrivacyScreen } from './features/privacy/PrivacyScreen';
 import { usePreferencesStore } from './core/store/preferencesStore';
 import { useTranslation } from 'react-i18next';
 import { useNotificationSetup } from './core/notifications/useNotificationSetup';
@@ -137,6 +138,7 @@ function App() {
       <Route path="/reminder/:id" element={<ReminderEdit />} />
       <Route path="/settings" element={<SettingsScreen />} />
       <Route path="/history" element={<HistoryScreen />} />
+      <Route path="/privacy" element={<PrivacyScreen />} />
     </Routes>
   );
 }

@@ -282,5 +282,27 @@
     "medication": "Recordatorios de medicación",
     "vibrate": "Recordatorios (solo vibración)",
     "silent": "Recordatorios (silenciosos)"
+  },
+  "privacy": {
+    "title": "Política de privacidad",
+    "link": "Política de privacidad",
+    "updated": "Última actualización: {{date}}",
+    "intro": "NyaNudge es una app de recordatorios. No tiene cuentas, anuncios ni analíticas, y no envía tus datos a ningún sitio.",
+    "data_title": "Qué guarda la app",
+    "data_body": "Tus recordatorios, ajustes y el historial de recordatorios completados se guardan solo en este dispositivo. Nosotros no podemos verlos.",
+    "permissions_title": "Permisos",
+    "permissions_body": "Las notificaciones y alarmas se usan solo para mostrar tus recordatorios a las horas que elijas. Se programan en el dispositivo; no se envía nada a ningún servidor.",
+    "crash_title": "Registros de errores",
+    "crash_body": "Si activas los registros de errores, los detalles se guardan en este dispositivo. Solo salen de él si tú los exportas y compartes.",
+    "sharing_title": "Compartir",
+    "sharing_body": "No vendemos, compartimos ni transferimos tus datos, y la app no contiene código de seguimiento ni publicidad de terceros.",
+    "deletion_title": "Borrar tus datos",
+    "deletion_body": "Usa Ajustes › Borrar historial para eliminar tu historial. Desinstalar la app elimina todos sus datos.",
+    "health_title": "No es consejo médico",
+    "health_body": "NyaNudge no es un dispositivo médico. Los recordatorios pueden retrasarse o no aparecer, por ejemplo si las notificaciones están desactivadas, así que no dependas solo de él para tu medicación.",
+    "children_title": "Menores",
+    "children_body": "La app no recopila información personal de nadie, incluidos los menores.",
+    "contact_title": "Contacto",
+    "contact_body": "Preguntas sobre esta política: {{email}}"
   }
 }

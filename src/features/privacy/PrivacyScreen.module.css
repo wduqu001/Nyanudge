@@ -1,0 +1,27 @@
+.container {
+  min-height: 100dvh;
+  background: var(--surface-bg);
+  color: var(--text-primary);
+}
+
+.content {
+  max-width: 65ch;
+  margin: 0 auto;
+  padding: var(--space-lg) var(--space-lg) var(--space-2xl);
+  line-height: 1.55;
+}
+
+.content h2 {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  margin: var(--space-xl) 0 var(--space-xs);
+}
+
+.content p {
+  margin: 0 0 var(--space-sm);
+  color: var(--text-secondary);
+}
+
+.updated {
+  font-size: var(--font-size-sm);
+}

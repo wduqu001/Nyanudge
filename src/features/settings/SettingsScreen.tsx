@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { usePreferencesStore } from '../../core/store/preferencesStore';
 import { useStatsStore } from '../../core/store/statsStore';
 import { ReminderService } from '../../core/db/ReminderService';
@@ -13,6 +14,7 @@ import styles from './SettingsScreen.module.css';
 
 export const SettingsScreen: React.FC = () => {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
   const { preferences, updatePreference, resetPreferences } = usePreferencesStore();
   const { setRecentCompletions, loadCompletionDays } = useStatsStore();
 
@@ -194,6 +196,12 @@ export const SettingsScreen: React.FC = () => {
           {/* DATA */}
           <section className={styles.section}>
             <h2 className={styles.sectionTitle}>{t('settings.data.title')}</h2>
+
+            <div className={styles.settingGroup}>
+              <NyaButton variant="secondary" fullWidth onClick={() => navigate('/privacy')}>
+                {t('privacy.link')}
+              </NyaButton>
+            </div>
 
             <div className={styles.settingGroup}>
               <NyaButton

@@ -282,5 +282,27 @@
     "medication": "Lembretes de remédio",
     "vibrate": "Lembretes (só vibração)",
     "silent": "Lembretes (silenciosos)"
+  },
+  "privacy": {
+    "title": "Política de privacidade",
+    "link": "Política de privacidade",
+    "updated": "Última atualização: {{date}}",
+    "intro": "O NyaNudge é um app de lembretes. Ele não tem contas, anúncios nem análises de uso, e não envia seus dados para lugar nenhum.",
+    "data_title": "O que o app guarda",
+    "data_body": "Seus lembretes, configurações e o histórico de lembretes concluídos ficam apenas neste aparelho. Nós não temos acesso a eles.",
+    "permissions_title": "Permissões",
+    "permissions_body": "Notificações e alarmes são usados apenas para mostrar seus lembretes nos horários que você escolher. Eles são agendados no aparelho; nada é enviado a um servidor.",
+    "crash_title": "Registros de falhas",
+    "crash_body": "Se você ativar os registros de falhas, os detalhes dos erros ficam salvos neste aparelho. Eles só saem do aparelho se você mesmo exportar e compartilhar.",
+    "sharing_title": "Compartilhamento",
+    "sharing_body": "Não vendemos, compartilhamos nem transferimos seus dados, e o app não contém código de rastreamento ou publicidade de terceiros.",
+    "deletion_title": "Apagar seus dados",
+    "deletion_body": "Use Configurações › Limpar todo o histórico para apagar seu histórico. Desinstalar o app remove todos os dados dele.",
+    "health_title": "Não é aconselhamento médico",
+    "health_body": "O NyaNudge não é um dispositivo médico. Lembretes podem atrasar ou não aparecer, por exemplo se as notificações estiverem desativadas, então não dependa só dele para remédios.",
+    "children_title": "Crianças",
+    "children_body": "O app não coleta informações pessoais de ninguém, incluindo crianças.",
+    "contact_title": "Contato",
+    "contact_body": "Dúvidas sobre esta política: {{email}}"
   }
 }
