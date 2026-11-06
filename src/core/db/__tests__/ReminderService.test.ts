@@ -109,6 +109,16 @@ describe('ReminderService', () => {
       expect(result[0]!.schedules[0]!.id).toBe('s1');
       expect(result[0]!.schedules[0]!.daysOfWeek).toEqual([1, 2, 3]);
     });
+
+    it('reads a schedule saved without weekdays as every day (daysOfWeek undefined)', async () => {
+      mockDb.query
+        .mockResolvedValueOnce({ values: [{ id: 'r1', category: 'water', label: 'W', enabled: 1, archived: 0, created_at: 0, updated_at: 0 }] })
+        .mockResolvedValueOnce({ values: [{ id: 's1', reminder_id: 'r1', type: 'interval', time_value: '120', days_of_week: null, start_time: '07:00', end_time: '21:00', notif_id: 2 }] });
+
+      const [reminder] = await ReminderService.getAllReminders();
+      expect(reminder!.schedules[0]).toEqual(expect.objectContaining({ type: 'interval', timeValue: '120', startTime: '07:00', endTime: '21:00' }));
+      expect(reminder!.schedules[0]!.daysOfWeek).toBeUndefined();
+    });
   });
 
   // ── seedIfEmpty ─────────────────────────────────────────────────────────
@@ -231,6 +241,18 @@ describe('ReminderService', () => {
         typeof call[0] === 'string' && call[0].includes('UPDATE reminders'),
       );
       expect(updateCalls).toHaveLength(0);
+    });
+  });
+
+  describe('updateReminder — schedules without optional fields', () => {
+    it('stores NULL weekdays and generates a notification id when none is given', async () => {
+      await ReminderService.updateReminder('rem-4', {
+        schedules: [{ id: 'sch-x', reminderId: 'rem-4', type: 'interval', timeValue: '60' }],
+      });
+      const insert = mockDb.run.mock.calls.find((call: any[]) => String(call[0]).includes('INSERT INTO schedules'))!;
+      const [, , , , daysOfWeek, , , notifId] = insert[1] as unknown[];
+      expect(daysOfWeek).toBeNull();
+      expect(Number.isInteger(notifId)).toBe(true);
     });
   });
 

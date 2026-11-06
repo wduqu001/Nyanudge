@@ -16,6 +16,8 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov'],
+      // Dev-only tool, never rendered in release builds (gated on import.meta.env.DEV).
+      exclude: ['src/features/home/DebugPanel.tsx'],
       thresholds: {
         lines: 80,
         functions: 80,
