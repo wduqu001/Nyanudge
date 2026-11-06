@@ -65,4 +65,15 @@ describe('PreferencesStore', () => {
     expect(usePreferencesStore.getState().preferences.theme).toBe('system');
     expect(PreferenceService.saveAll).toHaveBeenCalled(); // Should be saved back to DB
   });
+
+  it('resetPreferences keeps language and onboarding state', () => {
+    usePreferencesStore.getState().updatePreference('language', 'pt-BR');
+    usePreferencesStore.getState().updatePreference('isOnboardingComplete', true);
+    usePreferencesStore.getState().updatePreference('theme', 'dark');
+    usePreferencesStore.getState().resetPreferences();
+    const prefs = usePreferencesStore.getState().preferences;
+    expect(prefs.language).toBe('pt-BR');
+    expect(prefs.isOnboardingComplete).toBe(true);
+    expect(prefs.theme).toBe('system');
+  });
 });

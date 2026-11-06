@@ -27,7 +27,7 @@ interface PreferencesState {
   setLoaded: (loaded: boolean) => void;
 }
 
-export const usePreferencesStore = create<PreferencesState>((set) => ({
+export const usePreferencesStore = create<PreferencesState>((set, get) => ({
   preferences: defaultPreferences,
   isLoaded: false,
 
@@ -51,8 +51,10 @@ export const usePreferencesStore = create<PreferencesState>((set) => ({
   },
 
   resetPreferences: () => {
-    set({ preferences: defaultPreferences });
-    PreferenceService.saveAll(defaultPreferences).catch(err => console.error('[Store] Error resetting prefs:', err));
+    const { language, isOnboardingComplete } = get().preferences;
+    const reset = { ...defaultPreferences, language, isOnboardingComplete };
+    set({ preferences: reset });
+    PreferenceService.saveAll(reset).catch(err => console.error('[Store] Error resetting prefs:', err));
   },
 
   setLoaded: (loaded) => set({ isLoaded: loaded }),
