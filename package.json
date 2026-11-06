@@ -15,7 +15,6 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@capacitor-community/admob": "^8.1.0",
     "@capacitor-community/sqlite": "^8.1.1",
     "@capacitor/android": "^8.5.1",
     "@capacitor/app": "^8.1.1",
