@@ -8,6 +8,8 @@ import { HomeScreen } from '../HomeScreen';
 import { useRemindersStore } from '../../../core/store/remindersStore';
 import { usePreferencesStore } from '../../../core/store/preferencesStore';
 import { useStatsStore } from '../../../core/store/statsStore';
+import { snoozeReminder } from '../../../core/notifications/scheduler';
+import { runBackHandler } from '../../../shared/hooks/useBackHandler';
 
 // ── Capacitor & heavy deps mocks ─────────────────────────────────────────────
 
@@ -207,6 +209,33 @@ describe('HomeScreen', () => {
     // Last one is in the action sheet
     fireEvent.click(doneButtons[doneButtons.length - 1]!);
     expect(completeReminder).toHaveBeenCalledWith('r1');
+    expect(setPendingNotifAction).toHaveBeenCalledWith(null);
+  });
+
+  it('snooze in the action sheet snoozes that reminder and closes the sheet', () => {
+    const setPendingNotifAction = vi.fn();
+    useRemindersStore.setState({
+      reminders: [makeReminder()],
+      isLoaded: true,
+      pendingNotifAction: { reminderId: 'r1', label: 'Drink Water', category: 'water' },
+      setPendingNotifAction,
+    } as any);
+    render(<Wrapper><HomeScreen /></Wrapper>);
+    fireEvent.click(screen.getByText(new RegExp(i18n.t('home.notif_next_time'), 'i')));
+    expect(snoozeReminder).toHaveBeenCalledWith(expect.objectContaining({ id: 'r1' }));
+    expect(setPendingNotifAction).toHaveBeenCalledWith(null);
+  });
+
+  it('Android back closes the action sheet before anything else', () => {
+    const setPendingNotifAction = vi.fn();
+    useRemindersStore.setState({
+      reminders: [makeReminder()],
+      isLoaded: true,
+      pendingNotifAction: { reminderId: 'r1', label: 'Drink Water', category: 'water' },
+      setPendingNotifAction,
+    } as any);
+    render(<Wrapper><HomeScreen /></Wrapper>);
+    expect(runBackHandler()).toBe(true);
     expect(setPendingNotifAction).toHaveBeenCalledWith(null);
   });
 
