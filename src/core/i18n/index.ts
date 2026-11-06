@@ -4,6 +4,9 @@ import en from './locales/en.json';
 import ptBR from './locales/pt-BR.json';
 import ja from './locales/ja.json';
 import esES from './locales/es-ES.json';
+import { detectDeviceLanguage } from './detectLanguage';
+
+export { detectDeviceLanguage };
 
 i18n.use(initReactI18next).init({
   resources: { 
@@ -12,7 +15,7 @@ i18n.use(initReactI18next).init({
     ja: { translation: ja },
     'es-ES': { translation: esES }
   },
-  lng: 'en',
+  lng: detectDeviceLanguage(),
   fallbackLng: 'en',
   interpolation: { escapeValue: false },
 });

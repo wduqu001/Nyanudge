@@ -88,3 +88,16 @@ describe('i18n utilities', () => {
     });
   });
 });
+
+describe('detectDeviceLanguage', () => {
+  it('maps device locales to supported languages', async () => {
+    const { detectDeviceLanguage } = await import('../detectLanguage');
+    expect(detectDeviceLanguage(['pt-BR'])).toBe('pt-BR');
+    expect(detectDeviceLanguage(['pt-PT'])).toBe('pt-BR');
+    expect(detectDeviceLanguage(['es-MX'])).toBe('es-ES');
+    expect(detectDeviceLanguage(['ja-JP'])).toBe('ja');
+    expect(detectDeviceLanguage(['de-DE', 'es-AR'])).toBe('es-ES');
+    expect(detectDeviceLanguage(['de-DE'])).toBe('en');
+    expect(detectDeviceLanguage([])).toBe('en');
+  });
+});

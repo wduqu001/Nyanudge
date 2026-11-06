@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
 import { PreferenceService } from '../db/PreferenceService';
+import { detectDeviceLanguage } from '../i18n/detectLanguage';
 
 const defaultPreferences: Preferences = {
   defaultSoundMode: 'sound_vibration',
@@ -9,7 +10,7 @@ const defaultPreferences: Preferences = {
   dndEnd: '07:00',
   theme: 'system',
   character: 'mochi',
-  language: 'en',
+  language: detectDeviceLanguage(),
   defaultSnoozeMins: 10,
   markAsDoneOnOpen: false,
   isOnboardingComplete: false,
