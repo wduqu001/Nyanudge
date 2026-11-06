@@ -101,6 +101,7 @@
     "minutes_count": "{{count}} 分"
   },
   "home": {
+    "now": "まもなく",
     "next_up": "次の予定まで {{time}}",
     "no_reminders": "有効なリマインダーはありません",
     "no_schedule": "スケジュールなし",
@@ -180,6 +181,12 @@
     }
   },
   "onboarding": {
+    "actions": {
+      "next": "次へ",
+      "back": "戻る",
+      "finish": "始めよう！",
+      "select": "選ぶ"
+    },
     "step1": {
       "title": "仲間に出会う",
       "description": "健康をサポートしてくれる猫の仲間を選んでください。",
@@ -257,5 +264,13 @@
     "menu": "メニュー",
     "settings": "設定",
     "add_reminder": "リマインダーを追加"
+  },
+  "error": {
+    "title": "問題が発生しました",
+    "hero": "モチは見つけられませんでした。",
+    "subtitle": "このページは存在しないか、夜中の3時の猫のようにどこかへ行ってしまったようです。とにかく戻りましょう。",
+    "go_back": "戻る",
+    "take_home": "ホームへ",
+    "footer": "エラーページ"
   }
 }

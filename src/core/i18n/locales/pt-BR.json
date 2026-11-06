@@ -101,6 +101,7 @@
     "minutes_count": "{{count}} minutos"
   },
   "home": {
+    "now": "Agora",
     "next_up": "Próximo em {{time}}",
     "no_reminders": "Nenhum lembrete ativo",
     "no_schedule": "Sem agendamento",
@@ -219,6 +220,12 @@
     }
   },
   "onboarding": {
+    "actions": {
+      "next": "Próximo",
+      "back": "Voltar",
+      "finish": "Vamos nessa!",
+      "select": "Escolher"
+    },
     "step1": {
       "title": "Conheça sua equipe",
       "description": "Escolha seu companheiro felino para ajudar você a se manter saudável.",
@@ -257,5 +264,13 @@
     "menu": "Menu",
     "settings": "Configurações",
     "add_reminder": "Adicionar lembrete"
+  },
+  "error": {
+    "title": "Algo deu errado",
+    "hero": "A Mochi não encontrou isso.",
+    "subtitle": "Esta página não existe — ou fugiu como um gato às 3 da manhã. De qualquer forma, vamos te levar de volta.",
+    "go_back": "Voltar",
+    "take_home": "Ir para o início",
+    "footer": "página de erro"
   }
 }

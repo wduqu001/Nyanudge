@@ -98,6 +98,7 @@
     "minutes_count": "{{count}} minutes"
   },
   "home": {
+    "now": "Now",
     "next_up": "Next up in {{time}}",
     "no_reminders": "No active reminders",
     "no_schedule": "No schedule",

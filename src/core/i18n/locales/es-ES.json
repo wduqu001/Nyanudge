@@ -101,6 +101,7 @@
     "minutes_count": "{{count}} minutos"
   },
   "home": {
+    "now": "Ahora",
     "next_up": "Siguiente en {{time}}",
     "no_reminders": "Sin recordatorios activos",
     "no_schedule": "Sin horario",
@@ -180,6 +181,12 @@
     }
   },
   "onboarding": {
+    "actions": {
+      "next": "Siguiente",
+      "back": "Atrás",
+      "finish": "¡Vamos!",
+      "select": "Elegir"
+    },
     "step1": {
       "title": "Conoce a tu equipo",
       "description": "Elige a tu compañero gatuno para ayudarte a mantenerte saludable.",
@@ -257,5 +264,13 @@
     "menu": "Menú",
     "settings": "Ajustes",
     "add_reminder": "Añadir recordatorio"
+  },
+  "error": {
+    "title": "Algo salió mal",
+    "hero": "Mochi no pudo encontrar eso.",
+    "subtitle": "Esta página no existe, o quizá se escapó como un gato a las 3 de la mañana. En cualquier caso, volvamos.",
+    "go_back": "Volver",
+    "take_home": "Ir al inicio",
+    "footer": "página de error"
   }
 }
