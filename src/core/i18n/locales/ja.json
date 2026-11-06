@@ -167,7 +167,8 @@
       "default_snooze": "デフォルトのスヌーズ時間",
       "mark_done_on_open": "開いたときに完了とする",
       "mark_done_desc": "オンにすると、通知を開いたときにリマインダーが自動的に完了になります。",
-      "reset_defaults": "すべてデフォルトに戻す"
+      "reset_defaults": "すべてデフォルトに戻す",
+      "reset_confirm": "すべての設定を初期値に戻しますか？リマインダーと履歴は残ります。"
     },
     "data": {
       "title": "データ",

@@ -164,7 +164,8 @@
       "default_snooze": "Default snooze duration",
       "mark_done_on_open": "Mark as done on open",
       "mark_done_desc": "When on, opening a notification marks the reminder as complete automatically.",
-      "reset_defaults": "Reset all to defaults"
+      "reset_defaults": "Reset all to defaults",
+      "reset_confirm": "Reset all settings to their defaults? Your reminders and history are kept."
     },
     "data": {
       "title": "DATA",

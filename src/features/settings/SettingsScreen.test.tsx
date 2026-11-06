@@ -110,12 +110,22 @@ describe('SettingsScreen', () => {
 
   // ── Reset defaults ─────────────────────────────────────────────────────
 
-  it('resetPreferences is called when Reset Defaults is clicked', () => {
+  it('resetPreferences is called when Reset Defaults is clicked and confirmed', () => {
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
     const resetSpy = vi.spyOn(usePreferencesStore.getState(), 'resetPreferences');
     renderSettings();
 
     fireEvent.click(screen.getByText('settings.reminders.reset_defaults'));
     expect(resetSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not reset when the confirmation is cancelled', () => {
+    vi.spyOn(window, 'confirm').mockReturnValue(false);
+    const resetSpy = vi.spyOn(usePreferencesStore.getState(), 'resetPreferences');
+    renderSettings();
+
+    fireEvent.click(screen.getByText('settings.reminders.reset_defaults'));
+    expect(resetSpy).not.toHaveBeenCalled();
   });
 
   // ── Clear History ──────────────────────────────────────────────────────

@@ -185,7 +185,7 @@ export const SettingsScreen: React.FC = () => {
             </div>
 
             <div className={styles.settingGroup}>
-              <NyaButton variant="secondary" fullWidth onClick={resetPreferences}>
+              <NyaButton variant="secondary" fullWidth onClick={() => window.confirm(t('settings.reminders.reset_confirm')) && resetPreferences()}>
                 {t('settings.reminders.reset_defaults')}
               </NyaButton>
             </div>

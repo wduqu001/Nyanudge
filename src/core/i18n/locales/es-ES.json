@@ -167,7 +167,8 @@
       "default_snooze": "Duración de posponer por defecto",
       "mark_done_on_open": "Marcar como hecho al abrir",
       "mark_done_desc": "Cuando está activado, abrir una notificación marca el recordatorio como completo automáticamente.",
-      "reset_defaults": "Restablecer todos los valores predeterminados"
+      "reset_defaults": "Restablecer todos los valores predeterminados",
+      "reset_confirm": "¿Restablecer todos los ajustes predeterminados? Tus recordatorios e historial se conservan."
     },
     "data": {
       "title": "DATOS",

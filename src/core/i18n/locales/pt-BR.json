@@ -208,7 +208,8 @@
       "default_snooze": "Duração padrão de adiamento",
       "mark_done_on_open": "Marcar como concluído ao abrir",
       "mark_done_desc": "Quando ativado, abrir uma notificação marca o lembrete como concluído automaticamente.",
-      "reset_defaults": "Redefinir tudo para o padrão"
+      "reset_defaults": "Redefinir tudo para o padrão",
+      "reset_confirm": "Restaurar todas as configurações padrão? Seus lembretes e histórico serão mantidos."
     },
     "data": {
       "title": "DADOS",
