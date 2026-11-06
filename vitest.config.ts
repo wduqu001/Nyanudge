@@ -28,6 +28,8 @@ export default defineConfig({
       test: {
         name: 'unit',
         environment: 'jsdom',
+        // Node 25+ ships its own localStorage global, which shadows jsdom's and is unusable without a file.
+        execArgv: Number(process.versions.node.split('.')[0]) >= 25 ? ['--no-experimental-webstorage'] : [],
         globals: true,
         setupFiles: ['./src/vitest-setup.ts']
       }
