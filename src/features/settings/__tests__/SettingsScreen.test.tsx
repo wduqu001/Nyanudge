@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { I18nextProvider } from 'react-i18next';
@@ -22,6 +22,14 @@ vi.mock('../CrashReporterModal', () => ({
     </div>
   ),
 }));
+
+const seedCompletion = {
+  id: 'c1',
+  reminderId: 'r1',
+  category: 'water' as const,
+  completedAt: Date.now(),
+  wasSkipped: false,
+};
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <MemoryRouter>
@@ -53,6 +61,11 @@ describe('SettingsScreen', () => {
     useStatsStore.setState({ stats: {}, recentCompletions: [] });
   });
 
+  afterEach(async () => {
+    vi.restoreAllMocks();
+    await i18n.changeLanguage('en');
+  });
+
   // ── Render ────────────────────────────────────────────────────────────────
 
   it('renders all four section headings', () => {
@@ -63,22 +76,65 @@ describe('SettingsScreen', () => {
     expect(screen.getByText(/data/i)).toBeInTheDocument();
   });
 
+  it('renders the settings title', () => {
+    render(<Wrapper><SettingsScreen /></Wrapper>);
+    expect(screen.getByText('Settings')).toBeInTheDocument();
+  });
+
+  it('does not offer Export CSV until a real export exists', () => {
+    render(<Wrapper><SettingsScreen /></Wrapper>);
+    expect(screen.queryByText('Export history as CSV')).not.toBeInTheDocument();
+  });
+
+  // ── Reset defaults ────────────────────────────────────────────────────────
+
+  it('resetPreferences is called when Reset Defaults is clicked and confirmed', () => {
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const resetSpy = vi.spyOn(usePreferencesStore.getState(), 'resetPreferences').mockImplementation(() => {});
+    render(<Wrapper><SettingsScreen /></Wrapper>);
+    fireEvent.click(screen.getByText('Reset all to defaults'));
+    expect(resetSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not reset when the confirmation is cancelled', () => {
+    vi.spyOn(window, 'confirm').mockReturnValue(false);
+    const resetSpy = vi.spyOn(usePreferencesStore.getState(), 'resetPreferences').mockImplementation(() => {});
+    render(<Wrapper><SettingsScreen /></Wrapper>);
+    fireEvent.click(screen.getByText('Reset all to defaults'));
+    expect(resetSpy).not.toHaveBeenCalled();
+  });
+
   // ── Clear History ─────────────────────────────────────────────────────────
+
+  it('shows a confirm dialog when Clear History is clicked', () => {
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    render(<Wrapper><SettingsScreen /></Wrapper>);
+    fireEvent.click(screen.getByText(/clear all history/i));
+    expect(confirmSpy).toHaveBeenCalledWith('Are you sure you want to clear all history? This action cannot be undone.');
+  });
 
   it('does NOT clear history when confirm is cancelled', () => {
     vi.spyOn(window, 'confirm').mockReturnValue(false);
+    const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
+    useStatsStore.setState({ recentCompletions: [seedCompletion] });
     render(<Wrapper><SettingsScreen /></Wrapper>);
     fireEvent.click(screen.getByText(/clear all history/i));
     expect(ReminderService.ReminderService.clearHistory).not.toHaveBeenCalled();
+    expect(useStatsStore.getState().recentCompletions).toEqual([seedCompletion]);
+    expect(alertSpy).not.toHaveBeenCalled();
   });
 
   it('clears store and calls ReminderService.clearHistory when confirmed', async () => {
     vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
+    useStatsStore.setState({ recentCompletions: [seedCompletion] });
     render(<Wrapper><SettingsScreen /></Wrapper>);
     await act(async () => {
       fireEvent.click(screen.getByText(/clear all history/i));
     });
     expect(ReminderService.ReminderService.clearHistory).toHaveBeenCalledOnce();
+    expect(useStatsStore.getState().recentCompletions).toEqual([]);
+    expect(alertSpy).toHaveBeenCalledWith('History cleared.');
   });
 
   // ── Debug panel via version taps ──────────────────────────────────────────
