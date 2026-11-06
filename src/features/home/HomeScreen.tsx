@@ -205,33 +205,41 @@ export const HomeScreen: React.FC = () => {
             medicine: "medicine"
           };
 
-          const textColor = enabled ? 'var(--text-primary)' : '#A09E98';
-          const subtextColor = enabled ? 'var(--text-secondary)' : '#A09E98';
+          const displayLabel = reminder.label === t(`categories.${reminder.category}.name`, { lng: 'en' })
+            ? t(`categories.${reminder.category}.name`)
+            : reminder.label;
+          const textColor = enabled ? 'var(--text-primary)' : 'var(--text-muted)';
+          const subtextColor = enabled ? 'var(--text-secondary)' : 'var(--text-muted)';
 
           return (
             <Card
               key={reminder.id}
               className={`reminder-card ${expandedId === reminder.id ? 'expanded' : ''}`}
-              onClick={() => handleCardClick(reminder.id)}
               categoryColor={enabled ? categoryColorMapping[reminder.category] : undefined}
-              aria-expanded={expandedId === reminder.id}
-              aria-label={reminder.label}
             >
               <div className="reminder-card-main">
                 <div className="reminder-card-content">
-                  <div className="reminder-card-icon" style={{ background: bgConfig }} aria-hidden="true">
-                    <CategoryIcon category={reminder.category} enabled={enabled} />
-                  </div>
-                  <div className="reminder-card-text">
-                    <h3 id={`label-${reminder.id}`} style={{ color: textColor }}>
-                      {reminder.label === t(`categories.${reminder.category}.name`, { lng: 'en' }) 
-                        ? t(`categories.${reminder.category}.name`) 
-                        : reminder.label}
-                    </h3>
-                    <p style={{ color: subtextColor }}>
-                      {formatSchedule(reminder)}
-                    </p>
-                  </div>
+                  {/* The toggle sits beside, not inside, the expand button: controls must not nest. */}
+                  <button
+                    type="button"
+                    className="reminder-card-expand"
+                    onClick={() => handleCardClick(reminder.id)}
+                    aria-expanded={expandedId === reminder.id}
+                    aria-label={displayLabel}
+                    aria-describedby={`schedule-${reminder.id}`}
+                  >
+                    <span className="reminder-card-icon" style={{ background: bgConfig }} aria-hidden="true">
+                      <CategoryIcon category={reminder.category} enabled={enabled} />
+                    </span>
+                    <span className="reminder-card-text">
+                      <span className="reminder-card-title" id={`label-${reminder.id}`} style={{ color: textColor }}>
+                        {displayLabel}
+                      </span>
+                      <span className="reminder-card-schedule" id={`schedule-${reminder.id}`} style={{ color: subtextColor }}>
+                        {formatSchedule(reminder)}
+                      </span>
+                    </span>
+                  </button>
                   <div className="reminder-card-toggle">
                     <Toggle
                       checked={reminder.enabled}
@@ -355,7 +363,7 @@ export const HomeScreen: React.FC = () => {
                     borderRadius: 14,
                     border: 'none',
                     background: catColor,
-                    color: '#fff',
+                    color: 'var(--color-neutral-900)',
                     fontSize: 16,
                     fontWeight: 700,
                     cursor: 'pointer',

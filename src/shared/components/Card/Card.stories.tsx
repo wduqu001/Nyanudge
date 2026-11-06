@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Card } from './Card';
-import { Toggle } from '../Toggle/Toggle';
 import { LottiePlayer } from '../../animations/LottiePlayer';
 
 const meta: Meta<typeof Card> = {
@@ -49,7 +48,7 @@ export const WithCategoryColor: Story = {
           <h3 style={{ margin: 0 }}>Drink Water</h3>
           <p style={{ margin: 0, color: 'var(--text-secondary)' }}>Next: 3:30 PM</p>
         </div>
-        <Toggle checked={true} onChange={() => {}} categoryColor="water" />
+        <span style={{ color: 'var(--text-secondary)' }}>On</span>
       </div>
     ),
   },

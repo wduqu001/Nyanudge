@@ -17,6 +17,7 @@
   --color-accent-300: #F5A155;
   --color-accent-400: #E97B22;  /* Primary accent */
   --color-accent-500: #C45E0E;
+  --color-accent-600: #A9530C;  /* accent text on light surfaces (AA) */
 
   /* --- Semantic --- */
   --color-water:    #3B8BD4;  /* Hydration */
@@ -31,9 +32,10 @@
   --surface-overlay:   rgba(0,0,0,0.04);
   --text-primary:      var(--color-neutral-900);
   --text-secondary:    var(--color-neutral-500);
-  --text-muted:        var(--color-neutral-300);
+  --text-muted:        var(--color-neutral-500);
   --border-subtle:     var(--color-neutral-200);
   --accent:            var(--color-accent-400);
+  --accent-text:       var(--color-accent-600);
   --surface-selected:  var(--color-accent-100);
 
   /* --- Icon Backgrounds --- */
@@ -83,9 +85,10 @@
     --surface-overlay: rgba(255,255,255,0.05);
     --text-primary:    var(--color-neutral-50);
     --text-secondary:  var(--color-neutral-400);
-    --text-muted:      var(--color-neutral-600);
+    --text-muted:      var(--color-neutral-400);
     --border-subtle:   var(--color-neutral-700);
     --accent:          var(--color-accent-300);
+    --accent-text:     var(--color-accent-300);
     --surface-selected: rgba(245, 161, 85, 0.2); /* Slightly higher alpha for visibility, using accent-300 */
 
     /* --- Icon Backgrounds Dark --- */
@@ -107,9 +110,10 @@
   --surface-overlay: rgba(255,255,255,0.05);
   --text-primary:    var(--color-neutral-50);
   --text-secondary:  var(--color-neutral-400);
-  --text-muted:      var(--color-neutral-600);
+  --text-muted:      var(--color-neutral-400);
   --border-subtle:   var(--color-neutral-700);
   --accent:          var(--color-accent-300);
+  --accent-text:     var(--color-accent-300);
   --surface-selected: rgba(245, 161, 85, 0.2);
 
   /* --- Icon Backgrounds Dark --- */
@@ -117,6 +121,10 @@
   --color-icon-bg-food:     var(--color-neutral-700);
   --color-icon-bg-exercise: var(--color-neutral-700);
   --color-icon-bg-disabled: var(--color-neutral-800);
+
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.5);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.5);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
 }
 
 [data-theme='light'] {
@@ -125,8 +133,18 @@
   --surface-overlay:   rgba(0,0,0,0.04);
   --text-primary:      var(--color-neutral-900);
   --text-secondary:    var(--color-neutral-500);
-  --text-muted:        var(--color-neutral-300);
+  --text-muted:        var(--color-neutral-500);
   --border-subtle:     var(--color-neutral-200);
   --accent:            var(--color-accent-400);
   --surface-selected:  var(--color-accent-100);
+  --accent-text:       var(--color-accent-600);
+
+  /* Undo the system dark-mode overrides when Light is chosen in the app. */
+  --color-icon-bg-water:    #EBF3FC;
+  --color-icon-bg-food:     #EBF5EC;
+  --color-icon-bg-exercise: #FEF3E7;
+  --color-icon-bg-disabled: #F4F3F1;
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
 }
