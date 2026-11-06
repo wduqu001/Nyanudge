@@ -1,0 +1,43 @@
+name: Privacy policy page
+
+# Publishes only docs/privacy-policy.md to GitHub Pages, so the store listing URL
+# always matches the policy shipped in the app.
+on:
+  push:
+    branches: [main]
+    paths: [docs/privacy-policy.md, .github/workflows/privacy-pages.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Stage the policy as the site
+        run: |
+          mkdir site
+          printf -- '---\ntitle: NyaNudge privacy policy\npermalink: /privacy-policy/\n---\n' > site/privacy-policy.md
+          cat docs/privacy-policy.md >> site/privacy-policy.md
+          printf -- '---\npermalink: /\nredirect: privacy-policy/\n---\n<meta http-equiv="refresh" content="0; url=privacy-policy/">\n<a href="privacy-policy/">NyaNudge privacy policy</a>\n' > site/index.html
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./site
+          destination: ./_site
+      - uses: actions/upload-pages-artifact@v3
+      - id: deployment
+        uses: actions/deploy-pages@v4
