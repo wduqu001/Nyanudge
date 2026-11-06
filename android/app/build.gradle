@@ -16,19 +16,26 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    // Upload-key secrets come from ~/.gradle/gradle.properties or env vars, never this repo.
+    def signingValue = { String name -> project.findProperty(name) ?: System.getenv(name) }
+    def uploadStoreFile = signingValue('NYANUDGE_UPLOAD_STORE_FILE')
     signingConfigs {
         release {
-            storeFile file("release.keystore")
-            storePassword "password"
-            keyAlias "nyanudge-alias"
-            keyPassword "password"
+            if (uploadStoreFile) {
+                storeFile file(uploadStoreFile)
+                storePassword signingValue('NYANUDGE_UPLOAD_STORE_PASSWORD')
+                keyAlias signingValue('NYANUDGE_UPLOAD_KEY_ALIAS')
+                keyPassword signingValue('NYANUDGE_UPLOAD_KEY_PASSWORD')
+            }
         }
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+            if (uploadStoreFile) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 }
