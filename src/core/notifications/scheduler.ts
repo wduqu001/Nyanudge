@@ -69,7 +69,7 @@ export function calculateNextFireTime(schedule: Schedule, anchor?: number, overr
     const minutes = Number(parts[1]);
     if (isNaN(hours) || isNaN(minutes)) return undefined;
 
-    const candidate = new Date();
+    const candidate = new Date(now);
     candidate.setHours(hours, minutes, 0, 0);
 
     // If time passed today, start from tomorrow

@@ -248,6 +248,22 @@ describe('scheduler', () => {
       expect(notifs?.[0]?.id).toBeDefined();
     });
 
+    it('spreads specific-day instances over distinct, increasing allowed days', async () => {
+      const reminder: Reminder = {
+        id: 'r_days2', category: 'water', label: 'W', enabled: true, soundMode: 'silent',
+        snoozeMins: 5, character: 'mochi', createdAt: 0, updatedAt: 0,
+        schedules: [{ id: 's1', reminderId: 'r_days2', type: 'fixed', timeValue: '10:00', daysOfWeek: [1, 3, 5] }]
+      };
+      vi.setSystemTime(new Date(2026, 4, 10, 8, 0)); // Sunday
+      await scheduleReminder(reminder);
+
+      const notifs = vi.mocked(LocalNotifications.schedule).mock.calls[0]?.[0]?.notifications ?? [];
+      const times = notifs.map(n => (n.schedule?.at as Date).getTime());
+      expect(new Set(times).size).toBe(times.length);
+      times.slice(1).forEach((t, i) => expect(t).toBeGreaterThan(times[i]));
+      notifs.forEach(n => expect([1, 3, 5]).toContain((n.schedule?.at as Date).getDay()));
+    });
+
     it('schedules 64 instances for interval reminders', async () => {
       const reminder: Reminder = {
         id: 'r_int', category: 'exercise', label: 'E', enabled: true, soundMode: 'sound_vibration',
