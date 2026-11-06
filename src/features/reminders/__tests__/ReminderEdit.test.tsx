@@ -99,6 +99,16 @@ describe('ReminderEdit', () => {
     expect(navigateMock).toHaveBeenCalledWith(-1);
   });
 
+  it('falls back to the category name when the label is left empty', async () => {
+    const addReminder = vi.fn().mockResolvedValue(undefined);
+    useRemindersStore.setState({ reminders: [], isLoaded: true, addReminder } as any);
+    render(<RouterWrapper id="new" />);
+    await act(async () => {
+      fireEvent.click(screen.getByText(/save/i));
+    });
+    expect(addReminder).toHaveBeenCalledWith(expect.objectContaining({ label: 'Drink Water' }));
+  });
+
   // ── Existing reminder ─────────────────────────────────────────────────────
 
   it('pre-fills the label field for an existing reminder', () => {

@@ -44,7 +44,7 @@ const ReminderForm: React.FC<FormProps> = ({ initialReminder, isNew, onSave, onA
 
   const handleSave = () => {
     onSave({
-      label,
+      label: label.trim() || t(`categories.${category}.name`, { lng: 'en' }),
       enabled,
       soundMode,
       snoozeMins,
