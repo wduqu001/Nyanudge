@@ -134,7 +134,7 @@ describe('HomeScreen', () => {
       isLoaded: true,
     });
     render(<Wrapper><HomeScreen /></Wrapper>);
-    expect(screen.getByText('Next up in 30 minutes')).toBeInTheDocument();
+    expect(screen.getByText('Next up in 30 min')).toBeInTheDocument();
     expect(screen.getAllByText('Drink!').length).toBeGreaterThanOrEqual(1);
   });
 

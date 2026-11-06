@@ -15,7 +15,7 @@ import { AnimatedCatMochi } from '../../shared/components/AnimatedCatMochi/Anima
 import { AnimatedCatKuro } from '../../shared/components/KuroCat/AnimatedCatKuro';
 import { CatSora } from '../../shared/components/SoraCat/CatSora';
 import { CogIcon, MenuIcon, WaterIcon, MealIcon, ExerciseIcon, BathroomIcon, MedicineIcon } from '../../shared/components/Icons';
-import { formatLocalizedTime } from '../../shared/utils/dateUtils';
+import { formatLocalizedTime, formatDuration, formatNextFire } from '../../shared/utils/dateUtils';
 import { DebugPanel } from './DebugPanel';
 import { useBackHandler } from '../../shared/hooks/useBackHandler';
 import './HomeScreen.css';
@@ -48,6 +48,16 @@ const CATEGORY_BG_COLORS: Record<Category, string> = {
   bathroom: 'var(--color-icon-bg-disabled)',
   medicine: 'var(--color-icon-bg-disabled)',
 };
+
+function nextFireOf(r: Reminder): Date | null {
+  const cleanAnchor = Math.floor(Math.max(r.updatedAt || 0, r.createdAt || 0) / 60000) * 60000;
+  let earliest: Date | null = null;
+  r.schedules.forEach(s => {
+    const fire = calculateNextFireTime(s, cleanAnchor);
+    if (fire && (!earliest || fire < earliest)) earliest = fire;
+  });
+  return earliest;
+}
 
 export const HomeScreen: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -87,14 +97,11 @@ export const HomeScreen: React.FC = () => {
 
     reminders.forEach(r => {
       if (!r.enabled || r.archived) return;
-      const cleanAnchor = Math.floor(Math.max(r.updatedAt || 0, r.createdAt || 0) / 60000) * 60000;
-      r.schedules.forEach(s => {
-        const fire = calculateNextFireTime(s, cleanAnchor);
-        if (fire && (!earliestDate || fire < earliestDate)) {
-          earliestDate = fire;
-          nextReminder = r;
-        }
-      });
+      const fire = nextFireOf(r);
+      if (fire && (!earliestDate || fire < earliestDate)) {
+        earliestDate = fire;
+        nextReminder = r;
+      }
     });
 
     if (!earliestDate || !nextReminder) return null;
@@ -105,22 +112,15 @@ export const HomeScreen: React.FC = () => {
     let timeStr = '';
     if (diffMins < 1) {
       timeStr = t('home.now', 'Now');
-    } else if (diffMins < 60) {
-      timeStr = `${diffMins} ${t('edit_reminder.minutes')}`;
-    } else if (diffMins < 1440) { // Less than a day
-      const hours = Math.floor(diffMins / 60);
-      const remainingMins = diffMins % 60;
-      timeStr = remainingMins > 0 ? `${hours}h ${remainingMins}m` : `${hours}h`;
     } else {
-      const days = Math.floor(diffMins / 1440);
-      timeStr = `${days}d+`;
+      timeStr = formatDuration(diffMins, i18n.language);
     }
 
     return {
       reminder: nextReminder as Reminder,
       timeStr
     };
-  }, [reminders, t, currentTime]);
+  }, [reminders, t, currentTime, i18n.language]);
 
   const handleCardClick = (id: string) => {
     setExpandedId(expandedId === id ? null : id);
@@ -255,14 +255,15 @@ export const HomeScreen: React.FC = () => {
                   <div className="reminder-card-expanded">
                   <div className="expanded-divider" />
                   <div className="quick-actions">
-                    {reminder.enabled && (
-                      <div className="quick-info">
-                        <span className="quick-label">{t('home.quick_edit.next_fire')}</span>
-                        <span className="quick-value">
-                          {formatLocalizedTime(reminder.schedules[0]?.timeValue || '08:00', i18n.language)} {t('actions.today')}
-                        </span>
-                      </div>
-                    )}
+                    {(() => {
+                      const next = reminder.enabled ? nextFireOf(reminder) : null;
+                      return next && (
+                        <div className="quick-info">
+                          <span className="quick-label">{t('home.quick_edit.next_fire')}</span>
+                          <span className="quick-value">{formatNextFire(next, new Date(currentTime), i18n.language)}</span>
+                        </div>
+                      );
+                    })()}
                     <div style={{ display: 'flex', gap: 8, width: '100%' }}>
                       <button 
                         className="complete-button"

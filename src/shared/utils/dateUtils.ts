@@ -32,3 +32,22 @@ export const getLocalizedWeekdays = (locale: string | undefined): string[] => {
   }
   return weekDays;
 };
+
+/** Localized short duration for a countdown, e.g. "5 min", "2 hr 5 min", "3 days" (pt-BR: "3 dias"). */
+export const formatDuration = (minutes: number, locale: string | undefined): string => {
+  const unit = (u: 'minute' | 'hour' | 'day', n: number) =>
+    new Intl.NumberFormat(locale, { style: 'unit', unit: u, unitDisplay: 'short' }).format(n);
+  if (minutes < 60) return unit('minute', minutes);
+  if (minutes < 1440) {
+    const hours = Math.floor(minutes / 60);
+    const rest = minutes % 60;
+    return rest > 0 ? `${unit('hour', hours)} ${unit('minute', rest)}` : unit('hour', hours);
+  }
+  return unit('day', Math.floor(minutes / 1440));
+};
+
+/** Time of the next fire: just the time when it is today, otherwise with the weekday. */
+export const formatNextFire = (date: Date, now: Date, locale: string | undefined): string =>
+  date.toDateString() === now.toDateString()
+    ? date.toLocaleTimeString(locale, { hour: 'numeric', minute: '2-digit' })
+    : date.toLocaleString(locale, { weekday: 'short', hour: 'numeric', minute: '2-digit' });

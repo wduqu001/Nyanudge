@@ -104,3 +104,23 @@ describe('dateUtils', () => {
     });
   });
 });
+
+describe('formatDuration', () => {
+  it('uses localized units instead of hard-coded h/m/d', async () => {
+    const { formatDuration } = await import('./dateUtils');
+    expect(formatDuration(5, 'en')).toBe('5 min');
+    expect(formatDuration(125, 'en')).toBe('2 hr 5 min');
+    expect(formatDuration(120, 'en')).toBe('2 hr');
+    expect(formatDuration(3 * 1440 + 10, 'pt-BR')).toBe('3 dias');
+    expect(formatDuration(125, 'ja')).toBe('2 時間 5 分');
+  });
+});
+
+describe('formatNextFire', () => {
+  it('shows only the time today and adds the weekday otherwise', async () => {
+    const { formatNextFire } = await import('./dateUtils');
+    const now = new Date(2026, 10, 6, 9, 0); // Friday
+    expect(formatNextFire(new Date(2026, 10, 6, 15, 30), now, 'en').replace(/\s/g, ' ')).toBe('3:30 PM');
+    expect(formatNextFire(new Date(2026, 10, 9, 8, 0), now, 'en').replace(/\s/g, ' ')).toBe('Mon 8:00 AM');
+  });
+});
