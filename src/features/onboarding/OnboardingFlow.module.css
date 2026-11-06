@@ -22,7 +22,7 @@
 .progressBar {
   flex: 1;
   height: 4px;
-  background-color: var(--color-neutral-200);
+  background-color: var(--border-subtle);
   border-radius: 2px;
   overflow: hidden;
 }

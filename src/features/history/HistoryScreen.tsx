@@ -85,7 +85,7 @@ export const HistoryScreen: React.FC = () => {
                   className={styles.progressFill} 
                   style={{ 
                     width: `${data.completionRateLast7Days * 100}%`,
-                    backgroundColor: `var(--cat-${category}, #6a11cb)`
+                    backgroundColor: `var(--color-${category === 'meal' ? 'food' : category}, var(--accent))`
                   }} 
                 />
               </div>

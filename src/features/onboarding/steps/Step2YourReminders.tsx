@@ -38,7 +38,7 @@ export const Step2YourReminders: React.FC = () => {
                 width: '40px',
                 height: '40px',
                 borderRadius: '12px',
-                backgroundColor: 'var(--color-neutral-100)',
+                backgroundColor: 'var(--surface-overlay)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
