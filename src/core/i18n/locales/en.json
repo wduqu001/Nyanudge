@@ -138,7 +138,7 @@
       "silent": "Silent",
       "notification_style": "Notification style",
       "style_standard": "Standard",
-      "style_compact": "Compact",
+      "style_compact": "Compact (title only)",
       "dnd": "Do Not Disturb",
       "start_time": "Start time",
       "end_time": "End time"

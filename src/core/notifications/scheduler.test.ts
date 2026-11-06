@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import {
   calculateNextFireTime, upcomingFireTimes, rescheduleAll, snoozeReminder, channelFor, setQuietHours, isInQuietHours,
+  setCompactNotifications,
 } from './scheduler';
 
 vi.mock('@capacitor/local-notifications', () => ({
@@ -27,6 +28,7 @@ describe('scheduler', () => {
     vi.useFakeTimers();
     vi.clearAllMocks();
     setQuietHours(null);
+    setCompactNotifications(false);
   });
 
   describe('calculateNextFireTime', () => {
@@ -268,6 +270,15 @@ describe('scheduler', () => {
       }));
       await rescheduleAll(many);
       expect(scheduled().length).toBeLessThanOrEqual(400);
+    });
+
+    it('compact style drops the cat message but keeps a custom one', async () => {
+      setCompactNotifications(true);
+      await rescheduleAll([makeReminder(), makeReminder({ id: 'r2', customMessage: 'Take vitamin D' })]);
+      const bodies = new Map(scheduled().map((n) => [n.extra.reminderId, n.body]));
+      expect(bodies.get('r1')).toBe('');
+      expect(bodies.get('r2')).toBe('Take vitamin D');
+      expect(scheduled()[0]?.title).toBe('categories.water.name');
     });
 
     it('routes vibration-only reminders to the vibrate channel with the silent sound', async () => {

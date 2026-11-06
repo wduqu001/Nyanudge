@@ -141,7 +141,7 @@
       "silent": "Silencio",
       "notification_style": "Estilo de notificación",
       "style_standard": "Estándar",
-      "style_compact": "Compacto",
+      "style_compact": "Compacto (solo el título)",
       "dnd": "No molestar",
       "start_time": "Hora de inicio",
       "end_time": "Hora de fin"

@@ -204,6 +204,12 @@ export interface QuietHours {
 }
 
 let quietHours: QuietHours | null = null;
+let compactNotifications = false;
+
+/** Compact notifications show only the category title, without the cat message. */
+export function setCompactNotifications(compact: boolean): void {
+  compactNotifications = compact;
+}
 
 /** Do Not Disturb window applied to every category except medicine. */
 export function setQuietHours(hours: QuietHours | null): void {
@@ -261,7 +267,7 @@ function buildNotifications(reminder: Reminder, times: Date[], exact: boolean): 
   return times.map((at, i) => ({
     ...base,
     id: hashId(`${reminder.id}-slot-${i}`),
-    body: reminder.customMessage || pickMessage(reminder.category),
+    body: reminder.customMessage || (compactNotifications ? '' : pickMessage(reminder.category)),
     // One-shot alarms only: the plugin's `repeats` with `at` repeats every (at - now), not daily.
     schedule: { at, allowWhileIdle: true },
     isExactNotification: exact,
@@ -335,7 +341,7 @@ export async function snoozeReminder(reminder: Reminder): Promise<void> {
     notifications: [{
       ...baseNotification(reminder),
       id: hashId(`${reminder.id}-snooze`),
-      body: i18n.t(`snooze.${reminder.snoozeMins}`),
+      body: compactNotifications ? '' : i18n.t(`snooze.${reminder.snoozeMins}`),
       schedule: { at: fireTime, allowWhileIdle: true },
       isExactNotification: await canScheduleExact(),
       extra: {

@@ -180,7 +180,7 @@
       "silent": "Silencioso",
       "notification_style": "Estilo da notificação",
       "style_standard": "Padrão",
-      "style_compact": "Compacto",
+      "style_compact": "Compacto (só o título)",
       "dnd": "Não perturbe",
       "start_time": "Hora de início",
       "end_time": "Hora de término"

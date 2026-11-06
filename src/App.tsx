@@ -13,7 +13,7 @@ import { HistoryScreen } from './features/history/HistoryScreen';
 import { usePreferencesStore } from './core/store/preferencesStore';
 import { useTranslation } from 'react-i18next';
 import { useNotificationSetup } from './core/notifications/useNotificationSetup';
-import { setQuietHours } from './core/notifications/scheduler';
+import { setQuietHours, setCompactNotifications } from './core/notifications/scheduler';
 import { ReminderService } from './core/db/ReminderService';
 import { PreferenceService } from './core/db/PreferenceService';
 import { dbManager } from './core/db/database';
@@ -55,8 +55,9 @@ function App() {
 
   useEffect(() => {
     setQuietHours({ start: preferences.dndStart, end: preferences.dndEnd });
+    setCompactNotifications(preferences.notificationStyle === 'compact');
     useRemindersStore.getState().syncNotifications();
-  }, [preferences.dndStart, preferences.dndEnd]);
+  }, [preferences.dndStart, preferences.dndEnd, preferences.notificationStyle]);
 
   useEffect(() => {
     if (i18n.language !== preferences.language) {
