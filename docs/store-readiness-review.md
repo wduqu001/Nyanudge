@@ -61,7 +61,7 @@ How each fix was verified:
 
 ## 2. Owner tasks before submission
 
-1. **Upload key:** create a permanent one, store its secrets in `~/.gradle/gradle.properties`, and back the key up in two places. Uploading an APK keeps your key; with an AAB, Samsung manages it.
+1. **Upload key:** done. It's backed up locally and off-machine. Distribution format is APK, so you keep your own key (#27).
 2. **Privacy policy:** done. It's hosted at https://wduqu001.github.io/Nyanudge/privacy-policy/ and republished from `docs/privacy-policy.md` by `.github/workflows/privacy-pages.yml`. Enter the URL in Seller Portal.
 3. **Seller Portal:**
    - commercial seller status;
@@ -120,7 +120,7 @@ Not blocking submission. Listed so they aren't lost:
 | Target API ≥ 34 | ✓ 35 | seller.samsungapps.com notice 0000008212 |
 | 16 KB page size, mandatory (date postponed, not yet announced) | ✓ ELF p_align 16384 on all 4 ABIs | notice 0000011451 |
 | 64-bit binary | ✓ arm64-v8a | notice 0000007772 |
-| Signed with a real key; the same key for every update | Owner task 1 | developer.samsung.com/galaxy-store/launch.html |
+| Signed with a real key; the same key for every update | ✓ upload key, APK | developer.samsung.com/galaxy-store/launch.html |
 | Privacy policy in the app and as a URL | ✓ both | Distribution Guide 3.1.2–3.1.3 |
 | Launcher name and icon match the listing | ✓ "NyaNudge" | Self-Check List |
 | Back key, rotation and no crashes | Device pass | Distribution Guide 1.1, 1.4.6; Self-Check List |
