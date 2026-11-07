@@ -289,6 +289,15 @@ describe('HomeScreen', () => {
     expect(setPendingNotifAction).toHaveBeenCalledWith(null);
   });
 
+  it('lists every fixed time on the card, in order', () => {
+    useRemindersStore.setState({
+      reminders: [makeReminder({ schedules: ['21:01', '12:00'].map((timeValue, i) => ({ id: `s${i}`, reminderId: 'r1', type: 'fixed' as const, timeValue })) })],
+      isLoaded: true,
+    } as any);
+    render(<Wrapper><HomeScreen /></Wrapper>);
+    expect(screen.getByText(/At 12:00\sPM, 9:01\sPM/)).toBeInTheDocument();
+  });
+
   it('shows when a snoozed reminder will fire again', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date(2026, 10, 6, 21, 0));

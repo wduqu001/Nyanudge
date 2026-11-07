@@ -70,6 +70,15 @@ const ReminderForm: React.FC<FormProps> = ({ initialReminder, isNew, onSave, onA
         endTime: '21:00',
         ...changes,
       });
+    } else if (changes.type) {
+      // Switching between fixed and interval starts over with a single schedule.
+      const first = newSchedules[0]!;
+      setSchedules([{ ...first, ...changes }]);
+      return;
+    } else if (changes.daysOfWeek) {
+      // Weekdays apply to every time of the reminder.
+      setSchedules(newSchedules.map((s) => ({ ...s, daysOfWeek: changes.daysOfWeek })));
+      return;
     } else {
       const first = newSchedules[0];
       if (first) {
@@ -78,6 +87,23 @@ const ReminderForm: React.FC<FormProps> = ({ initialReminder, isNew, onSave, onA
     }
     setSchedules(newSchedules);
   };
+
+  const updateTime = (index: number, timeValue: string) => {
+    if (index === 0) return updateMainSchedule({ timeValue });
+    setSchedules(schedules.map((s, i) => (i === index ? { ...s, timeValue } : s)));
+  };
+
+  const addTime = () => {
+    const base = schedules[0] ?? { ...mainSchedule, id: '', reminderId: initialReminder?.id ?? '' };
+    setSchedules([...(schedules.length ? schedules : [base as Schedule]), {
+      ...(base as Schedule),
+      id: crypto.randomUUID(),
+      timeValue: '12:00',
+      notifId: undefined,
+    }]);
+  };
+
+  const removeTime = (index: number) => setSchedules(schedules.filter((_, i) => i !== index));
 
   const mainSchedule = schedules[0] || {
     type: category === 'water' || category === 'bathroom' ? 'interval' : 'fixed',
@@ -173,12 +199,30 @@ const ReminderForm: React.FC<FormProps> = ({ initialReminder, isNew, onSave, onA
         {mainSchedule.type === 'fixed' ? (
           <section className="form-section animate-in">
             <label className="form-label">{t('edit_reminder.time')}</label>
-            <input
-              className="form-input"
-              type="time"
-              value={mainSchedule.timeValue}
-              onChange={(e) => updateMainSchedule({ timeValue: e.target.value })}
-            />
+            {(schedules.length ? schedules : [mainSchedule as Schedule]).map((s, index, all) => (
+              <div className="time-row" key={s.id || index}>
+                <input
+                  className="form-input"
+                  type="time"
+                  aria-label={`${t('edit_reminder.time')} ${index + 1}`}
+                  value={s.timeValue}
+                  onChange={(e) => updateTime(index, e.target.value)}
+                />
+                {all.length > 1 && (
+                  <button
+                    type="button"
+                    className="remove-time-btn"
+                    aria-label={t('edit_reminder.remove_time', { time: s.timeValue })}
+                    onClick={() => removeTime(index)}
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+            ))}
+            <button type="button" className="add-time-btn" onClick={addTime}>
+              + {t('edit_reminder.add_time')}
+            </button>
           </section>
         ) : (
           <section className="form-section animate-in">

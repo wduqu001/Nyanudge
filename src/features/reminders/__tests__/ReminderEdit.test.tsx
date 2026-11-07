@@ -176,6 +176,22 @@ describe('ReminderEdit', () => {
     expect(saved.schedules![0]).toEqual(expect.objectContaining({ type: 'interval', timeValue: '120' }));
   });
 
+  it('shows and saves every fixed time, including added and removed ones', async () => {
+    const updateReminder = vi.fn().mockResolvedValue(undefined);
+    const reminder = makeReminder({ schedules: ['09:00', '12:00', '15:00'].map((timeValue, i) => ({ id: `s${i}`, reminderId: 'existing-1', type: 'fixed' as const, timeValue })) });
+    useRemindersStore.setState({ reminders: [reminder], isLoaded: true, updateReminder } as any);
+    render(<RouterWrapper id="existing-1" />);
+    expect(screen.getByLabelText('Time 3')).toHaveValue('15:00');
+    fireEvent.click(screen.getByRole('button', { name: 'Remove 12:00' }));
+    fireEvent.click(screen.getByRole('button', { name: /add time/i }));
+    fireEvent.change(screen.getByLabelText('Time 3'), { target: { value: '21:30' } });
+    await act(async () => {
+      fireEvent.click(screen.getByText(/save/i));
+    });
+    const saved = updateReminder.mock.calls[0]![1] as Partial<Reminder>;
+    expect(saved.schedules!.map((sch) => sch.timeValue)).toEqual(['09:00', '15:00', '21:30']);
+  });
+
   it('shows the Archive button only for existing reminders', () => {
     useRemindersStore.setState({ reminders: [makeReminder()], isLoaded: true });
     render(<RouterWrapper id="existing-1" />);

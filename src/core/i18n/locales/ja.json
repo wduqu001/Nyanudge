@@ -221,6 +221,8 @@
     }
   },
   "edit_reminder": {
+    "add_time": "時刻を追加",
+    "remove_time": "{{time}} を削除",
     "not_found": "リマインダーが見つかりません",
     "not_found_desc": "このリマインダーはアーカイブまたは削除された可能性があります。",
     "character": "ねこキャラクター",

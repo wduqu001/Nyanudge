@@ -221,6 +221,8 @@
     }
   },
   "edit_reminder": {
+    "add_time": "Añadir hora",
+    "remove_time": "Quitar {{time}}",
     "not_found": "Recordatorio no encontrado",
     "not_found_desc": "Es posible que este recordatorio se haya archivado o eliminado.",
     "character": "Personaje gato",

@@ -171,3 +171,30 @@
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+.time-row {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.remove-time-btn,
+.add-time-btn {
+  min-height: 44px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-card);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: var(--font-size-base);
+  cursor: pointer;
+}
+
+.remove-time-btn {
+  min-width: 44px;
+}
+
+.add-time-btn {
+  width: 100%;
+  font-weight: var(--font-weight-semibold);
+}

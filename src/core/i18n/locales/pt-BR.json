@@ -133,6 +133,8 @@
     "total_completions": "Total Concluído"
   },
   "edit_reminder": {
+    "add_time": "Adicionar horário",
+    "remove_time": "Remover {{time}}",
     "not_found": "Lembrete não encontrado",
     "not_found_desc": "Este lembrete pode ter sido arquivado ou removido.",
     "character": "Personagem gato",

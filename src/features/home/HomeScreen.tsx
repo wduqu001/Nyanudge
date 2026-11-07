@@ -155,8 +155,12 @@ export const HomeScreen: React.FC = () => {
       const end = formatLocalizedTime(schedule.endTime, i18n.language);
       return `${t('actions.every')} ${schedule.timeValue} ${t('edit_reminder.minutes')} · ${start}-${end}`;
     } else {
-      const atTime = formatLocalizedTime(schedule.timeValue, i18n.language);
-      return `${t('actions.at')} ${atTime}`;
+      const times = reminder.schedules
+        .filter((s) => s.type === 'fixed' && s.timeValue)
+        .map((s) => s.timeValue!)
+        .sort()
+        .map((time) => formatLocalizedTime(time, i18n.language));
+      return `${t('actions.at')} ${times.join(', ')}`;
     }
   };
 
