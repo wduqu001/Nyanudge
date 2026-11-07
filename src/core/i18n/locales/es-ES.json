@@ -129,8 +129,8 @@
     "category_stats_title": "Estadísticas por categoría",
     "recent_title": "Actividad reciente",
     "no_data": "No hay registros grabados. ¡Sigue así!",
-    "current_streak": "Conteo actual",
-    "streak_record": "Mejor conteo",
+    "current_streak": "Días seguidos (todos los recordatorios)",
+    "streak_record": "Mejor racha (un recordatorio)",
     "total_completions": "Total completado"
   },
   "settings": {

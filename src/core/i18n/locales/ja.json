@@ -128,8 +128,8 @@
     "category_stats_title": "カテゴリー統計",
     "recent_title": "最近の履歴",
     "no_data": "記録はまだありません。その調子で頑張りましょう！",
-    "current_streak": "現在のカウント",
-    "streak_record": "ベストカウント",
+    "current_streak": "連続日数（全リマインダー合計）",
+    "streak_record": "最長連続（1つのリマインダー）",
     "total_completions": "完了数"
   },
   "settings": {

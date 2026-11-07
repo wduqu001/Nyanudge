@@ -129,8 +129,8 @@
     "category_stats_title": "Estatísticas",
     "recent_title": "Atividade Recente",
     "no_data": "Nenhuma conclusão registrada ainda. Continue assim!",
-    "current_streak": "Contagem Atual",
-    "streak_record": "Melhor Contagem",
+    "current_streak": "Dias seguidos (todos os lembretes)",
+    "streak_record": "Melhor sequência (um lembrete)",
     "total_completions": "Total Concluído"
   },
   "edit_reminder": {

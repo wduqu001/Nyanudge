@@ -33,7 +33,12 @@ interface FormProps {
 const ReminderForm: React.FC<FormProps> = ({ initialReminder, isNew, onSave, onArchive }) => {
   const { t, i18n } = useTranslation();
   const defaults = usePreferencesStore((s) => s.preferences);
-  const [label, setLabel] = useState(initialReminder?.label || '');
+  // Default labels are stored as the English category name; show them translated.
+  const [label, setLabel] = useState(() => {
+    const stored = initialReminder?.label || '';
+    const cat = initialReminder?.category;
+    return cat && stored === t(`categories.${cat}.name`, { lng: 'en' }) ? t(`categories.${cat}.name`) : stored;
+  });
   const [enabled, setEnabled] = useState(initialReminder?.enabled ?? true);
   const [soundMode, setSoundMode] = useState<SoundMode>(
     initialReminder?.soundMode || defaults.defaultSoundMode,
@@ -46,7 +51,7 @@ const ReminderForm: React.FC<FormProps> = ({ initialReminder, isNew, onSave, onA
 
   const handleSave = () => {
     onSave({
-      label: label.trim() || t(`categories.${category}.name`, { lng: 'en' }),
+      label: !label.trim() || label.trim() === t(`categories.${category}.name`) ? t(`categories.${category}.name`, { lng: 'en' }) : label.trim(),
       enabled,
       soundMode,
       snoozeMins,

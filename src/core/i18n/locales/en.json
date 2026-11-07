@@ -126,8 +126,8 @@
     "category_stats_title": "Category Stats",
     "recent_title": "Recent Activity",
     "no_data": "No completions recorded yet. Keep it up!",
-    "current_streak": "Current Count",
-    "streak_record": "Best Count",
+    "current_streak": "Active streak days (all reminders)",
+    "streak_record": "Best streak (one reminder)",
     "total_completions": "Total Done"
   },
   "settings": {

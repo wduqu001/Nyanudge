@@ -192,6 +192,22 @@ describe('ReminderEdit', () => {
     expect(saved.schedules!.map((sch) => sch.timeValue)).toEqual(['09:00', '15:00', '21:30']);
   });
 
+  it('shows a default label translated and keeps storing the English default', async () => {
+    const updateReminder = vi.fn().mockResolvedValue(undefined);
+    useRemindersStore.setState({ reminders: [makeReminder()], isLoaded: true, updateReminder } as any);
+    await act(async () => { await i18n.changeLanguage('pt-BR'); });
+    try {
+      render(<RouterWrapper id="existing-1" />);
+      expect(screen.getByLabelText('Nome (opcional)')).toHaveValue('Beber Água');
+      await act(async () => {
+        fireEvent.click(screen.getByText('Salvar'));
+      });
+      expect(updateReminder).toHaveBeenCalledWith('existing-1', expect.objectContaining({ label: 'Drink Water' }));
+    } finally {
+      await act(async () => { await i18n.changeLanguage('en'); });
+    }
+  });
+
   it('shows the Archive button only for existing reminders', () => {
     useRemindersStore.setState({ reminders: [makeReminder()], isLoaded: true });
     render(<RouterWrapper id="existing-1" />);
