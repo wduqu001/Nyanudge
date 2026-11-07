@@ -170,12 +170,12 @@ describe('HomeScreen', () => {
       isLoaded: true,
     });
     render(<Wrapper><HomeScreen /></Wrapper>);
-    expect(screen.getByText('5 done — keep going!')).toBeInTheDocument();
+    expect(screen.getByText('5-day streak — keep going!')).toBeInTheDocument();
   });
 
   it('does not show streak banner when maxStreak is 0', () => {
     render(<Wrapper><HomeScreen /></Wrapper>);
-    expect(screen.queryByText(/done — keep going/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/streak — keep going/i)).not.toBeInTheDocument();
   });
 
   // ── Card expand/collapse ──────────────────────────────────────────────────

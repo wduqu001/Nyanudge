@@ -107,7 +107,7 @@
     "no_reminders": "有効なリマインダーはありません",
     "no_schedule": "スケジュールなし",
     "hero_sub": "{{name}} が見守っています 👀",
-    "streak_message": "{{count}}回達成 — その調子です！",
+    "streak_message_other": "{{count}}日連続 — その調子です！",
     "reminders_title": "リマインダー",
     "notif_action_subtitle": "どうしますか？",
     "notif_next_time": "次回",
