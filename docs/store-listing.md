@@ -7,6 +7,7 @@ The app name is **NyaNudge** in every language, matching the launcher. English i
 - **Category:** Health & Fitness (or Lifestyle)
 - **Privacy policy:** https://wduqu001.github.io/Nyanudge/privacy-policy/
 - **Contact email:** wduqu001+nyanudge@gmail.com
+- **Screenshots:** [store-screenshots/en](store-screenshots/en) and [store-screenshots/pt-BR](store-screenshots/pt-BR). There are five per language (Home, an expanded reminder, editing, history, settings), captured 1080×2340 from a Galaxy S23 running the release build. Samsung's current screenshot size rules weren't verified; the only source is a 2021 PDF saying 320–3840 px. Check them when uploading.
 
 ---
 
