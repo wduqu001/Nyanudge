@@ -98,6 +98,7 @@
     "minutes_count": "{{count}} minutes"
   },
   "home": {
+    "snoozed_until": "Snoozed until {{time}}",
     "now": "Now",
     "next_up": "Next up in {{time}}",
     "no_reminders": "No active reminders",

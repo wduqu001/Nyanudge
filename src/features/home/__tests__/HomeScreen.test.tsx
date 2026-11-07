@@ -24,8 +24,10 @@ vi.mock('@capacitor/local-notifications', () => ({
 vi.mock('../../../core/notifications/scheduler', () => ({
   rescheduleAll: vi.fn().mockResolvedValue(undefined),
   msSinceLastReschedule: vi.fn(() => Infinity),
-  calculateNextFireTime: vi.fn().mockReturnValue(null),
+  getPendingSnoozes: vi.fn().mockResolvedValue({}),
+  cancelSnooze: vi.fn().mockResolvedValue(undefined),
   snoozeReminder: vi.fn().mockResolvedValue(undefined),
+  calculateNextFireTime: vi.fn().mockReturnValue(null),
 }));
 
 // Wrap rather than replace the cats so they still render (and stay covered).
@@ -285,6 +287,20 @@ describe('HomeScreen', () => {
     fireEvent.click(screen.getByText(new RegExp(i18n.t('home.notif_next_time'), 'i')));
     expect(snoozeReminder).toHaveBeenCalledWith(expect.objectContaining({ id: 'r1' }));
     expect(setPendingNotifAction).toHaveBeenCalledWith(null);
+  });
+
+  it('shows when a snoozed reminder will fire again', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 10, 6, 21, 0));
+    useRemindersStore.setState({
+      reminders: [makeReminder()],
+      isLoaded: true,
+      snoozedUntil: { r1: new Date(2026, 10, 6, 21, 10).getTime() },
+      refreshSnoozes: vi.fn(),
+    } as any);
+    render(<Wrapper><HomeScreen /></Wrapper>);
+    expect(screen.getByText(/Snoozed until 9:10\sPM/)).toBeInTheDocument();
+    vi.useRealTimers();
   });
 
   it('Android back closes the action sheet before anything else', () => {

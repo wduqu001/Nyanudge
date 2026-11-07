@@ -7,6 +7,9 @@ import { ReminderService } from '../db/ReminderService';
 vi.mock('../notifications/scheduler', () => ({
   rescheduleAll: vi.fn().mockResolvedValue(undefined),
   msSinceLastReschedule: vi.fn().mockReturnValue(Infinity),
+  getPendingSnoozes: vi.fn().mockResolvedValue({}),
+  cancelSnooze: vi.fn().mockResolvedValue(undefined),
+  snoozeReminder: vi.fn().mockResolvedValue(undefined),
 }));
 
 vi.mock('../db/ReminderService', () => ({
@@ -280,6 +283,23 @@ describe('RemindersStore', () => {
 
     expect(useStatsStore.getState().stats['water']!.currentStreak).toBe(1);
     vi.useRealTimers();
+  });
+
+  it('completing a snoozed reminder cancels its snooze', async () => {
+    const { cancelSnooze } = await import('../notifications/scheduler');
+    useRemindersStore.setState({ reminders: [mockReminder], snoozedUntil: { r1: Date.now() + 600_000 } });
+    await useRemindersStore.getState().completeReminder('r1');
+    expect(cancelSnooze).toHaveBeenCalledWith('r1');
+  });
+
+  it('snooze schedules it and records when it will fire', async () => {
+    const { snoozeReminder, getPendingSnoozes } = await import('../notifications/scheduler');
+    const at = Date.now() + 600_000;
+    vi.mocked(getPendingSnoozes).mockResolvedValueOnce({ r1: at, old: Date.now() - 1000 });
+    useRemindersStore.setState({ reminders: [mockReminder] });
+    await useRemindersStore.getState().snooze('r1');
+    expect(snoozeReminder).toHaveBeenCalledWith(expect.objectContaining({ id: 'r1' }));
+    expect(useRemindersStore.getState().snoozedUntil).toEqual({ r1: at });
   });
 
   // ── setPendingNotifAction ──────────────────────────────────────────────────

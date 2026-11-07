@@ -12,6 +12,7 @@ type RemindersStoreWindow = typeof window & {
       completeReminder?: (id: string) => void;
       setPendingNotifAction?: (action: { reminderId: string; label: string; category: string } | null) => void;
       syncNotifications?: () => Promise<void>;
+      snooze?: (id: string) => Promise<void>;
     };
   };
 };
@@ -69,7 +70,10 @@ export function useNotificationSetup() {
           storeHook?.getState?.()?.completeReminder?.(extra.reminderId);
 
         } else if (actionId === 'snooze') {
-          if (reminder) snoozeReminder(reminder).catch(() => {});
+          if (reminder) {
+            const snooze = storeHook?.getState?.()?.snooze;
+            (snooze ? snooze(reminder.id) : snoozeReminder(reminder)).catch(() => {});
+          }
 
         } else if (usePreferencesStore.getState().preferences.markAsDoneOnOpen) {
           storeHook?.getState?.()?.completeReminder?.(extra.reminderId);

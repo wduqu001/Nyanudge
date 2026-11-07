@@ -85,6 +85,7 @@ function App() {
     const appStateSub = CapacitorApp.addListener('appStateChange', ({ isActive }) => {
       if (isActive) {
         useRemindersStore.getState().rehydrateFromDb();
+        useRemindersStore.getState().refreshSnoozes();
       }
     });
 

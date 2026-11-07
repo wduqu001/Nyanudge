@@ -101,6 +101,7 @@
     "minutes_count": "{{count}} minutos"
   },
   "home": {
+    "snoozed_until": "Adiado até {{time}}",
     "now": "Agora",
     "next_up": "Próximo em {{time}}",
     "no_reminders": "Nenhum lembrete ativo",

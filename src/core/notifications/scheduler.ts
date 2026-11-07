@@ -354,3 +354,22 @@ export async function snoozeReminder(reminder: Reminder): Promise<void> {
     }],
   });
 }
+
+/** Pending snoozes by reminder id, read back from the OS so they survive app restarts. */
+export async function getPendingSnoozes(): Promise<Record<string, number>> {
+  try {
+    const { notifications } = await LocalNotifications.getPending();
+    const snoozes: Record<string, number> = {};
+    for (const n of notifications) {
+      const at = n.schedule?.at;
+      if (n.extra?.isSnoozed && n.extra?.reminderId && at) snoozes[n.extra.reminderId] = new Date(at).getTime();
+    }
+    return snoozes;
+  } catch {
+    return {};
+  }
+}
+
+export async function cancelSnooze(reminderId: string): Promise<void> {
+  await LocalNotifications.cancel({ notifications: [{ id: hashId(`${reminderId}-snooze`) }] }).catch(() => {});
+}

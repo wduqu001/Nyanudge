@@ -101,6 +101,7 @@
     "minutes_count": "{{count}} 分"
   },
   "home": {
+    "snoozed_until": "{{time}} までスヌーズ中",
     "now": "まもなく",
     "next_up": "次の予定まで {{time}}",
     "no_reminders": "有効なリマインダーはありません",

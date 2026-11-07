@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useRemindersStore } from '../../core/store/remindersStore';
 import { usePreferencesStore } from '../../core/store/preferencesStore';
 import { useStatsStore } from '../../core/store/statsStore';
-import { calculateNextFireTime, snoozeReminder } from '../../core/notifications/scheduler';
+import { calculateNextFireTime } from '../../core/notifications/scheduler';
 
 import { Card } from '../../shared/components/Card/Card';
 import { Toggle } from '../../shared/components/Toggle/Toggle';
@@ -62,7 +62,7 @@ function nextFireOf(r: Reminder): Date | null {
 export const HomeScreen: React.FC = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const { reminders, toggleReminder, completeReminder, pendingNotifAction, setPendingNotifAction } = useRemindersStore();
+  const { reminders, toggleReminder, completeReminder, pendingNotifAction, setPendingNotifAction, snoozedUntil, snooze, refreshSnoozes } = useRemindersStore();
   const { preferences } = usePreferencesStore();
   const { stats } = useStatsStore();
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -70,6 +70,22 @@ export const HomeScreen: React.FC = () => {
   useBackHandler(pendingNotifAction !== null, () => setPendingNotifAction(null));
   const [pendingNotifs, setPendingNotifs] = useState<PendingResult | null>(null);
   const [currentTime, setCurrentTime] = useState(() => Date.now());
+
+  React.useEffect(() => {
+    refreshSnoozes();
+  }, [refreshSnoozes]);
+
+  /** Active snooze time for a reminder, if one is still pending. */
+  const snoozeOf = (r: Reminder): Date | null =>
+    snoozedUntil[r.id] && snoozedUntil[r.id]! > currentTime ? new Date(snoozedUntil[r.id]!) : null;
+
+  /** The sooner of the snooze and the next scheduled fire. */
+  const upcomingOf = (r: Reminder): Date | null => {
+    const fire = nextFireOf(r);
+    const snoozed = snoozeOf(r);
+    if (!fire || !snoozed) return fire ?? snoozed;
+    return fire < snoozed ? fire : snoozed;
+  };
 
   // Re-calculate "Next Up" every minute
   React.useEffect(() => {
@@ -97,7 +113,7 @@ export const HomeScreen: React.FC = () => {
 
     reminders.forEach(r => {
       if (!r.enabled || r.archived) return;
-      const fire = nextFireOf(r);
+      const fire = upcomingOf(r);
       if (fire && (!earliestDate || fire < earliestDate)) {
         earliestDate = fire;
         nextReminder = r;
@@ -120,7 +136,8 @@ export const HomeScreen: React.FC = () => {
       reminder: nextReminder as Reminder,
       timeStr
     };
-  }, [reminders, t, currentTime, i18n.language]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- upcomingOf reads snoozedUntil and currentTime, both listed
+  }, [reminders, t, currentTime, i18n.language, snoozedUntil]);
 
   const handleCardClick = (id: string) => {
     setExpandedId(expandedId === id ? null : id);
@@ -128,6 +145,8 @@ export const HomeScreen: React.FC = () => {
 
   const formatSchedule = (reminder: Reminder) => {
     if (!reminder.enabled) return t('actions.disabled');
+    const snoozed = snoozeOf(reminder);
+    if (snoozed) return t('home.snoozed_until', { time: formatNextFire(snoozed, new Date(currentTime), i18n.language) });
     const schedule = reminder.schedules && reminder.schedules[0];
     if (!schedule) return t('home.no_schedule');
     
@@ -256,7 +275,7 @@ export const HomeScreen: React.FC = () => {
                   <div className="expanded-divider" />
                   <div className="quick-actions">
                     {(() => {
-                      const next = reminder.enabled ? nextFireOf(reminder) : null;
+                      const next = reminder.enabled ? upcomingOf(reminder) : null;
                       return next && (
                         <div className="quick-info">
                           <span className="quick-label">{t('home.quick_edit.next_fire')}</span>
@@ -376,7 +395,7 @@ export const HomeScreen: React.FC = () => {
 
                 <button
                   onClick={() => {
-                    if (rem) snoozeReminder(rem).catch(() => {});
+                    if (rem) snooze(rem.id).catch(() => {});
                     setPendingNotifAction(null);
                   }}
                   style={{

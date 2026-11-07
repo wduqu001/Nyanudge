@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { useStatsStore } from './statsStore';
-import { rescheduleAll, msSinceLastReschedule } from '../notifications/scheduler';
+import { rescheduleAll, msSinceLastReschedule, snoozeReminder, getPendingSnoozes, cancelSnooze } from '../notifications/scheduler';
 import { ReminderService } from '../db/ReminderService';
 
 export interface NotifTapAction {
@@ -14,6 +14,8 @@ interface RemindersState {
   isLoaded: boolean;
   /** Set when user taps a notification body — HomeScreen shows a modal. */
   pendingNotifAction: NotifTapAction | null;
+  /** Pending snooze fire times (ms) by reminder id. */
+  snoozedUntil: Record<string, number>;
 
   setReminders: (reminders: Reminder[]) => void;
   addReminder: (reminder: Reminder) => Promise<void>;
@@ -27,12 +29,15 @@ interface RemindersState {
   rehydrateFromDb: () => Promise<void>;
   /** Re-plans every notification; with `ifOlderThanMs`, only when the last plan is older. */
   syncNotifications: (options?: { ifOlderThanMs?: number }) => Promise<void>;
+  snooze: (id: string) => Promise<void>;
+  refreshSnoozes: () => Promise<void>;
 }
 
 export const useRemindersStore = create<RemindersState>((set, get) => ({
   reminders: [],
   isLoaded: false,
   pendingNotifAction: null,
+  snoozedUntil: {},
 
   setReminders: (reminders) => {
     set({ reminders, isLoaded: true });
@@ -122,6 +127,12 @@ export const useRemindersStore = create<RemindersState>((set, get) => ({
     addCompletion(entry);
     recordCompletion(r.category, entry.completedAt);
 
+    // Done supersedes a pending snooze of the same reminder.
+    if (get().snoozedUntil[id]) {
+      await cancelSnooze(id);
+      await get().refreshSnoozes();
+    }
+
     // Update reminder anchor so the next interval starts from NOW
     const now = Date.now();
     set((state) => ({
@@ -149,6 +160,20 @@ export const useRemindersStore = create<RemindersState>((set, get) => ({
     if (!get().isLoaded) return;
     if (options?.ifOlderThanMs !== undefined && msSinceLastReschedule() < options.ifOlderThanMs) return;
     await rescheduleAll(get().reminders);
+    await get().refreshSnoozes();
+  },
+
+  snooze: async (id) => {
+    const r = get().reminders.find((rem) => rem.id === id);
+    if (!r) return;
+    await snoozeReminder(r);
+    await get().refreshSnoozes();
+  },
+
+  refreshSnoozes: async () => {
+    const all = await getPendingSnoozes();
+    const now = Date.now();
+    set({ snoozedUntil: Object.fromEntries(Object.entries(all).filter(([, at]) => at > now)) });
   },
 
   rehydrateFromDb: async () => {

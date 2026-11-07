@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import {
   calculateNextFireTime, upcomingFireTimes, rescheduleAll, snoozeReminder, channelFor, setQuietHours, isInQuietHours,
-  setCompactNotifications, ensureNotificationChannels,
+  setCompactNotifications, ensureNotificationChannels, getPendingSnoozes, cancelSnooze,
 } from './scheduler';
 
 vi.mock('@capacitor/local-notifications', () => ({
@@ -329,6 +329,24 @@ describe('scheduler', () => {
       expect(first?.extra.isSnoozed).toBe(true);
       expect(first?.schedule?.at!.getTime()).toBe(new Date(2026, 4, 10, 8, 10).getTime());
       expect(first?.id).not.toBe(second?.id);
+    });
+  });
+
+  describe('pending snoozes', () => {
+    it('reads snooze times back from the OS, ignoring regular slots', async () => {
+      const at = new Date(2026, 10, 6, 21, 10);
+      vi.mocked(LocalNotifications.getPending).mockResolvedValueOnce({ notifications: [
+        { id: 1, title: '', body: '', schedule: { at }, extra: { reminderId: 'r1', isSnoozed: true } },
+        { id: 2, title: '', body: '', schedule: { at }, extra: { reminderId: 'r2' } },
+      ] });
+      await expect(getPendingSnoozes()).resolves.toEqual({ r1: at.getTime() });
+    });
+
+    it('cancels the same id snoozeReminder scheduled', async () => {
+      await snoozeReminder(makeReminder());
+      const snoozeId = scheduled()[0]!.id;
+      await cancelSnooze('r1');
+      expect(LocalNotifications.cancel).toHaveBeenCalledWith({ notifications: [{ id: snoozeId }] });
     });
   });
 

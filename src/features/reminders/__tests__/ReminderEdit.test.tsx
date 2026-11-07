@@ -13,6 +13,9 @@ import { usePreferencesStore } from '../../../core/store/preferencesStore';
 vi.mock('../../../core/notifications/scheduler', () => ({
   rescheduleAll: vi.fn().mockResolvedValue(undefined),
   msSinceLastReschedule: vi.fn(() => Infinity),
+  getPendingSnoozes: vi.fn().mockResolvedValue({}),
+  cancelSnooze: vi.fn().mockResolvedValue(undefined),
+  snoozeReminder: vi.fn().mockResolvedValue(undefined),
 }));
 
 vi.mock('../../../core/db/ReminderService', () => ({
