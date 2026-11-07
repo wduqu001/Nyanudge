@@ -57,7 +57,9 @@ const ReminderForm: React.FC<FormProps> = ({ initialReminder, isNew, onSave, onA
       snoozeMins,
       character,
       customMessage: customMessage || undefined,
-      schedules,
+      // Keep fixed times in chronological order so the editor lists them sorted next time.
+      schedules: [...schedules].sort((x, y) =>
+        x.type === 'fixed' && y.type === 'fixed' ? (x.timeValue ?? '').localeCompare(y.timeValue ?? '') : 0),
       category,
     });
   };

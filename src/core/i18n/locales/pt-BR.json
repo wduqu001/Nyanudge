@@ -202,10 +202,10 @@
       "char_sora": "Sora",
       "char_kuro": "Kuro",
       "language": "Idioma",
-      "lang_en": "Inglês",
+      "lang_en": "English",
       "lang_ptBR": "Português (BR)",
-      "lang_ja": "Japonês",
-      "lang_esES": "Espanhol"
+      "lang_ja": "日本語",
+      "lang_esES": "Español"
     },
     "reminders": {
       "title": "LEMBRETES",

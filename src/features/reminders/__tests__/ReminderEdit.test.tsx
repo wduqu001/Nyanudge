@@ -208,6 +208,19 @@ describe('ReminderEdit', () => {
     }
   });
 
+  it('saves fixed times in chronological order', async () => {
+    const updateReminder = vi.fn().mockResolvedValue(undefined);
+    const reminder = makeReminder({ schedules: ['09:00', '12:00'].map((timeValue, i) => ({ id: `s${i}`, reminderId: 'existing-1', type: 'fixed' as const, timeValue })) });
+    useRemindersStore.setState({ reminders: [reminder], isLoaded: true, updateReminder } as any);
+    render(<RouterWrapper id="existing-1" />);
+    fireEvent.change(screen.getByLabelText('Time 1'), { target: { value: '21:00' } });
+    await act(async () => {
+      fireEvent.click(screen.getByText(/save/i));
+    });
+    const saved = updateReminder.mock.calls[0]![1] as Partial<Reminder>;
+    expect(saved.schedules!.map((sch) => sch.timeValue)).toEqual(['12:00', '21:00']);
+  });
+
   it('shows the Archive button only for existing reminders', () => {
     useRemindersStore.setState({ reminders: [makeReminder()], isLoaded: true });
     render(<RouterWrapper id="existing-1" />);
