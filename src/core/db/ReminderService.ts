@@ -131,10 +131,10 @@ export class ReminderService {
 
     // Bump updated_at whenever the reminder changes at all, including a schedules-only edit.
     const touchesReminderRow =
-      fields.length > 0 || changes.updatedAt !== undefined || changes.schedules !== undefined;
+      fields.length > 0 || changes.schedules !== undefined;
     if (touchesReminderRow) {
       fields.push('updated_at = ?');
-      values.push(changes.updatedAt ?? Date.now(), id);
+      values.push(Date.now(), id);
       await db.run(`UPDATE reminders SET ${fields.join(', ')} WHERE id = ?`, values);
     }
 
