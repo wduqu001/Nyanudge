@@ -84,6 +84,23 @@ function hashId(seed: string): number {
 export function calculateNextFireTime(schedule: Schedule, anchor?: number, overrideNow?: Date): Date | undefined {
   const now = overrideNow ?? new Date();
 
+  const days = schedule.daysOfWeek;
+  if (schedule.type === 'interval' && days?.length) {
+    // An overnight window belongs to the day it opens: Friday 22:00–02:00 includes Saturday 01:00.
+    let pointer = now;
+    for (let i = 0; i < 8; i++) {
+      const next = calculateNextFireTime({ ...schedule, daysOfWeek: undefined }, anchor, pointer);
+      if (!next) return undefined;
+      const opened = new Date(next);
+      opened.setHours(0, toMinutes(schedule.startTime ?? '00:00'), 0, 0);
+      if (opened > next) opened.setDate(opened.getDate() - 1);
+      if (days.includes(opened.getDay())) return next;
+      opened.setDate(opened.getDate() + 1);
+      pointer = new Date(opened.getTime() - 1);
+    }
+    return undefined;
+  }
+
   // --- FIXED SCHEDULE ---
   if (schedule.type === 'fixed' && schedule.timeValue) {
     const parts = schedule.timeValue.split(':');
@@ -233,7 +250,6 @@ export function isInQuietHours(date: Date, hours: QuietHours | null): boolean {
 /** Next fire times for a reminder across all its schedules, soonest first, within the horizon. */
 export function upcomingFireTimes(reminder: Reminder, now: Date, limit: number): Date[] {
   const horizon = now.getTime() + HORIZON_DAYS * 86_400_000;
-  const anchor = Math.floor(Math.max(reminder.updatedAt || 0, reminder.createdAt || 0) / 60_000) * 60_000;
   const quiet = reminder.category === 'medicine' ? null : quietHours;
   const times = new Map<number, Date>();
 
@@ -241,7 +257,7 @@ export function upcomingFireTimes(reminder: Reminder, now: Date, limit: number):
     let pointer = now;
     // Quiet-hour slots are skipped, so scan a bounded number of candidates.
     for (let i = 0; i < limit * 4; i++) {
-      const next = calculateNextFireTime(sched, sched.type === 'interval' ? anchor : undefined, pointer);
+      const next = calculateNextFireTime(sched, undefined, pointer);
       if (!next || next.getTime() > horizon) break;
       if (!isInQuietHours(next, quiet)) times.set(next.getTime(), next);
       pointer = new Date(next.getTime() + 60_000);

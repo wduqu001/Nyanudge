@@ -50,10 +50,9 @@ const CATEGORY_BG_COLORS: Record<Category, string> = {
 };
 
 function nextFireOf(r: Reminder): Date | null {
-  const cleanAnchor = Math.floor(Math.max(r.updatedAt || 0, r.createdAt || 0) / 60000) * 60000;
   let earliest: Date | null = null;
   r.schedules.forEach(s => {
-    const fire = calculateNextFireTime(s, cleanAnchor);
+    const fire = calculateNextFireTime(s);
     if (fire && (!earliest || fire < earliest)) earliest = fire;
   });
   return earliest;

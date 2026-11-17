@@ -201,6 +201,36 @@ describe('scheduler', () => {
       expect(new Set(times.map((t) => t.getDate())).size).toBeGreaterThan(1);
     });
 
+    it('fires interval reminders on the clock grid of the window, whenever the reminder was saved', () => {
+      const saved = new Date(2026, 10, 13, 10, 23).getTime(); // Fri 13 Nov, 10:23
+      const workHours = makeReminder({ createdAt: saved, updatedAt: saved, schedules: [{ id: 's1', reminderId: 'r1', type: 'interval', timeValue: '60', startTime: '08:00', endTime: '18:00', daysOfWeek: [1, 2, 3, 4, 5] }] });
+      const times = upcomingFireTimes(workHours, new Date(saved), 20);
+      expect(times.map((t) => `${t.getDay()} ${t.getHours()}:${String(t.getMinutes()).padStart(2, '0')}`)).toEqual([
+        '5 11:00', '5 12:00', '5 13:00', '5 14:00', '5 15:00', '5 16:00', '5 17:00', '5 18:00',
+        '1 8:00', '1 9:00', '1 10:00', '1 11:00', '1 12:00', '1 13:00', '1 14:00', '1 15:00', '1 16:00', '1 17:00', '1 18:00',
+        '2 8:00',
+      ]);
+    });
+
+    it('fires interval reminders only on the chosen weekdays', () => {
+      const workdays = makeReminder({ schedules: [{ id: 's1', reminderId: 'r1', type: 'interval', timeValue: '60', startTime: '08:00', endTime: '18:00', daysOfWeek: [1, 2, 3, 4, 5] }] });
+      const times = upcomingFireTimes(workdays, new Date(2026, 10, 13, 17, 30), 3); // Fri 13 Nov
+      expect(times.map((t) => `${t.getDay()} ${t.getHours()}:${t.getMinutes()}`)).toEqual(['5 18:0', '1 8:0', '1 9:0']);
+    });
+
+    it('judges an overnight interval window by the day it opens', () => {
+      const at22 = new Date(2026, 10, 1, 22, 0).getTime();
+      const fridayNights = makeReminder({ createdAt: at22, updatedAt: at22, schedules: [{ id: 's1', reminderId: 'r1', type: 'interval', timeValue: '120', startTime: '22:00', endTime: '02:00', daysOfWeek: [5] }] });
+      const times = upcomingFireTimes(fridayNights, new Date(2026, 10, 12, 12, 0), 4); // Thu 12 Nov
+      expect(times.map((t) => `${t.getDate()} ${t.getHours()}`)).toEqual(['13 22', '14 0', '14 2', '20 22']);
+    });
+
+    it('fires interval reminders every day when no weekday is chosen', () => {
+      const reminder = makeReminder({ schedules: [{ id: 's1', reminderId: 'r1', type: 'interval', timeValue: '60', startTime: '08:00', endTime: '08:00', daysOfWeek: [] }] });
+      const times = upcomingFireTimes(reminder, new Date(2026, 10, 13, 9, 0), 2);
+      expect(times.map((t) => t.getDate())).toEqual([14, 15]);
+    });
+
     it('keeps the local wall-clock time across a DST change', () => {
       const previousTz = process.env.TZ;
       process.env.TZ = 'America/New_York'; // DST ends 2026-11-01

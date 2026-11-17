@@ -133,19 +133,9 @@ export const useRemindersStore = create<RemindersState>((set, get) => ({
       await get().refreshSnoozes();
     }
 
-    // Update reminder anchor so the next interval starts from NOW
-    const now = Date.now();
-    set((state) => ({
-      reminders: state.reminders.map((rem) =>
-        rem.id === id ? { ...rem, updatedAt: now } : rem
-      ),
-    }));
-
-    // Persist Completion & Anchor
     ReminderService.addCompletion(entry).catch(err => console.error('[Store] Error saving completion:', err));
-    ReminderService.updateReminder(id, { updatedAt: now }).catch(() => { }); // Anchor it in DB too
 
-    // Interval slots are anchored to the last completion, so they move.
+    // Interval reminders use up their planned alarms fastest; Done may be the only interaction that tops them up.
     if (r.schedules.some(s => s.type === 'interval')) get().syncNotifications();
   },
 

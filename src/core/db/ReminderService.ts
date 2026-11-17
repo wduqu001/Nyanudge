@@ -129,10 +129,7 @@ export class ReminderService {
       values.push(changes.customMessage);
     }
 
-    // Bump updated_at whenever the reminder changes at all — a scalar field, an
-    // explicit anchor (completeReminder passes only { updatedAt }), or a
-    // schedules-only edit. The interval anchor lives in this column, so it must
-    // be written even when no other scalar field changed.
+    // Bump updated_at whenever the reminder changes at all, including a schedules-only edit.
     const touchesReminderRow =
       fields.length > 0 || changes.updatedAt !== undefined || changes.schedules !== undefined;
     if (touchesReminderRow) {
