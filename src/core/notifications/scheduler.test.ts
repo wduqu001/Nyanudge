@@ -58,16 +58,6 @@ describe('scheduler', () => {
       expect(result?.getDay()).toBe(1);
     });
 
-    it('interval: schedules next slot within today window (anchored)', () => {
-      const now = new Date(2026, 4, 10, 8, 30); 
-      vi.setSystemTime(now);
-      const schedule: Schedule = { id: '1', reminderId: 'r1', type: 'interval', timeValue: '60', startTime: '07:00', endTime: '21:00' };
-      const result = calculateNextFireTime(schedule, now.getTime());
-      // Anchored at 08:30 + 60 mins = 09:30
-      expect(result?.getHours()).toBe(9);
-      expect(result?.getMinutes()).toBe(30);
-    });
-
     it('interval: pushes tomorrow if now is past end window', () => {
       const now = new Date(2026, 4, 10, 22, 0); 
       vi.setSystemTime(now);
@@ -77,7 +67,7 @@ describe('scheduler', () => {
       expect(result?.getHours()).toBe(7);
     });
 
-    it('interval: snaps to the next clean slot when no anchor is provided', () => {
+    it('interval: snaps to the next clean slot of the window', () => {
       // Current time is 17:18
       vi.setSystemTime(new Date(2023, 9, 10, 17, 18, 0));
       
@@ -136,7 +126,7 @@ describe('scheduler', () => {
         id: '1', reminderId: 'r1', type: 'interval', timeValue: '60',
         startTime: '22:00', endTime: '06:00',
       };
-      const result = calculateNextFireTime(schedule, now.getTime(), now);
+      const result = calculateNextFireTime(schedule, now);
       expect(result).toBeDefined();
       // Should return a time that is ≤ 06:00 today (still inside window)
       expect(result!.getHours()).toBeLessThanOrEqual(6);
@@ -150,7 +140,7 @@ describe('scheduler', () => {
         id: '1', reminderId: 'r1', type: 'interval', timeValue: '60',
         startTime: '22:00', endTime: '06:00',
       };
-      const result = calculateNextFireTime(schedule, undefined, now);
+      const result = calculateNextFireTime(schedule, now);
       expect(result).toBeDefined();
       // Should snap to windowStart tonight (22:00)
       expect(result!.getHours()).toBe(22);

@@ -81,7 +81,7 @@ function hashId(seed: string): number {
  * Calculates the next fire time for a given schedule rule.
  * Handles overnight windows (e.g. 10pm - 6am).
  */
-export function calculateNextFireTime(schedule: Schedule, anchor?: number, overrideNow?: Date): Date | undefined {
+export function calculateNextFireTime(schedule: Schedule, overrideNow?: Date): Date | undefined {
   const now = overrideNow ?? new Date();
 
   const days = schedule.daysOfWeek;
@@ -89,7 +89,7 @@ export function calculateNextFireTime(schedule: Schedule, anchor?: number, overr
     // An overnight window belongs to the day it opens: Friday 22:00–02:00 includes Saturday 01:00.
     let pointer = now;
     for (let i = 0; i < 8; i++) {
-      const next = calculateNextFireTime({ ...schedule, daysOfWeek: undefined }, anchor, pointer);
+      const next = calculateNextFireTime({ ...schedule, daysOfWeek: undefined }, pointer);
       if (!next) return undefined;
       const opened = new Date(next);
       opened.setHours(0, toMinutes(schedule.startTime ?? '00:00'), 0, 0);
@@ -172,7 +172,7 @@ export function calculateNextFireTime(schedule: Schedule, anchor?: number, overr
 
     // CASE 2: Current time is inside the window
     if (now >= windowStart && now <= windowEnd) {
-      const anchorTime = anchor ?? windowStart.getTime();
+      const anchorTime = windowStart.getTime();
       const intervalMs = intervalMins * 60_000;
 
       // Calculate how many intervals have passed since anchor
@@ -256,7 +256,7 @@ export function upcomingFireTimes(reminder: Reminder, now: Date, limit: number):
     let pointer = now;
     // Quiet-hour slots are skipped, so scan a bounded number of candidates.
     for (let i = 0; i < limit * 4; i++) {
-      const next = calculateNextFireTime(sched, undefined, pointer);
+      const next = calculateNextFireTime(sched, pointer);
       if (!next || next.getTime() > horizon) break;
       if (!isInQuietHours(next, quiet)) times.set(next.getTime(), next);
       pointer = new Date(next.getTime() + 60_000);
