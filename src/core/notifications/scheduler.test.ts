@@ -305,6 +305,17 @@ describe('scheduler', () => {
       expect(LocalNotifications.cancel).not.toHaveBeenCalled();
     });
 
+    it('gives alarms that quiet reminders leave unused to busy ones', async () => {
+      vi.setSystemTime(new Date(2026, 10, 16, 7, 0));
+      const workHours = makeReminder({ id: 'busy', schedules: [{ id: 's', reminderId: 'busy', type: 'interval', timeValue: '60', startTime: '08:00', endTime: '18:00', daysOfWeek: [1, 2, 3, 4, 5] }] });
+      const daily = makeReminder({ id: 'daily', schedules: [{ id: 's', reminderId: 'daily', type: 'fixed', timeValue: '09:00' }] });
+      await rescheduleAll([workHours, daily]);
+      const count = (id: string) => scheduled().filter((n) => n.extra.reminderId === id).length;
+      expect(count('daily')).toBe(30);
+      expect(count('busy')).toBe(upcomingFireTimes(workHours, new Date(), 1000).length); // the whole 30-day horizon
+      expect(count('busy')).toBeGreaterThan(64);
+    });
+
     it('stays under the shared alarm budget with many reminders', async () => {
       const many = Array.from({ length: 10 }, (_, i) => makeReminder({
         id: `r${i}`,

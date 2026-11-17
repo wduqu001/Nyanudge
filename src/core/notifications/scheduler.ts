@@ -212,7 +212,6 @@ export function calculateNextFireTime(schedule: Schedule, anchor?: number, overr
 
 // Android caps an app at 500 concurrent alarms; the budget is shared by every reminder.
 const MAX_TOTAL_SLOTS = 400;
-const MAX_SLOTS_PER_REMINDER = 64;
 const HORIZON_DAYS = 30;
 
 export interface QuietHours {
@@ -323,9 +322,19 @@ async function doReschedule(reminders: Reminder[]): Promise<void> {
 
   // Asking for exact alarms without the permission makes the plugin open system settings.
   const exact = await canScheduleExact();
-  const perReminder = Math.min(MAX_SLOTS_PER_REMINDER, Math.floor(MAX_TOTAL_SLOTS / active.length));
   const now = new Date();
-  const notifications = active.flatMap((r) => buildNotifications(r, upcomingFireTimes(r, now, perReminder), exact));
+  // Reminders that need less than an equal share of the budget leave the rest to busier ones.
+  const wanted = active.map((r) => upcomingFireTimes(r, now, MAX_TOTAL_SLOTS));
+  const planned: Date[][] = [];
+  let budget = MAX_TOTAL_SLOTS;
+  wanted
+    .map((times, i) => ({ times, i }))
+    .sort((a, b) => a.times.length - b.times.length)
+    .forEach(({ times, i }, k, all) => {
+      planned[i] = times.slice(0, Math.floor(budget / (all.length - k)));
+      budget -= planned[i]!.length;
+    });
+  const notifications = active.flatMap((r, i) => buildNotifications(r, planned[i]!, exact));
   if (notifications.length > 0) {
     await LocalNotifications.schedule({ notifications });
   }
