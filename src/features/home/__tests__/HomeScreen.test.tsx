@@ -8,7 +8,7 @@ import { HomeScreen } from '../HomeScreen';
 import { useRemindersStore } from '../../../core/store/remindersStore';
 import { usePreferencesStore } from '../../../core/store/preferencesStore';
 import { useStatsStore } from '../../../core/store/statsStore';
-import { calculateNextFireTime, snoozeReminder } from '../../../core/notifications/scheduler';
+import { snoozeReminder, upcomingFireTimes } from '../../../core/notifications/scheduler';
 import { runBackHandler } from '../../../shared/hooks/useBackHandler';
 
 // ── Capacitor & heavy deps mocks ─────────────────────────────────────────────
@@ -27,7 +27,7 @@ vi.mock('../../../core/notifications/scheduler', () => ({
   getPendingSnoozes: vi.fn().mockResolvedValue({}),
   cancelSnooze: vi.fn().mockResolvedValue(undefined),
   snoozeReminder: vi.fn().mockResolvedValue(undefined),
-  calculateNextFireTime: vi.fn().mockReturnValue(null),
+  upcomingFireTimes: vi.fn().mockReturnValue([]),
 }));
 
 // Wrap rather than replace the cats so they still render (and stay covered).
@@ -84,7 +84,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
 beforeEach(() => {
   vi.clearAllMocks();
   navigateMock.mockReset();
-  vi.mocked(calculateNextFireTime).mockReturnValue(undefined);
+  vi.mocked(upcomingFireTimes).mockReturnValue([]);
   useRemindersStore.setState({
     reminders: [],
     isLoaded: true,
@@ -130,7 +130,7 @@ describe('HomeScreen', () => {
     vi.useFakeTimers();
     const mockDate = new Date(2023, 9, 10, 10, 0, 0);
     vi.setSystemTime(mockDate);
-    vi.mocked(calculateNextFireTime).mockReturnValue(new Date(mockDate.getTime() + 30 * 60_000));
+    vi.mocked(upcomingFireTimes).mockReturnValue([new Date(mockDate.getTime() + 30 * 60_000)]);
     useRemindersStore.setState({
       reminders: [makeReminder({ label: 'Drink!', createdAt: 0, updatedAt: 0, schedules: [{ id: 's1', reminderId: 'r1', type: 'fixed', timeValue: '10:30' }] })],
       isLoaded: true,
@@ -138,6 +138,24 @@ describe('HomeScreen', () => {
     render(<Wrapper><HomeScreen /></Wrapper>);
     expect(screen.getByText('Next up in 30 min')).toBeInTheDocument();
     expect(screen.getAllByText('Drink!').length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('skips Do Not Disturb times when showing the next reminder', async () => {
+    const actual = await vi.importActual<typeof import('../../../core/notifications/scheduler')>('../../../core/notifications/scheduler');
+    vi.mocked(upcomingFireTimes).mockImplementation(actual.upcomingFireTimes);
+    actual.setQuietHours({ start: '10:00', end: '10:20' });
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2023, 9, 10, 10, 0, 0));
+    try {
+      useRemindersStore.setState({
+        reminders: [makeReminder({ schedules: ['10:10', '10:30'].map((timeValue, i) => ({ id: `s${i}`, reminderId: 'r1', type: 'fixed' as const, timeValue })) })],
+        isLoaded: true,
+      });
+      render(<Wrapper><HomeScreen /></Wrapper>);
+      expect(screen.getByText('Next up in 30 min')).toBeInTheDocument();
+    } finally {
+      actual.setQuietHours(null);
+    }
   });
 
   it('renders the list of active (non-archived) reminders', () => {

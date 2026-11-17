@@ -176,6 +176,20 @@ describe('ReminderEdit', () => {
     expect(saved.schedules![0]).toEqual(expect.objectContaining({ type: 'interval', timeValue: '120' }));
   });
 
+  it('gives a fixed reminder without a window a default window when switched to interval', async () => {
+    const updateReminder = vi.fn().mockResolvedValue(undefined);
+    useRemindersStore.setState({ reminders: [makeReminder()], isLoaded: true, updateReminder } as any);
+    render(<RouterWrapper id="existing-1" />);
+    fireEvent.click(screen.getByRole('button', { name: 'Interval' }));
+    expect(screen.getByLabelText('Start')).toHaveValue('07:00');
+    expect(screen.getByLabelText('End')).toHaveValue('21:00');
+    await act(async () => {
+      fireEvent.click(screen.getByText(/save/i));
+    });
+    const saved = updateReminder.mock.calls[0]![1] as Partial<Reminder>;
+    expect(saved.schedules![0]).toEqual(expect.objectContaining({ startTime: '07:00', endTime: '21:00' }));
+  });
+
   it('shows and saves every fixed time, including added and removed ones', async () => {
     const updateReminder = vi.fn().mockResolvedValue(undefined);
     const reminder = makeReminder({ schedules: ['09:00', '12:00', '15:00'].map((timeValue, i) => ({ id: `s${i}`, reminderId: 'existing-1', type: 'fixed' as const, timeValue })) });
