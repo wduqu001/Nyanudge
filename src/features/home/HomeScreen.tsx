@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useRemindersStore } from '../../core/store/remindersStore';
 import { usePreferencesStore } from '../../core/store/preferencesStore';
 import { useStatsStore } from '../../core/store/statsStore';
-import { calculateNextFireTime } from '../../core/notifications/scheduler';
+import { upcomingFireTimes } from '../../core/notifications/scheduler';
 
 import { Card } from '../../shared/components/Card/Card';
 import { Toggle } from '../../shared/components/Toggle/Toggle';
@@ -49,14 +49,9 @@ const CATEGORY_BG_COLORS: Record<Category, string> = {
   medicine: 'var(--color-icon-bg-disabled)',
 };
 
+// Same rules as the scheduler, so Home never shows a time that is skipped for Do Not Disturb.
 function nextFireOf(r: Reminder): Date | null {
-  const cleanAnchor = Math.floor(Math.max(r.updatedAt || 0, r.createdAt || 0) / 60000) * 60000;
-  let earliest: Date | null = null;
-  r.schedules.forEach(s => {
-    const fire = calculateNextFireTime(s, cleanAnchor);
-    if (fire && (!earliest || fire < earliest)) earliest = fire;
-  });
-  return earliest;
+  return upcomingFireTimes(r, new Date(), 1)[0] ?? null;
 }
 
 export const HomeScreen: React.FC = () => {

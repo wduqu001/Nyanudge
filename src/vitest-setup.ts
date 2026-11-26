@@ -1,6 +1,6 @@
 import { expect, afterEach } from 'vitest';
 import { cleanup } from '@testing-library/react';
-import '@testing-library/jest-dom'; // augments vitest's Assertion<T> with jest-dom matchers
+import '@testing-library/jest-dom/vitest'; // adds the jest-dom matchers to vitest's Assertion types
 import * as matchers from '@testing-library/jest-dom/matchers';
 
 expect.extend(matchers);

@@ -81,8 +81,25 @@ function hashId(seed: string): number {
  * Calculates the next fire time for a given schedule rule.
  * Handles overnight windows (e.g. 10pm - 6am).
  */
-export function calculateNextFireTime(schedule: Schedule, anchor?: number, overrideNow?: Date): Date | undefined {
+export function calculateNextFireTime(schedule: Schedule, overrideNow?: Date): Date | undefined {
   const now = overrideNow ?? new Date();
+
+  const days = schedule.daysOfWeek;
+  if (schedule.type === 'interval' && days?.length) {
+    // An overnight window belongs to the day it opens: Friday 22:00–02:00 includes Saturday 01:00.
+    let pointer = now;
+    for (let i = 0; i < 8; i++) {
+      const next = calculateNextFireTime({ ...schedule, daysOfWeek: undefined }, pointer);
+      if (!next) return undefined;
+      const opened = new Date(next);
+      opened.setHours(0, toMinutes(schedule.startTime ?? '00:00'), 0, 0);
+      if (opened > next) opened.setDate(opened.getDate() - 1);
+      if (days.includes(opened.getDay())) return next;
+      opened.setDate(opened.getDate() + 1);
+      pointer = new Date(opened.getTime() - 1);
+    }
+    return undefined;
+  }
 
   // --- FIXED SCHEDULE ---
   if (schedule.type === 'fixed' && schedule.timeValue) {
@@ -155,7 +172,7 @@ export function calculateNextFireTime(schedule: Schedule, anchor?: number, overr
 
     // CASE 2: Current time is inside the window
     if (now >= windowStart && now <= windowEnd) {
-      const anchorTime = anchor ?? windowStart.getTime();
+      const anchorTime = windowStart.getTime();
       const intervalMs = intervalMins * 60_000;
 
       // Calculate how many intervals have passed since anchor
@@ -195,7 +212,6 @@ export function calculateNextFireTime(schedule: Schedule, anchor?: number, overr
 
 // Android caps an app at 500 concurrent alarms; the budget is shared by every reminder.
 const MAX_TOTAL_SLOTS = 400;
-const MAX_SLOTS_PER_REMINDER = 64;
 const HORIZON_DAYS = 30;
 
 export interface QuietHours {
@@ -233,7 +249,6 @@ export function isInQuietHours(date: Date, hours: QuietHours | null): boolean {
 /** Next fire times for a reminder across all its schedules, soonest first, within the horizon. */
 export function upcomingFireTimes(reminder: Reminder, now: Date, limit: number): Date[] {
   const horizon = now.getTime() + HORIZON_DAYS * 86_400_000;
-  const anchor = Math.floor(Math.max(reminder.updatedAt || 0, reminder.createdAt || 0) / 60_000) * 60_000;
   const quiet = reminder.category === 'medicine' ? null : quietHours;
   const times = new Map<number, Date>();
 
@@ -241,7 +256,7 @@ export function upcomingFireTimes(reminder: Reminder, now: Date, limit: number):
     let pointer = now;
     // Quiet-hour slots are skipped, so scan a bounded number of candidates.
     for (let i = 0; i < limit * 4; i++) {
-      const next = calculateNextFireTime(sched, sched.type === 'interval' ? anchor : undefined, pointer);
+      const next = calculateNextFireTime(sched, pointer);
       if (!next || next.getTime() > horizon) break;
       if (!isInQuietHours(next, quiet)) times.set(next.getTime(), next);
       pointer = new Date(next.getTime() + 60_000);
@@ -307,9 +322,19 @@ async function doReschedule(reminders: Reminder[]): Promise<void> {
 
   // Asking for exact alarms without the permission makes the plugin open system settings.
   const exact = await canScheduleExact();
-  const perReminder = Math.min(MAX_SLOTS_PER_REMINDER, Math.floor(MAX_TOTAL_SLOTS / active.length));
   const now = new Date();
-  const notifications = active.flatMap((r) => buildNotifications(r, upcomingFireTimes(r, now, perReminder), exact));
+  // Reminders that need less than an equal share of the budget leave the rest to busier ones.
+  const wanted = active.map((r) => upcomingFireTimes(r, now, MAX_TOTAL_SLOTS));
+  const planned: Date[][] = [];
+  let budget = MAX_TOTAL_SLOTS;
+  wanted
+    .map((times, i) => ({ times, i }))
+    .sort((a, b) => a.times.length - b.times.length)
+    .forEach(({ times, i }, k, all) => {
+      planned[i] = times.slice(0, Math.floor(budget / (all.length - k)));
+      budget -= planned[i]!.length;
+    });
+  const notifications = active.flatMap((r, i) => buildNotifications(r, planned[i]!, exact));
   if (notifications.length > 0) {
     await LocalNotifications.schedule({ notifications });
   }

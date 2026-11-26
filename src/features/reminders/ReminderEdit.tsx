@@ -80,7 +80,7 @@ const ReminderForm: React.FC<FormProps> = ({ initialReminder, isNew, onSave, onA
     } else if (changes.type) {
       // Switching between fixed and interval starts over with a single schedule.
       const first = newSchedules[0]!;
-      setSchedules([{ ...first, ...changes }]);
+      setSchedules([{ ...first, startTime: first.startTime || '07:00', endTime: first.endTime || '21:00', ...changes }]);
       return;
     } else if (changes.daysOfWeek) {
       // Weekdays apply to every time of the reminder.
@@ -248,8 +248,9 @@ const ReminderForm: React.FC<FormProps> = ({ initialReminder, isNew, onSave, onA
             />
             <div className="window-row">
               <div>
-                <label className="form-label sub">{t('edit_reminder.start')}</label>
+                <label className="form-label sub" htmlFor="window-start">{t('edit_reminder.start')}</label>
                 <input
+                  id="window-start"
                   className="form-input"
                   type="time"
                   value={mainSchedule.startTime}
@@ -257,8 +258,9 @@ const ReminderForm: React.FC<FormProps> = ({ initialReminder, isNew, onSave, onA
                 />
               </div>
               <div>
-                <label className="form-label sub">{t('edit_reminder.end')}</label>
+                <label className="form-label sub" htmlFor="window-end">{t('edit_reminder.end')}</label>
                 <input
+                  id="window-end"
                   className="form-input"
                   type="time"
                   value={mainSchedule.endTime}

@@ -8,6 +8,13 @@ import i18n from '../i18n';
 
 expect.extend(toHaveNoViolations);
 
+// @types/jest-axe types the matcher for Jest only.
+declare module 'vitest' {
+  interface Matchers<R extends void | Promise<void> = void | Promise<void>> {
+    toHaveNoViolations(): R;
+  }
+}
+
 // Mock the CatErrorIllustration SVG component so it doesn't break in jsdom
 vi.mock('../../shared/components/CatErrorIllustration/CatErrorIllustration', () => ({
   CatErrorIllustration: () => <svg aria-label="Error illustration" role="img" />,
